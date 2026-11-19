@@ -1,0 +1,32 @@
+# PLANTILLA. Reglas de la Línea A (portales locales). Piloto automático (`cvtitan auto`): busca, filtra y, SOLO
+# si activas lines.A.send_enabled en config/lines.yaml, postula a las vacantes que cumplan TODAS estas reglas.
+# Edita con cuidado: cada envío es real. Tu pretensión se define en candidate/profile.yaml.
+
+min_score: 55            # compatibilidad mínima (0-100) con tu perfil
+potential_margin: 10     # «potencial»: a 10 puntos o menos del mínimo (solo se informa)
+salary_rule: minimo      # ignorar | minimo  (minimo: descarta si el sueldo PUBLICADO < pretensión)
+exclude_temporary: false # descarta trabajos por proyecto, plazo fijo, freelance, reemplazos, temporales
+allow_remote_part_time: true  # excepción: proyectos/temporales REMOTOS y de POCAS HORAS sí se postulan
+daily_max: 10            # postulaciones automáticas por día (además de los límites por portal de settings.yaml)
+groups: [datos, software, ia, sector, diccionario]   # grupos de config/search_keywords.yaml a buscar
+dictionary_priorities: [P1, P2]   # cargos de config/job_dictionary.json que cuentan como «en tus áreas»
+# Portales que bloquean navegadores automatizados (403): no se intenta postular ahí.
+manual_platforms: [computrabajo]
+max_per_search: 8        # vacantes por palabra clave y fuente
+
+# El cargo (título) debe coincidir con al menos un patrón de `include` y con ninguno de `exclude`.
+# Patrones en minúsculas y sin acentos (expresiones regulares). Ejemplo para un perfil de datos/software.
+include:
+  datos_bi: >-
+    analista de datos|data analyst|ingenier\w* de datos|data engineer|\bbi\b|business intelligence|
+    power bi|reporting|reporteria|analytics|analitica|\bsql\b|\bdatos\b|\bdata\b
+  software: >-
+    desarroll|developer|programador|software|full.?stack|back.?end|front.?end|python|devops
+  automatizacion: >-
+    automatiz|automation|integraci|rpa
+  ia: >-
+    \bia\b|inteligencia artificial|\bai\b|machine learning|\bllm|genai|generativ
+exclude: >-
+  conductor|chofer|aseo|limpieza|mecanic|soldador|ventas|vendedor|comercial|docente|profesor|practica|
+  practicante|memorista|alumno|contador|contable|recursos humanos|rrhh|cocina|bodeg|guardia|cajer|
+  repartidor|trainee

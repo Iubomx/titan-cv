@@ -1,0 +1,55 @@
+# Configuración de la automatización de postulaciones.
+
+# Puntaje mínimo de evidencia para seguir con una vacante. Bajo este valor se marca "Descartada"
+# (puedes forzarla desde la web).
+min_score: 30
+
+# Siempre se detiene antes de enviar para tu revisión final. No cambies esto sin estar seguro.
+review_before_submit: true
+
+browser:
+  channel: chrome          # usa tu Google Chrome instalado (perfil separado en data/browser-profile)
+  slow_mo_ms: 120          # pausa entre acciones; más alto = más "humano"
+  max_form_steps: 12       # pasos máximos de un formulario multipágina
+
+# Límites diarios de postulaciones enviadas por plataforma, para no disparar sus sistemas antiabuso.
+daily_limits:
+  linkedin: 8                # postulaciones por día en LinkedIn (exclusivo)
+  indeed: 20
+  default: 40
+
+# CV que se adjunta: "adaptado" (generado y auditado para cada vacante en español; en otros idiomas se usa
+# tu original de ese idioma) u "original" (siempre tus CV de candidate/profile.yaml -> cv_files).
+cv_mode: adaptado
+
+# Tipos de cambio aproximados para comparar sueldos en `cvtitan mercado` (USD por unidad). Actualízalos.
+fx:
+  USD: 1.0
+  CLP: 0.00105      # ~950 CLP por USD
+  UF: 41.0          # ~39.000 CLP por UF
+  EUR: 1.08
+
+# IA (Claude API) para preguntas abiertas de formularios. DESACTIVADA por defecto.
+# Para activarla: 1) ANTHROPIC_API_KEY en .env  2) enabled: true.
+# Qué se envía: hechos del perfil (experiencia, proyectos, estudios, skills respaldadas, preferencias) y el TEXTO
+# de las preguntas pendientes. Nunca: contraseñas, RUT, declaraciones legales, casillas, HTML ni formularios completos.
+llm:
+  enabled: false
+
+# Límites EXCLUSIVOS de LinkedIn (protegen tu cuenta; las demás fuentes no se ven afectadas).
+linkedin:
+  max_searches_per_run: 12      # páginas de búsqueda por ejecución
+  max_reads_per_run: 30         # avisos abiertos por ejecución
+  min_seconds_between: 20       # pausa mínima entre páginas de LinkedIn (+ 2 a 8 s al azar)
+  max_searches_per_day: 30      # tope diario de búsquedas
+
+# Centro de mando: casco TITAN formado por código real (ui/ascii_helmet.py).
+ui:
+  # Efecto de la portada en modo texto (TerminalTextEffects): unstable (2,1 s) | slice (1,6 s) |
+  # errorcorrect (3 s) | decrypt (6 s) | none
+  text_effect: unstable
+  helmet:
+    flow_speed: 18      # caracteres por segundo que fluye el código dentro de la silueta
+    glitch: 0.012       # intensidad del glitch (probabilidad por carácter y cuadro; 0 = sin glitch)
+    sway: 1             # vaivén horizontal en columnas (0 = quieto)
+    intensity: 0.8      # agresividad de los efectos 0..1 (ráfagas, corrupción, color); el contorno no se deforma

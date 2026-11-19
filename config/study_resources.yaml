@@ -1,0 +1,91 @@
+# Recursos de estudio enlazados (no copiados) desde repositorios abiertos:
+#   - Coding Interview University (jwasham, CC BY-SA 4.0)
+#   - Tech Interview Handbook (yangshun, MIT) — sitio techinterviewhandbook.org
+#   - The System Design Primer (donnemartin, CC BY 4.0)
+#   - How to Secure Anything (veeral-patel, sin licencia publicada: solo enlaces)
+# La guía de entrevista elige recursos según el cargo y las brechas de cada vacante.
+
+sources:
+  ciu: {name: Coding Interview University, url: "https://github.com/jwasham/coding-interview-university"}
+  tih: {name: Tech Interview Handbook, url: "https://www.techinterviewhandbook.org"}
+  sdp: {name: The System Design Primer, url: "https://github.com/donnemartin/system-design-primer"}
+  hsa: {name: How to Secure Anything, url: "https://github.com/veeral-patel/how-to-secure-anything"}
+
+resources:
+  # --- Tech Interview Handbook
+  tih_behavioral: {source: tih, title: "Entrevista conductual (behavioral)", path: /behavioral-interview/}
+  tih_behavioral_q: {source: tih, title: "Preguntas conductuales frecuentes", path: /behavioral-interview-questions/}
+  tih_self_intro: {source: tih, title: "Cómo presentarte («cuéntame sobre ti»)", path: /self-introduction/}
+  tih_final_q: {source: tih, title: "Preguntas para hacerle al entrevistador", path: /final-questions/}
+  tih_negotiation: {source: tih, title: "Negociación de oferta", path: /negotiation/}
+  tih_resume: {source: tih, title: "Guía de CV para ingeniería", path: /resume/}
+  tih_coding_plan: {source: tih, title: "Plan de estudio para entrevista de código", path: /coding-interview-study-plan/}
+  tih_coding_cheat: {source: tih, title: "Cheatsheet de la entrevista de código", path: /coding-interview-cheatsheet/}
+  tih_system_design: {source: tih, title: "Entrevista de diseño de sistemas", path: /system-design/}
+  # --- Coding Interview University
+  ciu_bigo: {source: ciu, title: "Complejidad algorítmica / Big-O", anchor: algorithmic-complexity--big-o--asymptotic-analysis}
+  ciu_ds: {source: ciu, title: "Estructuras de datos", anchor: data-structures}
+  ciu_trees: {source: ciu, title: "Árboles", anchor: trees}
+  ciu_sorting: {source: ciu, title: "Ordenamiento", anchor: sorting}
+  ciu_graphs: {source: ciu, title: "Grafos", anchor: graphs}
+  ciu_practice: {source: ciu, title: "Práctica de problemas de código", anchor: coding-question-practice}
+  ciu_process: {source: ciu, title: "Proceso de entrevista y preparación general", anchor: interview-process--general-interview-prep}
+  # --- System Design Primer
+  sdp_approach: {source: sdp, title: "Cómo abordar una pregunta de diseño de sistemas", anchor: how-to-approach-a-system-design-interview-question}
+  sdp_index: {source: sdp, title: "Índice de temas de diseño de sistemas", anchor: index-of-system-design-topics}
+  sdp_ood: {source: sdp, title: "Diseño orientado a objetos (preguntas con solución)", anchor: object-oriented-design-interview-questions-with-solutions}
+  sdp_database: {source: sdp, title: "Bases de datos: SQL, NoSQL, replicación, sharding", anchor: database}
+  sdp_cache: {source: sdp, title: "Caché", anchor: cache}
+  sdp_async: {source: sdp, title: "Asincronía: colas de mensajes y tareas", anchor: asynchronism}
+  sdp_communication: {source: sdp, title: "Comunicación: HTTP, REST, RPC", anchor: communication}
+  sdp_security: {source: sdp, title: "Seguridad en diseño de sistemas", anchor: security}
+  sdp_cap: {source: sdp, title: "Disponibilidad vs consistencia (CAP)", anchor: availability-vs-consistency}
+  sdp_aws: {source: sdp, title: "Escalar a millones de usuarios en AWS", anchor: design-a-system-that-scales-to-millions-of-users-on-aws}
+  # --- How to Secure Anything
+  hsa_process: {source: hsa, title: "Proceso de ingeniería de seguridad", anchor: high-level-process}
+  hsa_defenses: {source: hsa, title: "Mejorar defensas (mínimo privilegio, secure by design)", anchor: improve-defenses}
+  hsa_vulns: {source: hsa, title: "Encontrar vulnerabilidades (mentalidad de atacante)", anchor: find-vulnerabilities}
+  hsa_authn: {source: hsa, title: "Autenticación", anchor: authentication}
+  hsa_authz: {source: hsa, title: "Autorización y control de acceso", anchor: access-control}
+  hsa_crypto: {source: hsa, title: "Criptografía", anchor: cryptography}
+
+# Reglas: se aplica una regla si coincide alguna condición.
+#   gaps: claves de skill que son brecha en la vacante
+#   skills: claves de skill que pide la vacante (respaldadas o no)
+#   title: palabras en el cargo (sin acentos)
+#   always: siempre
+rules:
+  - reason: "Toda entrevista: presentación, preguntas conductuales y preguntas finales"
+    always: true
+    resources: [tih_self_intro, tih_behavioral, tih_behavioral_q, tih_final_q]
+  - reason: "Cargo de desarrollo de software: probable entrevista técnica de código"
+    title: [desarrollador, developer, programador, engineer, ingeniero de software, full stack, fullstack, backend, frontend, software]
+    resources: [tih_coding_plan, tih_coding_cheat, ciu_bigo, ciu_ds, ciu_practice]
+  - reason: "Cargo semi senior o superior en software: probable diseño de sistemas"
+    title: [senior, lead, arquitecto, architect, staff, principal, tech lead]
+    resources: [tih_system_design, sdp_approach, sdp_index]
+  - reason: "Piden backend, APIs o integraciones"
+    skills: [nodejs, express, nestjs, fastapi, django, flask, rest_api, apis, java, dotnet, go]
+    resources: [sdp_communication, sdp_async, sdp_cache]
+  - reason: "Piden bases de datos (SQL o NoSQL)"
+    skills: [nosql, documentdb, mongodb, postgresql, mysql, sql_server, oracle, data_modeling]
+    resources: [sdp_database, sdp_cap]
+  - reason: "Piden nube o escalabilidad"
+    skills: [aws, azure, gcp, kubernetes, docker, terraform]
+    resources: [sdp_aws, sdp_index]
+  - reason: "Piden programación orientada a objetos"
+    skills: [oop, java, csharp]
+    resources: [sdp_ood]
+  - reason: "Brecha en POO o pruebas: refuerza fundamentos de estructuras y algoritmos"
+    gaps: [oop, unit_testing]
+    resources: [ciu_ds, ciu_sorting, ciu_trees, ciu_graphs]
+  - reason: "Cargo o requisitos de seguridad"
+    title: [seguridad, security, ciberseguridad, cybersecurity, appsec, devsecops, soc, pentest]
+    skills: [cybersecurity, iam]
+    resources: [hsa_process, hsa_defenses, hsa_vulns, hsa_authn, hsa_authz, hsa_crypto, sdp_security]
+  - reason: "Backend con usuarios: autenticación y autorización suelen preguntarse"
+    skills: [nodejs, express, rest_api, apis, django, fastapi]
+    resources: [hsa_authn, hsa_authz]
+  - reason: "La vacante publica salario o es semi senior o superior: prepara la negociación"
+    salary_or_senior: true
+    resources: [tih_negotiation]

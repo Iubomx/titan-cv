@@ -1,0 +1,81 @@
+# PLANTILLA. Dos líneas de búsqueda independientes (ejecución, cupo y registros separados).
+#   cvtitan auto --linea A            -> mercado local (portales de tu país)
+#   cvtitan auto --linea B --simular  -> remoto internacional
+# Los registros quedan en data/auto/<linea>/. Adapta nombres, palabras clave y fuentes a TU búsqueda.
+
+lines:
+  A:
+    name: Local — tu país y tus áreas
+    market: chile                 # conectores locales incluidos: Chile (ver config/search_keywords.yaml)
+    send_enabled: false           # true SOLO cuando hayas revisado tus reglas: cada envío es real
+    rules: config/auto.yaml       # reglas de la Línea A (cargos, ajuste, cupo)
+
+  B:
+    name: Internacional — remoto
+    market: internacional
+    send_enabled: false           # true SOLO cuando hayas revisado tus reglas: cada envío es real
+    daily_max: 10
+    min_score: 50                 # puntaje de línea (0-100), ver `scoring` abajo
+    potential_margin: 10          # «potencial»: a 10 puntos o menos del mínimo (solo se informa)
+    salary:
+      currency: USD
+      min_monthly: 0              # tu mínimo mensual (USD); 0 = no filtrar
+      target_monthly: 4000           # desde aquí, puntaje completo de sueldo
+      keep_unpublished: true      # sin sueldo publicado: se mantiene (puntaje neutro)
+    scoring:                      # pesos (suman 100)
+      compatibility: 40           # evidence.match ajustado
+      eligibility: 25             # ok=100, ambiguo=50, excluido = descartada antes
+      salary: 20
+      experience: 15
+    # Palabras para filtrar por título/etiquetas (en inglés; los portales internacionales publican en inglés).
+    # Ejemplo para un perfil de datos/software: reemplázalas por las tuyas.
+    keywords:
+      - data analyst
+      - data engineer
+      - analytics engineer
+      - business intelligence
+      - power bi
+      - sql
+      - python
+      - automation
+      - software engineer
+      - backend
+      - full stack
+    # Cargos de config/job_dictionary.json (además de las palabras de arriba) que pasan el filtro de título.
+    dictionary_priorities: [P1, P2]
+    exclude_titles: >-
+      \bintern\b|internship|trainee|early career|new grad|graduate program|apprentice|sales|account executive|
+      recruiter|marketing|nurse|teacher|lawyer|accountant|copywriter|\bsdr\b|\bbdr\b
+    # Fuentes públicas con API o feed oficial (1 consulta diaria por fuente, con caché).
+    sources: [remotive, remoteok, himalayas, jobicy, arbeitnow, weworkremotely, greenhouse, lever]
+    # Portales que exigen cuenta propia para mostrar el enlace del empleador. Sus ofertas quedan «en espera»
+    # hasta que crees la cuenta (manualmente) y agregues el portal a board_accounts.
+    board_account_required: [We Work Remotely, Remote OK, Remotive]
+    board_accounts: []
+    # Sistemas que SIEMPRE exigen un paso humano (CAPTCHA): sus vacantes no consumen cupo ni abren ventanas.
+    human_step_ats: [ashby]
+    # Tableros públicos Greenhouse / Lever de empresas que contratan en remoto (agrega las que te interesen).
+    #   greenhouse: [token]  -> https://boards.greenhouse.io/<token>
+    #   lever: [token]       -> https://jobs.lever.co/<token>
+    # Escáner mundial: además de estas listas, se escanean las empresas Greenhouse/Lever que TITAN ya descubrió.
+    world_scan: true
+    greenhouse: []
+    lever: []
+    # LinkedIn (requiere tu sesión): búsquedas remotas. Una búsqueda por palabra × ubicación. Límites estrictos.
+    linkedin:
+      enabled: false              # actívalo solo si aceptas el riesgo (LinkedIn prohíbe la automatización)
+      keywords: [data analyst, python developer, software engineer]
+      locations:
+        - Latin America
+        - Worldwide
+      # Catálogo geográfico (GeoNames, `cvtitan geo cargar`): búsqueda por país; si se satura, por ciudades.
+      geo:
+        revisit_hours: 72
+        min_population: 500000
+        max_cities_per_country: 25
+        countries:
+          US: United States
+          CA: Canada
+          ES: Spain
+          GB: United Kingdom
+      max_per_search: 10

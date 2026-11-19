@@ -1,0 +1,155 @@
+# PERFIL DE EJEMPLO (ficticio). `cvtitan init` lo copia a candidate/profile.yaml:
+# reemplaza todo con tus datos reales. Este archivo es la ÚNICA fuente de verdad del candidato.
+#
+# Reglas:
+# - Cada logro (achievement) es un hecho verificable, con su propio id.
+# - Una skill es `backed` solo si `evidence` apunta a ids existentes (logros, proyectos, estudios).
+# - `to_demonstrate` = estás aprendiendo o no puedes defenderla aún. Nunca aparece en el CV.
+# - Las cifras de un logro son las únicas cifras que el CV podrá usar para ese logro.
+
+personal:
+  name: Camila Rojas Fuentes
+  headline: Analista de Datos | Automatización con Python y SQL | Minería
+  email: camila.rojas@example.com
+  phone: "+56 9 1234 5678"
+  location: Antofagasta, Chile
+  linkedin: linkedin.com/in/camila-rojas-ejemplo
+  github: github.com/camila-ejemplo
+
+summary: >-
+  Analista de datos con experiencia en minería, enfocada en automatizar reportabilidad operacional con
+  Python y SQL y en construir dashboards de Power BI para equipos de operación y planificación.
+
+summary_variants:
+  - id: automation
+    focus: [Python, Automatización de procesos, ETL]
+    text: >-
+      Analista de datos especializada en automatización: diseño scripts en Python y consultas SQL que
+      reemplazan reportes manuales por procesos programados y confiables en operaciones mineras.
+  - id: bi
+    focus: [Power BI, Visualización de datos, Reportabilidad]
+    text: >-
+      Analista de datos orientada a negocio: traduzco necesidades de operación y planificación en minería en
+      dashboards de Power BI y modelos de datos que apoyan decisiones diarias.
+
+experience:
+  - id: exp-minera-norte
+    company: Minera Ejemplo del Norte
+    role: Analista de Datos Operacionales
+    location: Antofagasta, Chile
+    start: 2021-03
+    end: presente
+    achievements:
+      - id: ach-reporte-automatico
+        text: >-
+          Automaticé el reporte diario de producción con Python y SQL, reduciendo de 3 horas a 20 minutos
+          el tiempo de preparación.
+        skills: [Python, SQL, Automatización de procesos, Reportabilidad]
+      - id: ach-dashboard-kpi
+        text: >-
+          Diseñé dashboards de Power BI con KPIs de disponibilidad y utilización de flota, usados por
+          4 equipos de operación.
+        skills: [Power BI, Visualización de datos]
+      - id: ach-etl-despacho
+        text: >-
+          Construí un proceso ETL que integra datos del sistema de despacho con SQL Server para análisis
+          de ciclos de carguío y transporte.
+        skills: [ETL, SQL Server, Sistemas de despacho]
+      - id: ach-stakeholders
+        text: >-
+          Coordiné con planificación y mantenimiento la definición de indicadores comunes, alineando
+          criterios entre áreas.
+        skills: [Gestión de stakeholders]
+
+  - id: exp-consultora
+    company: Consultora Analítica Ejemplo
+    role: Analista de Datos Junior
+    location: Santiago, Chile
+    start: 2019-01
+    end: 2021-02
+    achievements:
+      - id: ach-macros
+        text: >-
+          Desarrollé macros en VBA y tablas dinámicas de Excel para consolidar reportes de 12 clientes.
+        skills: [VBA, Excel]
+      - id: ach-limpieza
+        text: >-
+          Estandaricé la limpieza de datos con pandas, disminuyendo errores en informes mensuales.
+        skills: [Python, pandas]
+
+projects:
+  - id: proj-alertas
+    name: Alertas de desviación de producción
+    description: >-
+      Script en Python que detecta desviaciones del plan diario y envía alertas por correo al equipo
+      de turno.
+    skills: [Python, Automatización de procesos]
+    status: completed
+    url: github.com/camila-ejemplo/alertas-produccion
+  - id: proj-rag
+    name: Asistente RAG de procedimientos
+    description: Prototipo de búsqueda semántica sobre procedimientos operacionales.
+    skills: [RAG]
+    status: in_progress
+
+education:
+  - id: edu-ingenieria
+    degree: Ingeniería Civil Industrial
+    institution: Universidad Ejemplo
+    year: 2018
+    skills: [Estadística]
+
+certifications:
+  - id: cert-pl300
+    name: "Microsoft Certified: Power BI Data Analyst (PL-300)"
+    issuer: Microsoft
+    year: 2023
+    skills: [Power BI]
+
+skills:
+  - {name: Python, status: backed, evidence: [ach-reporte-automatico, ach-limpieza, proj-alertas]}
+  - {name: SQL, status: backed, evidence: [ach-reporte-automatico, ach-etl-despacho]}
+  - {name: SQL Server, status: backed, evidence: [ach-etl-despacho]}
+  - {name: Power BI, status: backed, evidence: [ach-dashboard-kpi, cert-pl300]}
+  - {name: Visualización de datos, status: backed, evidence: [ach-dashboard-kpi]}
+  - {name: ETL, status: backed, evidence: [ach-etl-despacho]}
+  - {name: Automatización de procesos, status: backed, evidence: [ach-reporte-automatico, proj-alertas]}
+  - {name: Reportabilidad, status: backed, evidence: [ach-reporte-automatico]}
+  - {name: pandas, status: backed, evidence: [ach-limpieza]}
+  - {name: Excel, status: backed, evidence: [ach-macros]}
+  - {name: VBA, status: backed, evidence: [ach-macros]}
+  - {name: Sistemas de despacho, status: backed, evidence: [ach-etl-despacho]}
+  - {name: Gestión de stakeholders, status: backed, evidence: [ach-stakeholders]}
+  - {name: Estadística, status: backed, evidence: [edu-ingenieria]}
+  - {name: Minería, status: backed, evidence: [exp-minera-norte]}
+  - name: RAG
+    status: to_demonstrate
+    evidence: [proj-rag]
+    note: Prototipo en curso; no convertir en experiencia productiva hasta terminarlo.
+  - name: Bases de datos vectoriales
+    status: to_demonstrate
+    note: En aprendizaje.
+
+# Datos para completar formularios. Lo que no esté aquí, el robot te lo pregunta y lo recuerda
+# en candidate/answers.yaml. Nunca se inventa.
+preferences:
+  country: Chile
+  salary_expectation: "CLP 2.000.000 líquidos mensuales"
+  availability: "Inmediata"
+  willing_to_relocate: "No"
+  work_authorization:
+    Chile: "Sí"
+    default: null          # otros países: preguntar
+  # national_id: "12.345.678-9"
+  # birth_date: "1995-01-31"
+
+# Documentos adicionales que pueden pedir los formularios (rutas relativas a la carpeta del proyecto).
+documents: []
+#  - name: Certificado de título
+#    type: titulo
+#    keywords: [certificado de titulo, titulo profesional, degree]
+#    path: candidate/documents/certificado_titulo.pdf
+
+languages:
+  - {name: Español, level: Nativo}
+  - {name: Inglés, level: Intermedio (B2)}

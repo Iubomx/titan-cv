@@ -1,0 +1,25 @@
+Analista de Datos Senior - Operaciones Mineras
+
+Somos una compañía minera que busca fortalecer su equipo de analítica en Antofagasta. Modalidad híbrida.
+
+Responsabilidades
+- Automatizar la reportabilidad operacional y los KPIs de producción.
+- Construir y mantener dashboards en Power BI para operación y planificación minera.
+- Diseñar pipelines de datos (ETL) desde sistemas de despacho hacia el data warehouse.
+- Trabajar con stakeholders de mantenimiento y planificación.
+
+Requisitos
+- Título de Ingeniería Civil Industrial, Informática o afín.
+- 4 años de experiencia en análisis de datos, idealmente en minería.
+- Dominio de Python y SQL (excluyente).
+- Experiencia con Power BI.
+- Conocimientos de Azure.
+- Inglés intermedio.
+
+Deseable
+- Experiencia con RAG y bases de datos vectoriales.
+- Conocimientos de Docker y Git.
+
+Beneficios
+- Seguro complementario de salud.
+- Bono anual por desempeño.

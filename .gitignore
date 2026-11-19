@@ -1,0 +1,20 @@
+.venv/
+__pycache__/
+*.egg-info/
+.pytest_cache/
+
+# Datos personales del candidato: NUNCA se versionan
+candidate/profile.yaml
+candidate/profile.draft.yaml
+candidate/answers.yaml
+candidate/declarations.yaml
+candidate/question_bank.yaml
+candidate/documents/
+candidate/*.pdf
+candidate/*.docx
+
+# Todo lo generado en data/ (historial, CV, capturas, sesiones del navegador, búsquedas, respaldos)
+data/
+
+# Secretos
+.env

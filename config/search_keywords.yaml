@@ -1,0 +1,55 @@
+# PLANTILLA. Diccionario de búsqueda: `cvtitan buscar` (sin palabras) busca cada palabra clave en cada fuente
+# de su grupo y junta todo en un solo listado, sin repetidos y ordenado por compatibilidad.
+#   cvtitan buscar                          -> todos los grupos
+#   cvtitan buscar --grupo datos,software   -> solo esos grupos
+#   cvtitan buscar python "power bi"        -> palabras sueltas (ignora este archivo)
+#
+# Fuentes disponibles (conectores locales incluidos para Chile):
+#   getonboard    -> https://www.getonbrd.com/jobs-<frase>             (tecnología, público)
+#   computrabajo  -> https://cl.computrabajo.com/trabajo-de-<frase>    (todo rubro, público)
+#   linkedin      -> búsqueda con Easy Apply                           (requiere tu sesión en el Chrome del robot)
+#   chiletrabajos -> https://www.chiletrabajos.cl/trabajos/<frase>     (todo rubro, público)
+#   indeed        -> https://cl.indeed.com/jobs?q=<frase>              (navegador; puede pedir verificación humana)
+# Además se recorren los portales de empresas de config/companies.yaml (desactívalo con --sin-empresas).
+
+# Diccionario de cargos (config/job_dictionary.json, categorías con prioridad P1/P2/P3).
+# Cada categoría de las prioridades indicadas se convierte en un grupo `dic_<categoría>`.
+# En config/auto.yaml, el grupo «diccionario» activa todos.
+dictionary:
+  enabled: true
+  priorities: [P1, P2]
+  sources: [getonboard, computrabajo, chiletrabajos]
+
+groups:
+  datos:
+    description: Datos, BI y automatización
+    sources: [getonboard, computrabajo, chiletrabajos]
+    keywords:
+      - analista de datos
+      - ingeniero de datos
+      - analista bi
+      - power bi
+      - sql
+      - automatizacion de procesos
+
+  software:
+    description: Desarrollo de software
+    sources: [getonboard, computrabajo, chiletrabajos]
+    keywords:
+      - desarrollador python
+      - backend
+      - full stack
+      - ingeniero de software
+
+  ia:
+    description: Inteligencia artificial
+    sources: [getonboard]
+    keywords:
+      - inteligencia artificial
+      - machine learning
+
+  sector:
+    description: Tu industria (ejemplo; reemplázalo por la tuya)
+    sources: [computrabajo, chiletrabajos]
+    keywords:
+      - analista de datos mineria

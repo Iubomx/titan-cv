@@ -1,0 +1,9 @@
+# Declaraciones legales (copia a candidate/declarations.yaml). ÚNICA fuente para responder preguntas de
+# ciudadanía, residencia, autorización de trabajo, patrocinio y clearance. Si un dato falta, la pregunta queda
+# pendiente: el sistema nunca lo deduce.
+confirmed_on: null              # fecha en que revisaste estos datos (YYYY-MM-DD)
+citizenship: []                 # p. ej. [Chile]
+legal_residence: []             # países donde resides legalmente
+work_authorization: []          # países donde puedes trabajar sin patrocinio
+security_clearance: false
+needs_sponsorship_outside_authorized: true

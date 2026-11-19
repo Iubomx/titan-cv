@@ -1,0 +1,19 @@
+# PLANTILLA. Portales de empleo oficiales de empresas. `cvtitan buscar` recorre las que tienen un `ats`
+# soportado y trae TODAS sus vacantes publicadas (luego se ordenan por compatibilidad con tu perfil).
+#
+# ats soportados:
+#   successfactors -> portales "SAP SuccessFactors Career Site" (URL /search/?q=&locationsearch=...)
+#   manual         -> el portal no expone enlaces directos; se lista para que lo revises tú
+#   pendiente      -> aún no se identificó el portal (solo sitio corporativo)
+#
+# Para agregar una empresa: busca su "Trabaja con nosotros", sigue el botón al portal de empleo y,
+# si la URL de una vacante se ve como https://<portal>/job/<cargo>/<número>/, usa ats: successfactors.
+#
+# Ejemplos de formato (descoméntalos y cámbialos por las empresas que te interesen):
+#   - {name: Empresa Ejemplo, ats: successfactors, url: "https://empleos.empresa-ejemplo.example", location: Chile, max_pages: 2}
+#   - name: Otra Empresa
+#     ats: manual
+#     url: "https://otra-empresa.example/trabaja-con-nosotros"
+#     note: Portal sin enlaces directos; revísalo a mano.
+
+companies: []

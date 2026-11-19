@@ -1,0 +1,118 @@
+# Taxonomía de habilidades. Clave canónica -> nombre visible, categoría y alias.
+# Los alias se comparan sin acentos ni mayúsculas y como palabra completa.
+# Agrega aquí las tecnologías de tu industria; las skills del perfil se registran solas.
+skills:
+  # --- Lenguajes y datos
+  python: {name: Python, category: language, aliases: [python3]}
+  sql: {name: SQL, category: data, aliases: [t-sql, tsql, pl/sql, plsql, consultas sql]}
+  r_lang: {name: R, category: language, aliases: [lenguaje r, rstudio, r studio]}
+  javascript: {name: JavaScript, category: language, aliases: [js, ecmascript]}
+  typescript: {name: TypeScript, category: language, aliases: [ts]}
+  java: {name: Java, category: language}
+  csharp: {name: "C#", category: language, aliases: [c sharp, csharp]}
+  dotnet: {name: .NET, category: framework, aliases: [dotnet, asp.net, .net core]}
+  go: {name: Go, category: language, aliases: [golang]}
+  vba: {name: VBA, category: language, aliases: [macros, macros excel, visual basic]}
+  pandas: {name: pandas, category: library}
+  numpy: {name: NumPy, category: library}
+  scikit_learn: {name: scikit-learn, category: library, aliases: [sklearn, scikit learn]}
+  tensorflow: {name: TensorFlow, category: library}
+  pytorch: {name: PyTorch, category: library, aliases: [torch]}
+  # --- BI y analítica
+  power_bi: {name: Power BI, category: bi, aliases: [powerbi, dax, power query]}
+  tableau: {name: Tableau, category: bi}
+  looker: {name: Looker, category: bi, aliases: [looker studio, data studio]}
+  excel: {name: Excel, category: bi, aliases: [excel avanzado, microsoft excel, tablas dinamicas]}
+  data_visualization: {name: Visualización de datos, category: analytics, aliases: [data visualization, visualizacion de datos, dashboards, dashboard]}
+  statistics: {name: Estadística, category: analytics, aliases: [statistics, estadistica, analisis estadistico]}
+  data_modeling: {name: Modelado de datos, category: data, aliases: [data modeling, modelado de datos, modelo dimensional, star schema]}
+  google_analytics: {name: Google Analytics, category: analytics, aliases: [ga4, google analytics 4, universal analytics]}
+  tag_manager: {name: Google Tag Manager, category: analytics, aliases: [gtm, tag manager, google tag manager]}
+  reporting: {name: Reportabilidad, category: analytics, aliases: [reporting, reportabilidad, reportes, informes de gestion, kpi, kpis]}
+  # --- Ingeniería de datos
+  etl: {name: ETL, category: data, aliases: [elt, pipelines de datos, data pipelines, pipeline de datos]}
+  airflow: {name: Airflow, category: data, aliases: [apache airflow]}
+  dbt: {name: dbt, category: data}
+  spark: {name: Spark, category: data, aliases: [pyspark, apache spark, databricks]}
+  data_warehouse: {name: Data Warehouse, category: data, aliases: [data warehouse, datawarehouse, snowflake, redshift]}
+  bigquery: {name: BigQuery, category: data, aliases: [google bigquery, big query]}
+  # --- Bases de datos
+  postgresql: {name: PostgreSQL, category: database, aliases: [postgres]}
+  mysql: {name: MySQL, category: database}
+  sql_server: {name: SQL Server, category: database, aliases: [mssql, microsoft sql server]}
+  oracle: {name: Oracle, category: database}
+  mongodb: {name: MongoDB, category: database, aliases: [mongo]}
+  # --- Cloud / DevOps
+  aws: {name: AWS, category: cloud, aliases: [amazon web services, s3, lambda, ec2]}
+  azure: {name: Azure, category: cloud, aliases: [microsoft azure, azure data factory]}
+  gcp: {name: Google Cloud, category: cloud, aliases: [gcp, google cloud platform]}
+  docker: {name: Docker, category: devops, aliases: [contenedores, containers]}
+  kubernetes: {name: Kubernetes, category: devops, aliases: [k8s]}
+  git: {name: Git, category: devops, aliases: [github, gitlab, control de versiones]}
+  ci_cd: {name: CI/CD, category: devops, aliases: [ci cd, github actions, integracion continua]}
+  linux: {name: Linux, category: devops, aliases: [bash, shell scripting]}
+  terraform: {name: Terraform, category: devops}
+  # --- Desarrollo
+  rest_api: {name: APIs REST, category: backend, aliases: [api rest, rest api, apis rest, rest apis, restful]}
+  fastapi: {name: FastAPI, category: backend}
+  django: {name: Django, category: backend}
+  flask: {name: Flask, category: backend}
+  react: {name: React, category: frontend, aliases: [react.js, reactjs]}
+  nodejs: {name: Node.js, category: backend, aliases: [node, nodejs, node js]}
+  express: {name: Express, category: backend, aliases: [express.js, expressjs]}
+  nestjs: {name: NestJS, category: backend, aliases: [nest.js]}
+  html: {name: HTML, category: frontend, aliases: [html5]}
+  css: {name: CSS, category: frontend, aliases: [css3, sass, scss]}
+  tailwind: {name: Tailwind CSS, category: frontend, aliases: [tailwind, tailwindcss]}
+  streamlit: {name: Streamlit, category: frontend}
+  ajax: {name: AJAX, category: frontend}
+  responsive: {name: Diseño responsive, category: frontend, aliases: [responsive, responsive design, diseno adaptativo, adaptativo, mobile first]}
+  angular: {name: Angular, category: frontend, aliases: [angularjs, angular.js]}
+  backbone: {name: Backbone.js, category: frontend, aliases: [backbone, backbonejs]}
+  vue: {name: Vue.js, category: frontend, aliases: [vue, vuejs]}
+  mobile_dev: {name: Desarrollo móvil, category: frontend, aliases: [desarrollo movil, mobile development, android, ios, react native, flutter, ionic]}
+  oop: {name: Programación orientada a objetos, category: engineering, aliases: [programacion orientada a objetos, poo, oop, object oriented]}
+  apis: {name: APIs e integraciones, category: backend, aliases: [apis, api, integraciones, integracion de sistemas, web services, servicios web]}
+  app_migration: {name: Migración de aplicaciones, category: engineering, aliases: [migracion de aplicaciones, migracion de sistemas, modernizacion de aplicaciones, legacy, application migration, app modernization]}
+  unit_testing: {name: Pruebas unitarias y de integración, category: engineering, aliases: [pruebas unitarias, tests unitarios, unit tests, unit testing, pruebas de integracion, tests de integracion, jest, mocha, pytest, testing automatizado]}
+  nosql: {name: NoSQL, category: database, aliases: [bases de datos nosql, no sql]}
+  documentdb: {name: Amazon DocumentDB, category: database, aliases: [documentdb, document db]}
+  # --- IA
+  machine_learning: {name: Machine Learning, category: ai, aliases: [aprendizaje automatico, ml, modelos predictivos]}
+  deep_learning: {name: Deep Learning, category: ai, aliases: [aprendizaje profundo, redes neuronales]}
+  nlp: {name: NLP, category: ai, aliases: [procesamiento de lenguaje natural, natural language processing]}
+  llm: {name: LLMs, category: ai, aliases: [llm, large language models, ia generativa, generative ai, genai, gpt, openai, claude]}
+  rag: {name: RAG, category: ai, aliases: [retrieval augmented generation, retrieval-augmented generation]}
+  vector_db: {name: Bases de datos vectoriales, category: ai, aliases: [vector database, vector databases, base de datos vectorial, bases vectoriales, pinecone, chroma, pgvector, faiss]}
+  langchain: {name: LangChain, category: ai, aliases: [langgraph, llamaindex]}
+  anomaly_detection: {name: Detección de anomalías, category: ai, aliases: [deteccion de anomalias, anomaly detection, anomalias]}
+  ai_agents: {name: Agentes de IA, category: ai, aliases: [agentes de ia, ai agents, agentes ia, agentic, agentes autonomos]}
+  mcp: {name: MCP, category: ai, aliases: [model context protocol]}
+  ai_dev_tools: {name: Herramientas de IA para desarrollo, category: ai, aliases: [claude code, codex, chatgpt, opencode, herramientas de ia, ai tools, ai coding tools, asistentes de codigo]}
+  prompt_engineering: {name: Prompt Engineering, category: ai, aliases: [ingenieria de prompts]}
+  # --- Seguridad
+  cybersecurity: {name: Ciberseguridad, category: security, aliases: [ciberseguridad, cybersecurity, seguridad informatica, seguridad de la informacion, owasp, appsec, pentesting, ethical hacking]}
+  iam: {name: Gestión de identidades y accesos, category: security, aliases: [iam, oauth, oauth2, openid connect, sso, jwt, keycloak, active directory]}
+  # --- Automatización
+  automation: {name: Automatización de procesos, category: automation, aliases: [automatizacion, automation, rpa, automatizar]}
+  power_automate: {name: Power Automate, category: automation, aliases: [power apps, power platform]}
+  n8n: {name: n8n, category: automation, aliases: [zapier, make.com]}
+  # --- Negocio / gestión
+  sap: {name: SAP, category: business, aliases: [sap hana, sap bw]}
+  agile: {name: Metodologías ágiles, category: management, aliases: [scrum, agile, kanban, metodologias agiles]}
+  jira: {name: Jira, category: management, aliases: [confluence]}
+  project_management: {name: Gestión de proyectos, category: management, aliases: [project management, gestion de proyectos, pmo]}
+  stakeholders: {name: Gestión de stakeholders, category: management, aliases: [stakeholders, stakeholder management, partes interesadas]}
+  training: {name: Capacitación, category: soft, aliases: [capacitacion, training, instructor, formacion de equipos, mentoring, mentoria]}
+  leadership: {name: Liderazgo de equipos, category: soft, aliases: [liderazgo, leadership, liderar equipos]}
+  # --- Dominio minero
+  mining: {name: Minería, category: domain, aliases: [mineria, mining, faena, faenas, minera]}
+  mine_planning: {name: Planificación minera, category: domain, aliases: [planificacion minera, mine planning, plan minero]}
+  dispatch: {name: Sistemas de despacho, category: domain, aliases: [dispatch, sistema de despacho, wenco, fms, fleet management, gestion de flota]}
+  autonomous_ops: {name: Operación autónoma, category: domain, aliases: [operacion autonoma, ahs, autonomous haulage, equipos autonomos, autonomous operation]}
+  geofencing: {name: Geocercas, category: domain, aliases: [geocercas, geofencing, geocerca]}
+  modular_mining: {name: Modular Mining DISPATCH, category: domain, aliases: [modular mining, modular dispatch, jigsaw, dispatch fms]}
+  minestar: {name: Cat MineStar, category: domain, aliases: [minestar, cat minestar, cat command, command for hauling, minestar command]}
+  frontrunner: {name: Komatsu FrontRunner, category: domain, aliases: [frontrunner, komatsu frontrunner, frontrunner ahs]}
+  hexagon_mineoperate: {name: Hexagon MineOperate, category: domain, aliases: [mineoperate, hxgn mineoperate]}
+  operational_safety: {name: Seguridad operacional, category: domain, aliases: [seguridad operacional, operational safety, gestion de fatiga]}

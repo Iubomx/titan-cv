@@ -1,0 +1,32 @@
+# Diccionario de preguntas de postulación (copia este archivo a candidate/question_bank.yaml y adáptalo).
+# Cada entrada: patrones (regex sobre la pregunta, sin acentos y en minúsculas) -> respuesta.
+# Las respuestas deben salir SOLO de hechos de tu candidate/profile.yaml o de decisiones tuyas.
+# Variables: {years_total} {current_role} {current_company} {degree} {degree_en} {degree_year} {institution}
+#            {availability_es} {availability_en} {salary_es} {salary_en} {location} {english_level}
+#            {motivation_es} {motivation_en} {certifications}
+# Tipos: answer: {es, en} (texto) · yesno: true|false (Sí/No y listas) · option: [patrones] (listas)
+# Las preguntas sobre experiencia con tecnologías las responde el motor de evidencias con tus skills respaldadas.
+
+questions:
+  - id: proyecto
+    patterns: ["dispuest[oa] a trabajar .*proyecto", "willing to (work|start) .*(contract|project|temporary)"]
+    yesno: true
+
+  - id: disponibilidad
+    patterns: ["cuando podrias? (empezar|comenzar)", "notice period", "when (can|could) you start"]
+    answer: {es: "{availability_es}", en: "{availability_en}"}
+
+  - id: titulado
+    patterns: ["(se encuentra|estas|eres) titulad", "have you graduated"]
+    yesno: true
+    answer:
+      es: "Sí. {degree}, {institution} ({degree_year})."
+      en: "Yes. {degree_en}, {institution} ({degree_year})."
+
+  - id: motivacion
+    patterns: ["que te motiva", "por que (te )?(interesa|postulas)", "why (are you|do you want|this role)"]
+    answer: {es: "{motivation_es}", en: "{motivation_en}"}
+
+  - id: licencia_conducir
+    patterns: ["licencia de conducir", "driver'?s licen[cs]e"]
+    note: "Completa con tu dato (yesno: true/false) o déjalo así para que quede pendiente."
