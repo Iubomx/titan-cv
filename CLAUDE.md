@@ -3,6 +3,7 @@
 Sistema local de ingeniería de empleabilidad: analiza vacantes, compara con evidencia verificable
 del candidato, genera un CV adaptado y lo audita como lo haría un reclutador.
 
+@AGENTS.md
 @docs/agent-policy.md
 
 ## Entorno

@@ -7,6 +7,8 @@ el sistema **nunca inventa** experiencia, cifras ni respuestas legales.
 - 100 % local (Python + Playwright + SQLite). La IA (Claude) es opcional y está desactivada por defecto.
 - Este repositorio **no incluye datos de ninguna persona**: trae plantillas ficticias para que configures los tuyos.
 - Los envíos automáticos vienen **desactivados**. Lee [Uso responsable](#uso-responsable) antes de activarlos.
+- ¿Trabajas con un agente de IA (Codex, Claude Code, Cursor, Copilot...)? Empieza por [`AGENTS.md`](AGENTS.md):
+  mapa del sistema, comandos, invariantes y dónde cambiar cada cosa.
 
 ```
 Descubrir (portales, APIs públicas, ATS de empresas)
