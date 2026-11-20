@@ -37,7 +37,7 @@ TITLE_PLACE = re.compile(r"(?<![A-Za-z])(US|USA|U\.S\.|UK|EMEA|APAC|EU|DACH|ANZ)
 
 
 LINES_PATH = Path(__file__).resolve().parents[1] / "config" / "lines.yaml"
-COLUMNS = ["decision", "nivel", "motivo", "score_linea", "compatibilidad", "elegibilidad", "sueldo_usd_mes", "cargo", "empresa",
+COLUMNS = ["decision", "nivel", "motivo", "score_linea", "compatibilidad", "pts_elegibilidad", "pts_sueldo", "pts_experiencia", "elegibilidad", "sueldo_usd_mes", "cargo", "empresa",
            "fuente", "regiones", "idioma", "nivel", "brechas", "url"]
 
 
@@ -109,6 +109,14 @@ def score_line(m: dict, n_skills: int, elig: str, usd: float | None, years_ok: b
     parts = {"compatibility": compat, "eligibility": elig_pts, "salary": sal_pts, "experience": exp_pts}
     total = sum(parts[k] * float(w.get(k, 0)) for k in parts) / max(1.0, sum(float(w.get(k, 0)) for k in parts))
     return round(total, 1), parts
+
+
+def explain_score(parts: dict, line: dict) -> list[dict]:
+    """Desglose del puntaje de línea: por componente, sus puntos, su peso (%) y cuánto aporta al total."""
+    w = line.get("scoring") or {}
+    total_w = max(1.0, sum(float(w.get(k, 0)) for k in parts))
+    return [{"component": k, "points": parts[k], "weight_pct": round(100 * float(w.get(k, 0)) / total_w, 1),
+             "contribution": round(parts[k] * float(w.get(k, 0)) / total_w, 1)} for k in parts]
 
 
 def collect_offers(ws: Workspace, line: dict, say=print, use_linkedin: bool = True) -> tuple[list[dict], dict]:
@@ -375,6 +383,8 @@ def run(ws: Workspace, simulate: bool = True, say=print, use_linkedin: bool = Tr
         else:
             decision, why = "postular", f"puntaje {score} · {elig.split(':')[0]}"
         rows.append({"decision": decision, "motivo": why, "score_linea": score, "compatibilidad": parts["compatibility"],
+                     "pts_elegibilidad": parts["eligibility"], "pts_sueldo": parts["salary"],
+                     "pts_experiencia": parts["experience"],
                      "elegibilidad": elig, "sueldo_usd_mes": f"{usd:,.0f}" if usd else "", "cargo": o["title"],
                      "empresa": o.get("company") or "", "fuente": o["source"],
                      "regiones": ", ".join(o.get("regions") or [])[:80], "idioma": job.get("language") or "",
@@ -418,7 +428,9 @@ def run(ws: Workspace, simulate: bool = True, say=print, use_linkedin: bool = Tr
         records.append({"line": "B", "stage": "scored", "tier": tier, "reason": r["motivo"],
                         "reason_category": reason_category(r["motivo"]), "score": r["score_linea"],
                         "title": r["cargo"], "company": r["empresa"], "source": r["fuente"],
-                        "modality": "remote", "url": r["url"]})
+                        "modality": "remote", "url": r["url"],
+                        "pts_compatibility": r["compatibilidad"], "pts_eligibility": r["pts_elegibilidad"],
+                        "pts_salary": r["pts_sueldo"], "pts_experience": r["pts_experiencia"]})
     telemetry.funnel(records)
     telemetry.agent("TITAN-MATCH", "READY", f"{len(rows)} analyzed · {len(chosen)} compatible")
     say(f"  eligibility: {ELIG_EN(elig_counts)} · to apply: {len(chosen)} · details: {path}")
