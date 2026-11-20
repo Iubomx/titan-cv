@@ -1,0 +1,83 @@
+# PERFIL DE EJEMPLO (ficticio): enfermería y salud. Usa `titan init --plantilla salud`.
+# No pongas datos de pacientes ni información clínica identificable en ningún logro.
+personal:
+  name: Camilo Reyes Navarro
+  headline: Enfermero Universitario | Urgencias y cuidados críticos
+  email: camilo.reyes@example.com
+  phone: "+56 9 5555 0103"
+  location: Temuco, Chile
+
+summary: >-
+  Enfermero universitario con 6 años de experiencia en servicios de urgencia y unidad de cuidados intermedios,
+  con foco en seguridad del paciente, protocolos y trabajo en equipo.
+
+experience:
+  - id: exp-hospital
+    company: Hospital Regional Ejemplo
+    role: Enfermero de Urgencias
+    location: Temuco, Chile
+    start: 2020-09
+    end: presente
+    achievements:
+      - id: ach-triage
+        text: Realicé triage a un promedio de 40 pacientes por turno aplicando el protocolo vigente del servicio.
+        skills: [Triage, Urgencias]
+      - id: ach-protocolo
+        text: Participé en la actualización del protocolo de administración segura de medicamentos de un servicio de 25 camas.
+        skills: [Seguridad del paciente, Administración de medicamentos]
+      - id: ach-capacitacion
+        text: Capacité a 12 enfermeros nuevos en reanimación cardiopulmonar básica.
+        skills: [RCP, Docencia clínica]
+  - id: exp-clinica
+    company: Clínica Ejemplo
+    role: Enfermero de Cuidados Intermedios
+    location: Temuco, Chile
+    start: 2018-03
+    end: 2020-08
+    achievements:
+      - id: ach-monitoreo
+        text: Monitoreé a pacientes de una unidad de 10 camas con soporte ventilatorio y registro clínico electrónico.
+        skills: [Monitoreo, Registro clínico electrónico]
+
+education:
+  - id: edu-enf
+    degree: Licenciatura en Enfermería
+    institution: Universidad Ejemplo
+    year: 2017
+    skills: [Enfermería]
+
+certifications:
+  - id: cert-acls
+    name: Advanced Cardiac Life Support (ACLS)
+    issuer: Centro de Simulación Ejemplo
+    year: 2022
+    skills: [RCP, Urgencias]
+
+skills:
+  - {name: Triage, status: backed, evidence: [ach-triage, exp-hospital]}
+  - {name: Urgencias, status: backed, evidence: [ach-triage, cert-acls]}
+  - {name: Seguridad del paciente, status: backed, evidence: [ach-protocolo, ach-monitoreo]}
+  - {name: Administración de medicamentos, status: backed, evidence: [ach-protocolo, ach-monitoreo]}
+  - {name: RCP, status: backed, evidence: [ach-capacitacion, cert-acls]}
+  - {name: Docencia clínica, status: backed, evidence: [ach-capacitacion, ach-protocolo]}
+  - {name: Monitoreo, status: backed, evidence: [ach-monitoreo, ach-triage]}
+  - {name: Registro clínico electrónico, status: backed, evidence: [ach-monitoreo, ach-protocolo]}
+  - {name: Enfermería, status: backed, evidence: [edu-enf, exp-hospital]}
+  - name: Ecografía clínica
+    status: to_demonstrate
+    note: Curso en progreso; sin práctica supervisada todavía.
+
+preferences:
+  country: Chile
+  salary_expectation: "CLP 2.100.000 líquidos mensuales"
+  availability: "15 días"
+  willing_to_relocate: "Sí"
+  work_authorization:
+    Chile: "Sí"
+    default: null
+
+documents: []
+
+languages:
+  - {name: Español, level: Nativo}
+  - {name: Inglés, level: Básico (A2)}

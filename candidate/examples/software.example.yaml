@@ -1,0 +1,104 @@
+# PERFIL DE EJEMPLO (ficticio): ingeniería de software. Usa `titan init --plantilla software` y reemplaza todo.
+# Reglas: cada logro tiene id; una skill es `backed` solo con evidencia real; `to_demonstrate` nunca va al CV.
+personal:
+  name: Diego Morales Pizarro
+  headline: Ingeniero de Software Backend | Python, APIs y Cloud
+  email: diego.morales@example.com
+  phone: "+56 9 5555 0101"
+  location: Valparaíso, Chile
+  linkedin: linkedin.com/in/diego-ejemplo
+  github: github.com/diego-ejemplo
+
+summary: >-
+  Ingeniero de software backend con 5 años construyendo APIs en Python y servicios en la nube, con foco en
+  confiabilidad, pruebas automatizadas y despliegues repetibles.
+
+experience:
+  - id: exp-fintech
+    company: Fintech Ejemplo SpA
+    role: Ingeniero de Software Backend
+    location: Valparaíso, Chile
+    start: 2021-06
+    end: presente
+    achievements:
+      - id: ach-api-pagos
+        text: >-
+          Diseñé y mantuve una API de pagos en Python (FastAPI) que procesa 120.000 transacciones diarias con
+          disponibilidad del 99,9%.
+        skills: [Python, FastAPI, APIs REST]
+      - id: ach-ci-cd
+        text: >-
+          Automaticé el despliegue con GitHub Actions y Docker, bajando el tiempo de release de 2 horas a 15 minutos.
+        skills: [Docker, CI/CD, GitHub Actions]
+      - id: ach-pruebas
+        text: >-
+          Elevé la cobertura de pruebas de 35% a 82% con pytest, reduciendo los incidentes en producción.
+        skills: [pytest, Python]
+  - id: exp-agencia
+    company: Agencia Digital Ejemplo
+    role: Desarrollador Junior
+    location: Santiago, Chile
+    start: 2019-03
+    end: 2021-05
+    achievements:
+      - id: ach-sitios
+        text: Desarrollé 14 sitios y APIs a medida con Django y PostgreSQL para clientes de retail.
+        skills: [Django, PostgreSQL, Python]
+
+projects:
+  - id: proj-cli
+    name: Herramienta CLI de migraciones
+    description: Utilidad de línea de comandos en Python para versionar y aplicar migraciones de bases de datos.
+    skills: [Python, PostgreSQL]
+    status: completed
+    url: github.com/diego-ejemplo/migrator
+  - id: proj-k8s
+    name: Clúster Kubernetes de pruebas
+    description: Laboratorio personal para aprender Kubernetes.
+    skills: [Kubernetes]
+    status: in_progress
+
+education:
+  - id: edu-ing
+    degree: Ingeniería en Informática
+    institution: Universidad Ejemplo
+    year: 2018
+    skills: [Algoritmos]
+
+certifications:
+  - id: cert-aws
+    name: AWS Certified Cloud Practitioner
+    issuer: Amazon Web Services
+    year: 2023
+    skills: [AWS]
+
+skills:
+  - {name: Python, status: backed, evidence: [ach-api-pagos, ach-pruebas, ach-sitios, proj-cli]}
+  - {name: FastAPI, status: backed, evidence: [ach-api-pagos]}
+  - {name: APIs REST, status: backed, evidence: [ach-api-pagos, ach-sitios]}
+  - {name: Docker, status: backed, evidence: [ach-ci-cd]}
+  - {name: CI/CD, status: backed, evidence: [ach-ci-cd]}
+  - {name: GitHub Actions, status: backed, evidence: [ach-ci-cd]}
+  - {name: pytest, status: backed, evidence: [ach-pruebas]}
+  - {name: Django, status: backed, evidence: [ach-sitios]}
+  - {name: PostgreSQL, status: backed, evidence: [ach-sitios, proj-cli]}
+  - {name: AWS, status: backed, evidence: [cert-aws]}
+  - name: Kubernetes
+    status: to_demonstrate
+    evidence: [proj-k8s]
+    note: Laboratorio en curso; no es experiencia productiva.
+
+preferences:
+  country: Chile
+  salary_expectation: "CLP 3.200.000 líquidos mensuales"
+  availability: "30 días"
+  willing_to_relocate: "No"
+  work_authorization:
+    Chile: "Sí"
+    default: null
+
+documents: []
+
+languages:
+  - {name: Español, level: Nativo}
+  - {name: Inglés, level: Avanzado (C1)}
