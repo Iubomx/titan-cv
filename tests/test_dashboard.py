@@ -1,6 +1,5 @@
 """Centro de mando: refleja solo el estado real que informa el motor; se adapta a cualquier tamaño."""
 import io
-import time
 
 import pytest
 
