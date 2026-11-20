@@ -175,6 +175,12 @@ class Registry:
                     (canonical_url(url),))
         return r[0] if r else None
 
+    def _require(self, vid: int | None) -> dict:
+        row = self.get(vid) if vid is not None else None
+        if row is None:  # no debería ocurrir: la vacante se acaba de crear o actualizar
+            raise KeyError(vid)
+        return row
+
     def sources(self, vid: int) -> list[str]:
         return [r["url"] for r in self._q("SELECT url FROM vacancy_sources WHERE vacancy_id=?", (vid,))]
 
@@ -246,7 +252,7 @@ class Registry:
             except Exception:
                 self._conn.execute("ROLLBACK")
                 raise
-        return self.get(vid)
+        return self._require(vid)
 
     # -------------------------------------------------- reglas de envío
     def can_submit(self, vid: int) -> tuple[bool, str]:
@@ -332,7 +338,7 @@ class Registry:
             if aid:
                 self._conn.execute("UPDATE attempts SET finished_at=?, outcome=?, detail=? WHERE id=?",
                                    (now, status, detail[:500], aid))
-        return self.get(vid)
+        return self._require(vid)
 
     def set_status(self, vid: int, status: str) -> None:
         assert status in STATES, status

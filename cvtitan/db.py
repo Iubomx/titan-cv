@@ -1,6 +1,7 @@
 """Historial de postulaciones (SQLite local): datos de la vacante, ajuste, estado y eventos."""
 from __future__ import annotations
 
+import builtins
 import csv
 import io
 import json
@@ -69,13 +70,19 @@ class DB:
         d = dict(row)
         for c in JSON_COLUMNS:
             d[c] = json.loads(d[c]) if d.get(c) else ([] if c != "data" else {})
-        d["status_label"] = STATUS_LABELS.get(d.get("status"), d.get("status"))
+        d["status_label"] = STATUS_LABELS.get(d.get("status") or "", d.get("status"))
         return d
 
     def get(self, job_id: str) -> dict | None:
         with self._lock:
             return self._decode(self._conn.execute(
                 "SELECT * FROM applications WHERE job_id=?", (job_id,)).fetchone())
+
+    def _require(self, job_id: str) -> dict:
+        row = self.get(job_id)
+        if row is None:  # no debería ocurrir: se acaba de insertar o actualizar
+            raise KeyError(job_id)
+        return row
 
     def find_by_url(self, url: str) -> dict | None:
         with self._lock:
@@ -100,7 +107,7 @@ class DB:
                     f"INSERT INTO applications ({', '.join(cols)}) VALUES ({', '.join('?' * len(cols))})",
                     (job_id, *fields.values()))
             self._conn.commit()
-        return self.get(job_id)
+        return self._require(job_id)
 
     def update_data(self, job_id: str, **data) -> dict:
         """Mezcla claves en la columna JSON `data` (estado de la automatización)."""
@@ -118,7 +125,7 @@ class DB:
             fields["applied_at"] = now_iso()
         self.upsert(job_id, **fields)
         self.event(job_id, "status", f"{STATUS_LABELS[status]}" + (f": {detail}" if detail else ""))
-        return self.get(job_id)
+        return self._require(job_id)
 
     def list(self, status: str | None = None, search: str | None = None) -> list[dict]:
         sql, args = "SELECT * FROM applications", []
@@ -133,7 +140,7 @@ class DB:
             sql += " WHERE " + " AND ".join(clauses)
         sql += " ORDER BY created_at DESC"
         with self._lock:
-            return [self._decode(r) for r in self._conn.execute(sql, args).fetchall()]
+            return [row for r in self._conn.execute(sql, args).fetchall() if (row := self._decode(r)) is not None]
 
     def delete(self, job_id: str) -> None:
         with self._lock:
@@ -148,7 +155,7 @@ class DB:
                                (job_id, now_iso(), kind, message))
             self._conn.commit()
 
-    def events(self, job_id: str) -> list[dict]:
+    def events(self, job_id: str) -> builtins.list[dict]:
         with self._lock:
             return [dict(r) for r in self._conn.execute(
                 "SELECT ts, kind, message FROM events WHERE job_id=? ORDER BY id", (job_id,)).fetchall()]
