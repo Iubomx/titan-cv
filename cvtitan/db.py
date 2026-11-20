@@ -7,6 +7,7 @@ import io
 import json
 import sqlite3
 import threading
+from datetime import date, timedelta
 from pathlib import Path
 
 from .utils import now_iso
@@ -24,6 +25,8 @@ PIPELINE_STATUSES = ["queued", "analyzing", "generating", "filling", "needs_inpu
                      "submitting", "error", "skipped", "cancelled"]
 PROCESS_STATUSES = ["applied", "screening", "interview", "technical", "offer", "hired", "rejected", "withdrawn"]
 STATUSES = PIPELINE_STATUSES + PROCESS_STATUSES
+# Hitos del proceso con la empresa (CRM): entrevistas, seguimientos, pruebas...
+PROCESS_EVENT_KINDS = ("interview", "followup", "test", "offer", "other")
 ADVANCED = {"screening", "interview", "technical", "offer", "hired"}
 
 STATUS_LABELS = {
@@ -49,6 +52,16 @@ CREATE TABLE IF NOT EXISTS events (
     message TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_events_job ON events(job_id);
+CREATE TABLE IF NOT EXISTS process_events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    job_id TEXT NOT NULL,
+    kind TEXT NOT NULL,
+    due TEXT NOT NULL,
+    note TEXT NOT NULL DEFAULT '',
+    done INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_process_events_job ON process_events(job_id);
 """
 
 
@@ -146,6 +159,7 @@ class DB:
         with self._lock:
             self._conn.execute("DELETE FROM applications WHERE job_id=?", (job_id,))
             self._conn.execute("DELETE FROM events WHERE job_id=?", (job_id,))
+            self._conn.execute("DELETE FROM process_events WHERE job_id=?", (job_id,))
             self._conn.commit()
 
     # ------------------------------------------------------------------ eventos
@@ -159,6 +173,52 @@ class DB:
         with self._lock:
             return [dict(r) for r in self._conn.execute(
                 "SELECT ts, kind, message FROM events WHERE job_id=? ORDER BY id", (job_id,)).fetchall()]
+
+    # ------------------------------------------------------------------ hitos del proceso (CRM)
+    def add_process_event(self, job_id: str, kind: str, due: str, note: str = "") -> int:
+        """Agenda un hito (entrevista, seguimiento...). `due` es una fecha ISO (AAAA-MM-DD, con hora opcional)."""
+        if kind not in PROCESS_EVENT_KINDS:
+            raise ValueError(f"Tipo inválido '{kind}'. Usa uno de: {', '.join(PROCESS_EVENT_KINDS)}")
+        try:
+            day = date.fromisoformat(str(due)[:10])
+        except ValueError as exc:
+            raise ValueError(f"Fecha inválida '{due}': usa AAAA-MM-DD.") from exc
+        if not self.get(job_id):
+            raise KeyError(job_id)
+        with self._lock:
+            cur = self._conn.execute(
+                "INSERT INTO process_events (job_id, kind, due, note, created_at) VALUES (?,?,?,?,?)",
+                (job_id, kind, day.isoformat(), note, now_iso()))
+            self._conn.commit()
+            return int(cur.lastrowid or 0)
+
+    def process_events(self, job_id: str | None = None, pending_only: bool = False) -> builtins.list[dict]:
+        sql, args = "SELECT * FROM process_events", []
+        clauses = []
+        if job_id:
+            clauses.append("job_id=?")
+            args.append(job_id)
+        if pending_only:
+            clauses.append("done=0")
+        if clauses:
+            sql += " WHERE " + " AND ".join(clauses)
+        with self._lock:
+            return [dict(r) for r in self._conn.execute(sql + " ORDER BY due, id", args).fetchall()]
+
+    def complete_process_event(self, event_id: int) -> bool:
+        with self._lock:
+            cur = self._conn.execute("UPDATE process_events SET done=1 WHERE id=?", (event_id,))
+            self._conn.commit()
+            return cur.rowcount > 0
+
+    def agenda(self, days: int = 14, today: date | None = None) -> builtins.list[dict]:
+        """Hitos pendientes atrasados o que vencen en los próximos `days` días, con título y empresa."""
+        limit = ((today or date.today()) + timedelta(days=days)).isoformat()
+        with self._lock:
+            rows = self._conn.execute(
+                "SELECT e.*, a.company, a.title FROM process_events e LEFT JOIN applications a ON a.job_id = e.job_id "
+                "WHERE e.done=0 AND e.due <= ? ORDER BY e.due, e.id", (limit,)).fetchall()
+        return [dict(r) for r in rows]
 
     def count_applied_today(self, platform: str) -> int:
         today = now_iso()[:10]
