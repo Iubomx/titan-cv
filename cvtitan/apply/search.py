@@ -20,7 +20,7 @@ import re
 from pathlib import Path
 from urllib.parse import quote_plus, urljoin, urlparse
 
-from .. import evidence, job_intel
+from .. import evidence, job_intel, markets
 from ..market import MarketCache, job_record
 from .legal import remote_eligibility
 from ..db import PROCESS_STATUSES
@@ -54,8 +54,9 @@ def vs_expectation(salary: dict, prefs: dict) -> str:
     gross = prefs.get("salary_gross") or {}
     cur = (salary or {}).get("salary_currency")
     top = (salary or {}).get("salary_max") or (salary or {}).get("salary_min")
-    if not cur and top and float(top) >= 100_000:
-        cur = "CLP"                                  # montos de 6+ dígitos sin moneda: pesos chilenos
+    mk = markets.active()
+    if not cur and top and float(top) >= mk.no_currency_threshold:
+        cur = mk.default_currency                    # montos grandes sin moneda: la del mercado local (CLP en Chile)
     if not cur or not top or cur not in gross:
         return ""
     diff = (float(top) - float(gross[cur])) / float(gross[cur]) * 100
@@ -158,7 +159,7 @@ def http_get(url: str, cache: bool | None = None) -> str:
     if use_cache and path.exists() and _time.time() - path.stat().st_mtime < PAGE_CACHE_HOURS * 3600:
         return path.read_text(encoding="utf-8", errors="replace")
     from ..net import fetch
-    raw, charset = fetch(url, {"User-Agent": UA, "Accept-Language": "es-CL,es;q=0.9"}, 20)
+    raw, charset = fetch(url, {"User-Agent": UA, "Accept-Language": markets.active().accept_language}, 20)
     body = raw.decode(charset or "utf-8", errors="replace")
     if use_cache:
         try:

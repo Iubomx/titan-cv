@@ -44,6 +44,19 @@ términos de cada portal, usa la caché (una consulta diaria por fuente) y un Us
 Agrega el *fetcher* en `cvtitan/apply/intl_sources.py` y regístralo en `FETCHERS`; `cvtitan/sources.py` lo expone
 automáticamente. Incluye pruebas con respuestas simuladas (sin red) en `tests/`.
 
+## Agregar un país (mercado)
+
+Un `Market` (`cvtitan/markets.py`) define país, términos de la región local (`home_regex`), moneda supuesta para
+montos sin moneda, fuentes locales y `Accept-Language`. Publícalo como entry point:
+
+```toml
+[project.entry-points."cvtitan.markets"]
+peru = "mi_paquete.mercados:PERU"      # un objeto `Market`
+```
+
+y actívalo con `lines.A.market: peru` en `config/lines.yaml`. El mercado `chile` es integrado y no se reemplaza.
+
 ## Siguiente paso previsto
 
-El mismo patrón se extenderá a los portales de postulación (`apply/platforms.py`) y a los mercados por país.
+El mismo patrón se extenderá a los portales de postulación (`apply/platforms.py`) y a las URL de búsqueda locales
+(`apply/search.py`), que todavía son específicas de Chile.

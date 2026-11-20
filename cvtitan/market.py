@@ -20,7 +20,7 @@ from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-from . import evidence, job_intel
+from . import evidence, job_intel, markets
 from .profile import Profile
 from .taxonomy import Taxonomy
 from .utils import Workspace, now_iso, write_text
@@ -67,8 +67,8 @@ def _monthly_usd(salary: dict, fx: dict) -> float | None:
     value = ((lo or 0) + (hi or 0)) / (2 if lo and hi else 1) if (lo or hi) else None
     if not value:
         return None
-    if not cur and value >= 100_000:
-        cur = "CLP"
+    if not cur and value >= markets.active().no_currency_threshold:
+        cur = markets.active().default_currency
     if cur not in fx:
         return None
     period = salary.get("salary_period") or "mes"

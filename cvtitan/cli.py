@@ -1092,6 +1092,11 @@ def main(argv: list[str] | None = None) -> int:
         configure(Workspace.resolve(args.root).profile_path)
     except Exception:
         configure(None)
+    try:
+        from . import markets
+        markets.configure(Workspace.resolve(args.root).root)
+    except Exception:
+        pass
     sys.stdout, sys.stderr = RedactingStream(sys.stdout), RedactingStream(sys.stderr)
     try:
         rc = args.func(args)

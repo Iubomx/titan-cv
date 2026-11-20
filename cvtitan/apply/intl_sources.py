@@ -269,7 +269,7 @@ FETCHERS = {"remotive": remotive, "remoteok": remoteok, "himalayas": himalayas, 
 
 # ---------------------------------------------------------------- elegibilidad por región oficial
 OPEN_REGION = (r"worldwide|anywhere|global|work from anywhere|latam|latin america|south america|americas|"
-               r"\bchile\b|north (and|&) south america|any (country|location)|international")
+               r"north (and|&) south america|any (country|location)|international")
 
 
 def region_eligibility(regions: list[str] | None) -> str | None:
@@ -277,7 +277,9 @@ def region_eligibility(regions: list[str] | None) -> str | None:
     if not regions:
         return None
     joined = normalize(" | ".join(regions))
-    if re.search(OPEN_REGION, joined):
+    from .. import markets
+    home = markets.active().home_regex.split("|")[0]          # p. ej. «chile»: el país del candidato cuenta como abierto
+    if re.search(OPEN_REGION, joined) or re.search(rf"\b{home}\b", joined):
         return f"ok: región permitida ({', '.join(regions)[:60]})"
     return f"excluido: solo {', '.join(regions)[:60]} (restricción publicada por el portal)"
 
