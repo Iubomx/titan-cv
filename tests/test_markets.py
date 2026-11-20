@@ -9,7 +9,7 @@ from cvtitan.apply.search import vs_expectation
 from cvtitan.market import _monthly_usd
 
 PERU = markets.Market(key="peru", country="Peru", home_regex=r"peru|lima|latam", default_currency="PEN",
-                      no_currency_threshold=10_000, local_sources=("computrabajo",), accept_language="es-PE,es;q=0.9")
+                      no_currency_threshold=5_000, local_sources=("computrabajo",), accept_language="es-PE,es;q=0.9")
 
 
 @pytest.fixture(autouse=True)
