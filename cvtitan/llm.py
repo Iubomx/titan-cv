@@ -49,7 +49,10 @@ def _parse(system: str, user: str, schema: type[BaseModel], effort: str = "mediu
            max_tokens: int = 16000) -> BaseModel:
     if not available():
         raise LLMUnavailable("No hay ANTHROPIC_API_KEY configurada (archivo .env).")
-    import anthropic
+    try:
+        import anthropic
+    except ImportError as exc:
+        raise LLMUnavailable('Falta el paquete "anthropic". Instálalo con: pip install -e ".[ai]"') from exc
 
     try:
         response = anthropic.Anthropic().beta.messages.parse(

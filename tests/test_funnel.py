@@ -3,7 +3,6 @@ import csv
 
 from cvtitan import telemetry
 from cvtitan.funnel import reason_category, summarize, tier_line_a, tier_line_b, write
-from cvtitan.utils import Workspace
 
 
 def test_reason_categories_cover_both_lines():

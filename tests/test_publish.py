@@ -1,6 +1,5 @@
 """cvtitan publish: la auditoría bloquea secretos y datos personales sin mostrarlos; la configuración se sanea."""
 import re
-from pathlib import Path
 
 from cvtitan import publish
 

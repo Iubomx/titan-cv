@@ -91,7 +91,7 @@ def run(ws: Workspace, simulate: bool = False, say=print, reuse: Path | None = N
     if reuse:
         say(f"[1/3] Using saved search {reuse}")
         rows = list(csv.DictReader(reuse.read_text(encoding="utf-8-sig").splitlines(), delimiter=";"))
-        rows = [r for r in rows if not (db.find_by_url(r["url"]) or {}).get("status") in PROCESS]
+        rows = [r for r in rows if (db.find_by_url(r["url"]) or {}).get("status") not in PROCESS]
     else:
         say(f"[1/3] Searching job openings (groups: {', '.join(rules.get('groups') or [])})...")
         where = ["getonboard", "computrabajo", "chiletrabajos", "indeed", "linkedin"]
