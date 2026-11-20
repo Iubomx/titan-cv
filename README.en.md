@@ -42,6 +42,9 @@ python -m venv .venv
 .venv/bin/python -m pip install -e ".[ai]"
 ```
 
+Alternative installs: `pipx install .` (global `cvtitan` command) or Docker for analysis without a browser:
+`docker build -t titan-cv .` then `docker run --rm -v "$PWD":/workspace titan-cv auto --modo analysis`.
+
 On Windows, `titan.cmd` is a shortcut: `.\titan <command>` is `python -m cvtitan <command>`.
 
 ## Set up YOUR data
