@@ -1,5 +1,7 @@
 # TITAN CV
 
+**Español** · [English](README.en.md)
+
 Sistema local de **búsqueda y postulación a empleos basado en evidencia**, con un centro de mando en la terminal.
 Cada afirmación que llega a un CV o a un formulario sale de un hecho verificable del perfil del candidato:
 el sistema **nunca inventa** experiencia, cifras ni respuestas legales.
@@ -36,6 +38,7 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -e ".[dev]"
 .\.venv\Scripts\python.exe -m playwright install chromium      # solo si no usarás Google Chrome
 .\.venv\Scripts\python.exe -m pytest -q                        # todo debe pasar antes de empezar
+.\.venv\Scripts\python.exe -m pip install -e ".[ai]"            # opcional: funciones de IA (Anthropic)
 ```
 
 `titan.cmd` es un atajo: `.\titan <comando>` equivale a `.\.venv\Scripts\python.exe -m cvtitan <comando>`.

@@ -1,0 +1,22 @@
+# Changelog
+
+Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y versionado [SemVer](https://semver.org/lang/es/).
+
+## [Unreleased]
+
+### Added
+- Archivos de comunidad: `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, plantillas de issues y PR.
+- `README.en.md` (resumen en inglés), `.editorconfig`, `.gitattributes`, Dependabot.
+- Lint con Ruff y reporte de cobertura en CI; CI en Python 3.10 a 3.13.
+- Extra opcional `ai` (`pip install -e ".[ai]"`) para las funciones de IA.
+
+### Changed
+- `anthropic` pasa a dependencia opcional; `pydantic` se declara explícitamente.
+- Metadatos de empaquetado (licencia, clasificadores, URLs).
+
+### Fixed
+- Escape de rutas con apóstrofes o comodines en los comandos de PowerShell de `human_browser.py`.
+- `programar_tarea.ps1` advierte si `send_enabled: true`.
+
+## [0.1.0]
+- Primera versión pública.

@@ -17,6 +17,16 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
+Calidad (lo mismo que corre el CI):
+
+```powershell
+.\.venv\Scripts\python.exe -m ruff check .
+.\.venv\Scripts\python.exe scripts/public_scan.py
+pip install pre-commit; pre-commit install       # opcional: lo ejecuta en cada commit
+```
+
+Las funciones de IA son opcionales: `pip install -e ".[ai]"`.
+
 ## Reglas del proyecto
 
 - **Cambios pequeños y enfocados**, con pruebas en `tests/` usando datos ficticios.
