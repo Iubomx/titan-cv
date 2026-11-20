@@ -10,7 +10,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 - `Dockerfile` y `.dockerignore` (análisis sin navegador; datos montados en `/workspace`), job `docker` en CI.
 - Registro de fuentes `cvtitan/sources.py` con plugins por entry point `cvtitan.sources`; guía `docs/agregar-conector.md`. `line_b.collect_offers` ya no cablea Greenhouse/Lever.
 - `titan purge` (`--outputs`, `--sesiones`, `--historial`, `--cache`, `--todo`): borra lo generado en `data/` con confirmación; nunca toca `candidate/` ni `.env`.
-- CI: cobertura mínima (58%), job `typecheck` (mypy, informativo) y workflow de release por tag `v*`.
+- CI: cobertura mínima (58%), job `typecheck` (mypy, bloqueante sobre los módulos tipados) y workflow de release por tag `v*`.
 - Job `audit` en CI (pip-audit, informativo).
 - Pruebas para el puntaje de la Línea B y la normalización de sueldos.
 - Archivos de comunidad: `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, plantillas de issues y PR.
