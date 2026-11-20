@@ -70,4 +70,5 @@ ignore = ["E741", "E731"]   # nombres de una letra (l, O, I) y lambdas asignadas
 [tool.mypy]
 python_version = "3.10"
 ignore_missing_imports = true
+follow_imports = "silent"   # solo se reportan los archivos listados en el CI; el resto se tipa por etapas
 # Adopción gradual: se tipan primero los módulos listados en el job `typecheck` del CI.
