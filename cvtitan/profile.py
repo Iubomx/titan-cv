@@ -5,6 +5,7 @@ import re
 from datetime import date
 from pathlib import Path
 
+from .i18n import t
 from .taxonomy import Taxonomy
 from .utils import load_yaml
 
@@ -148,46 +149,42 @@ class Profile:
         warnings: list[str] = []
         d = self.data
         if not (d.get("personal") or {}).get("name"):
-            errors.append("personal.name es obligatorio.")
+            errors.append(t("profile.name_required"))
 
         ids: list[str] = []
         for section in ("experience", "projects", "education", "certifications"):
             for item in d.get(section) or []:
                 if not item.get("id"):
-                    errors.append(f"Un elemento de '{section}' no tiene id.")
+                    errors.append(t("profile.item_no_id", section=section))
                 ids.append(item.get("id"))
                 for ach in item.get("achievements") or []:
                     if not ach.get("id"):
-                        errors.append(f"Un logro de '{item.get('id')}' no tiene id.")
+                        errors.append(t("profile.achievement_no_id", item=item.get("id")))
                     ids.append(ach.get("id"))
         dupes = {i for i in ids if i and ids.count(i) > 1}
         if dupes:
-            errors.append(f"IDs duplicados: {', '.join(sorted(dupes))}")
+            errors.append(t("profile.duplicate_ids", ids=", ".join(sorted(dupes))))
 
         ev = self.evidence()
         for s in self.skill_map.values():
             name = s["name"]
             status = s.get("status")
             if status not in VALID_STATUS:
-                errors.append(f"Skill '{name}': status debe ser backed o to_demonstrate.")
+                errors.append(t("profile.skill_bad_status", name=name))
                 continue
             refs = s.get("evidence") or []
             missing = [r for r in refs if r not in ev]
             if missing:
-                errors.append(f"Skill '{name}': evidencia inexistente {missing}.")
+                errors.append(t("profile.skill_missing_evidence", name=name, missing=missing))
             if status == "backed" and not refs:
-                errors.append(f"Skill '{name}' está como backed pero no tiene evidencia.")
+                errors.append(t("profile.backed_without_evidence", name=name))
             for r in refs if status == "backed" else []:
                 if ev.get(r, {}).get("kind") == "project" and ev[r].get("status") != "completed":
-                    warnings.append(
-                        f"Skill '{name}' se respalda en el proyecto '{r}', que no está completado."
-                    )
+                    warnings.append(t("profile.project_not_completed", name=name, ref=r))
 
         declared = set(self.skill_map)
         for ev_id, e in ev.items():
             for sk in e["skills"]:
                 if self.tax.key_for(sk, register=False) not in declared:
-                    warnings.append(
-                        f"'{ev_id}' usa la skill '{sk}', que no está declarada en skills."
-                    )
+                    warnings.append(t("profile.skill_undeclared", ev_id=ev_id, skill=sk))
         return errors, warnings

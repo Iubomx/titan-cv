@@ -5,6 +5,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 ## [Unreleased]
 
 ### Added
+- i18n: `cvtitan/i18n.py` + `cvtitan/messages.py`, `--lang es|en` y `CVTITAN_LANG`; migrados los mensajes de `validate` (ver `docs/i18n.md`). El español sigue siendo el valor por defecto.
 - Mercados por país (`cvtitan/markets.py`, entry points `cvtitan.markets`, `lines.A.market`): moneda supuesta, región local, fuentes y etiquetas ya no están cableadas a Chile.
 - `Dockerfile` y `.dockerignore` (análisis sin navegador; datos montados en `/workspace`), job `docker` en CI.
 - Registro de fuentes `cvtitan/sources.py` con plugins por entry point `cvtitan.sources`; guía `docs/agregar-conector.md`. `line_b.collect_offers` ya no cablea Greenhouse/Lever.

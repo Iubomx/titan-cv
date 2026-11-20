@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from .colors import mark, tally
+from . import i18n
 from .commands import register_all
 from .commands._common import CliError  # noqa: F401  (reexportado)
 
@@ -13,6 +14,7 @@ from pathlib import Path
 
 from . import cv_writer, evidence, importer, interview, job_intel, recruiter
 from .db import DB, STATUSES
+from .i18n import t
 from .profile import Profile
 from .taxonomy import Taxonomy
 from .utils import Workspace, dump_yaml, load_yaml, write_text
@@ -89,9 +91,9 @@ def cmd_validate(args):
     profile = Profile.load(ws.profile_path, tax)
     errors, warnings = profile.validate()
     for e in errors:
-        print(f"ERROR  {e}")
+        print(f"{t('cli.label_error')}  {e}")
     for w in warnings:
-        print(f"AVISO  {w}")
+        print(f"{t('cli.label_warning')}  {w}")
     backed = len(profile.backed_keys())
     print(f"\nBacked skills: {backed} / {len(profile.skill_map)} · "
           f"Total experience: {profile.years_experience()} years")
@@ -915,6 +917,7 @@ def cmd_geo(args):
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="cvtitan", description="TITAN CV — evidence-based CVs and autonomous job applications.")
     p.add_argument("--root", help="Workspace folder (default: the project folder or CVTITAN_HOME).")
+    p.add_argument("--lang", choices=i18n.available(), help="Message language (default: CVTITAN_LANG or es).")
     sub = p.add_subparsers(dest="cmd", required=True)
 
     sub.add_parser("init", help="Create folders and candidate/profile.yaml from the example.").set_defaults(func=cmd_init)
@@ -1086,6 +1089,7 @@ def main(argv: list[str] | None = None) -> int:
         except (AttributeError, ValueError):
             pass
     args = build_parser().parse_args(argv)
+    i18n.set_language(args.lang)
     # Privacidad: nada de lo que se imprime muestra datos personales (nombre, correo, teléfono, ciudad, RUT...).
     from .privacy import RedactingStream, configure
     try:
