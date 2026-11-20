@@ -400,6 +400,10 @@ class BatchApplier:
                         if self.runner.pages.get(job_id) else None
                     return ("pending: submitted but the platform showed no recognizable confirmation; "
                             f"check it on the portal{f' (screenshot: {shot})' if shot else ''}")
+                if self.unattended and not self.auto_submit:
+                    # review_mode: always: el robot dejó el formulario listo; el envío lo aprueba una persona.
+                    self.db.set_status(job_id, "awaiting_review", "Awaiting your approval (review_mode: always).")
+                    return "pending: awaiting your approval -> `cvtitan postular --pendientes --ver` or the web app"
                 if not self._review(job_id):
                     self.db.set_status(job_id, "awaiting_review", "Not submitted: you left it pending in the terminal.")
                     return "not sent (your decision)"

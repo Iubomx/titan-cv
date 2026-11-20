@@ -429,7 +429,9 @@ def run(ws: Workspace, simulate: bool = True, say=print, use_linkedin: bool = Tr
     result = {"stats": stats, "offers": len(offers), "candidates": len(candidates), "rows": len(rows),
               "chosen": len(chosen), "eligibility": dict(elig_counts), "filtered": dict(counts), "decisions": str(path),
               "summary": []}
-    if simulate or not line.get("send_enabled"):
+    from . import send_policy
+    decision = send_policy.decide(line, simulate, max(1, len(chosen)), label="Line B")
+    if not decision.send:
         say("\n[4/4] No submissions: " + ("simulation." if simulate else "Line B has send_enabled: false (requires your authorization)."))
         telemetry.stage("LINE B · GLOBAL", 4, 4, "Simulation · no submissions" if simulate else "Sending disabled")
         return result
@@ -437,7 +439,8 @@ def run(ws: Workspace, simulate: bool = True, say=print, use_linkedin: bool = Tr
     from .apply.batch import BatchApplier
     say(f"\n[4/4] Applying to {len(chosen)} international job(s)...")
     telemetry.stage("LINE B · GLOBAL", 4, 4, "Processing applications")
-    applier = BatchApplier(ws, headless=True, force=True, auto_submit=True, unattended=True, login_window=False, say=say)
+    applier = BatchApplier(ws, headless=True, force=True, auto_submit=decision.auto_submit, unattended=True,
+                           login_window=False, say=say)
     result["summary"] = applier.run([r["url"] for r in chosen], limit=len(chosen), direct=True)
     for r in chosen:                                   # marca el mercado en el historial
         prev = db.find_by_url(r["url"])
