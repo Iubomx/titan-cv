@@ -84,7 +84,7 @@ All are templates (marked `# PLANTILLA`) with a data/software example profile.
 titan auto --modo hunter      # discover on Line A, no sending
 titan auto --modo global      # international scanner, no sending
 titan auto --modo analysis    # evaluate both lines, no sending
-titan auto                    # full mission (sends ONLY if send_enabled: true)
+titan auto                    # full mission (sends ONLY if send_enabled: true; with review_mode: always you approve each submission)
 titan demo <URL>              # watch the robot fill a form (never submits without --enviar)
 titan postular --pendientes --ver   # finish human steps (CAPTCHA, email codes)
 titan informe                 # last mission report

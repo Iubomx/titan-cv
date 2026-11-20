@@ -92,7 +92,7 @@ conectores locales para Chile: reemplaza cargos, palabras clave, empresas y prio
 .\titan auto --modo hunter      # descubre en la Línea A, sin enviar
 .\titan auto --modo global      # escáner internacional, sin enviar
 .\titan auto --modo analysis    # evalúa ambas líneas, sin enviar
-.\titan auto                    # misión completa (envía SOLO si send_enabled: true)
+.\titan auto                    # misión completa (envía SOLO si send_enabled: true; con review_mode: always dejas tú la aprobación final)
 .\titan auto --modo stealth     # salida de texto simple
 .\titan demo <URL>              # mira al robot llenar un formulario (no envía sin --enviar)
 .\titan postular --pendientes --ver   # termina lo que requiere a una persona (CAPTCHA, códigos)

@@ -175,14 +175,21 @@ def run(ws: Workspace, simulate: bool = False, say=print, reuse: Path | None = N
         seen_urls.add(q["url"])
         say(f"  retry queue: {(q.get('title') or q['url'])[:70]}")
     result = {"found": len(rows), "chosen": len(chosen), "decisions": str(decision_csv), "summary": []}
-    if simulate or not chosen:
-        say("\n[3/3] Simulation: nothing was submitted." if simulate else "\n[3/3] Nothing to apply to today.")
-        telemetry.stage(markets.active().stage_name, 3, 3, "Simulation · no submissions" if simulate else "Nothing to apply")
+    from . import send_policy
+    from .line_b import load_line
+    try:
+        line_cfg = load_line(ws, "A")
+    except ValueError:                                   # sin línea A configurada: no se envía nada
+        line_cfg = {}
+    decision = send_policy.decide(line_cfg, simulate, len(chosen), label="Line A")
+    if not decision.send:
+        say("\n[3/3] " + decision.reason)
+        telemetry.stage(markets.active().stage_name, 3, 3, decision.stage_label)
         return result
 
     say(f"\n[3/3] Applying to {len(chosen)} job(s)...")
     telemetry.stage(markets.active().stage_name, 3, 3, "Processing applications")
-    applier = BatchApplier(ws, headless=True, force=True, auto_submit=True, unattended=True,
+    applier = BatchApplier(ws, headless=True, force=True, auto_submit=decision.auto_submit, unattended=True,
                            login_window=False, say=say)
     result["summary"] = applier.run([r["url"] for r in chosen], limit=len(chosen), direct=True)
     with (out_dir / f"{stamp}-resultado.csv").open("w", encoding="utf-8-sig", newline="") as fh:

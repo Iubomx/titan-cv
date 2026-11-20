@@ -8,12 +8,14 @@ lines:
     name: Local — tu país y tus áreas
     market: chile                 # conectores locales incluidos: Chile (ver config/search_keywords.yaml)
     send_enabled: false           # true SOLO cuando hayas revisado tus reglas: cada envío es real
+    review_mode: always           # always = tú apruebas cada envío (web o `postular --pendientes`) · auto = envía sin confirmar
     rules: config/auto.yaml       # reglas de la Línea A (cargos, ajuste, cupo)
 
   B:
     name: Internacional — remoto
     market: internacional
     send_enabled: false           # true SOLO cuando hayas revisado tus reglas: cada envío es real
+    review_mode: always           # always = tú apruebas cada envío · auto = envía sin confirmar lo que cumple tus reglas
     daily_max: 10
     min_score: 50                 # puntaje de línea (0-100), ver `scoring` abajo
     potential_margin: 10          # «potencial»: a 10 puntos o menos del mínimo (solo se informa)

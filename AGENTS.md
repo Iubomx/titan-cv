@@ -37,7 +37,7 @@ python -m venv .venv
    sponsorship, clearance). Missing data -> the question stays pending. See `apply/legal.py`.
 3. **No CAPTCHA/anti-bot evasion, no account creation, no password handling.** Login, CAPTCHA and email
    codes are done by a human (`postular --pendientes --ver`).
-4. **Sending is opt-in**: `lines.<A|B>.send_enabled` in `config/lines.yaml` (default `false`). Daily caps
+4. **Sending is opt-in**: `lines.<A|B>.send_enabled` in `config/lines.yaml` (default `false`). Enforced for BOTH lines by `cvtitan/send_policy.py` (only a boolean `true` enables it). `lines.<A|B>.review_mode` (default `always`) leaves each application in `awaiting_review` for a human; `auto` is an explicit opt-in. Daily caps
    (`daily_max`, `config/settings.yaml -> daily_limits`, LinkedIn limits) are protections, not targets.
 5. **Privacy**: terminal, logs and reports go through `cvtitan/privacy.py` (`redact`, `RedactingStream`);
    URLs are shown as `domain #JOB-XXXXXXXX` (`privacy.ref`). Forms receive real data; output never does.
