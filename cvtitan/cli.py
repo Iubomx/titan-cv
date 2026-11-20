@@ -1086,8 +1086,9 @@ def main(argv: list[str] | None = None) -> int:
     except Exception:
         configure(None)
     try:
-        from . import markets
+        from . import markets, scoring
         markets.configure(Workspace.resolve(args.root).root)
+        scoring.configure(Workspace.resolve(args.root).root)
     except Exception:
         pass
     sys.stdout, sys.stderr = RedactingStream(sys.stdout), RedactingStream(sys.stderr)
