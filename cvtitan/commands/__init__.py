@@ -9,9 +9,9 @@ de a uno (ver el plan de refactor); `main` y `purge_diagnostics` siguen exportad
 """
 from __future__ import annotations
 
-from . import init, llmlog, pipeline, preview, purge, schema
+from . import init, llmlog, pipeline, preview, purge, reports, schema
 
-MODULES = (init, llmlog, pipeline, preview, purge, schema)
+MODULES = (init, llmlog, pipeline, preview, purge, reports, schema)
 
 
 def register_all(sub) -> None:

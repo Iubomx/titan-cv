@@ -10,6 +10,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 - **Revisión humana por defecto.** Nuevo `lines.<A|B>.review_mode` (`always` por defecto): el autopilot deja cada formulario listo en «awaiting_review» y el envío lo apruebas tú (web o `postular --pendientes --ver`). `review_mode: auto` conserva el envío sin confirmación para quien lo elija explícitamente. **Cambio de comportamiento:** quien tenía `send_enabled: true` y dependía del envío automático debe agregar `review_mode: auto`.
 
 ### Added
+- Refactor (parte 2): `publish`, `informe`, `geo`, `registro` y `mercado` pasan a `cvtitan/commands/reports.py`; pruebas de humo para los comandos movidos (`tests/test_cli_smoke.py`).
 - Refactor: el flujo de CV (`validate`, `import-cv`, `analyze`, `match`, `approve`, `generate`, `render`, `audit`, `interview`, `run`, `jobs`, `track`) pasa a `cvtitan/commands/pipeline.py` y los helpers a `commands/_common.py`; `cli.py` baja de 1092 a unas 790 líneas. Sin cambios de comportamiento.
 - Explicabilidad del puntaje de la Línea B: el desglose (compatibilidad, elegibilidad, sueldo, experiencia) se guarda por oferta en `*-decisiones.csv` y `*-funnel.csv`; `line_b.explain_score` calcula el aporte de cada componente. El embudo conserva los ceros (antes un puntaje 0 salía vacío).
 - Umbrales y puntos del puntaje configurables en `config/scoring.yaml` (`scoring.py`): skills mínimas, factor de experiencia, cortes de recomendación y puntos de elegibilidad y sueldo de la Línea B. Los valores por defecto no cambian el comportamiento.
