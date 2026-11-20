@@ -35,8 +35,10 @@ def test_history_never_prints_full_urls(db_path):
     assert ref(URL_A) in out
 
 
-def test_history_days_filter_keeps_recent(db_path):
-    assert "Applications: 2 (last 7 days)" in history_report(db_path, days=7, width=120)
+def test_history_days_filter_uses_applied_at(db_path):
+    # solo "a" tiene applied_at (se fija al pasar a "applied"); "b" nunca se marcó como enviada
+    out = history_report(db_path, days=7, width=120)
+    assert "Applications: 1 (last 7 days)" in out and "Acme" in out and "Globex" not in out
 
 
 def test_history_empty_database(tmp_path):
