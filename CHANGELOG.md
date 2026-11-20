@@ -15,6 +15,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 - Extra opcional `ai` (`pip install -e ".[ai]"`) para las funciones de IA.
 
 ### Changed
+- Portabilidad: `release_profile` y `release_orphans` usan `psutil` (macOS/Linux); `find_chrome` busca Chromium; prioridad baja con `os.nice`; `titan.sh` y guía de tareas programadas (cron/launchd). CI incluye macOS.
 - `anthropic` pasa a dependencia opcional; `pydantic` se declara explícitamente.
 - Metadatos de empaquetado (licencia, clasificadores, URLs).
 

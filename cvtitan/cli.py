@@ -6,6 +6,7 @@ from .commands import register_all
 from .commands._common import CliError  # noqa: F401  (reexportado)
 
 import argparse
+import os
 import shutil
 import sys
 from pathlib import Path
@@ -344,7 +345,13 @@ class RobotLock:
 
 
 def _quiet_process() -> None:
-    """Prioridad baja para este proceso y sus Chrome (Windows): no compite con lo que estés haciendo."""
+    """Prioridad baja para este proceso y sus Chrome: no compite con lo que estés haciendo."""
+    if sys.platform != "win32":
+        try:
+            os.nice(5)
+        except (AttributeError, OSError):
+            pass
+        return
     if sys.platform == "win32":
         try:
             import ctypes
