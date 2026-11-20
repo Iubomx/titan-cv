@@ -20,7 +20,7 @@ import re
 from pathlib import Path
 from urllib.parse import quote_plus, urljoin, urlparse
 
-from .. import evidence, job_intel, markets
+from .. import evidence, job_intel, markets, scoring
 from ..market import MarketCache, job_record
 from .legal import remote_eligibility
 from ..db import PROCESS_STATUSES
@@ -33,7 +33,6 @@ COLUMNS = ["postular", "score", "score_bruto", "skills_detectadas", "area", "obl
 # Áreas de Get on Board (segmento de la URL) que corresponden a tecnología y datos.
 TECH_AREAS = {"programming", "programacion", "data-science-analytics", "machine-learning-ai", "sysadmin-devops-qa",
               "desarrollo-mobile", "mobile-development", "cybersecurity", "ciberseguridad", "design-ux"}
-MIN_SKILLS = 6          # con menos skills detectadas, el % de cobertura no es confiable
 
 
 def area_of(url: str) -> str:
@@ -44,9 +43,10 @@ def area_of(url: str) -> str:
 def adjusted_score(score: float, n_skills: int, area: str) -> float:
     """El score de cobertura sube artificialmente si la vacante menciona pocas skills técnicas
     (p. ej. «Excel y Power BI» en un cargo comercial). Se pondera por cantidad de skills y área."""
-    factor = min(1.0, n_skills / MIN_SKILLS)
+    sc = scoring.active()
+    factor = min(1.0, n_skills / sc.min_skills)
     if area and area not in TECH_AREAS:
-        factor *= 0.6
+        factor *= sc.non_tech_area_factor
     return round(score * factor, 1)
 
 

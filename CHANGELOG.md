@@ -10,6 +10,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 - **Revisión humana por defecto.** Nuevo `lines.<A|B>.review_mode` (`always` por defecto): el autopilot deja cada formulario listo en «awaiting_review» y el envío lo apruebas tú (web o `postular --pendientes --ver`). `review_mode: auto` conserva el envío sin confirmación para quien lo elija explícitamente. **Cambio de comportamiento:** quien tenía `send_enabled: true` y dependía del envío automático debe agregar `review_mode: auto`.
 
 ### Added
+- Umbrales y puntos del puntaje configurables en `config/scoring.yaml` (`scoring.py`): skills mínimas, factor de experiencia, cortes de recomendación y puntos de elegibilidad y sueldo de la Línea B. Los valores por defecto no cambian el comportamiento.
 - Privacidad de la IA (`llm_privacy.py`): nombre, correo, teléfono, ubicación y enlaces ya NO se envían a la API salvo `llm.send_contact: true`; documentos de identidad y fecha de nacimiento (`preferences`) nunca salen. Registro local `data/llm_audit.jsonl` (solo metadatos: fecha, función, modelo, secciones, tokens) y comando `titan llmlog`. `titan purge --historial` lo borra.
 - `titan preview <job_id>`: HTML del CV adaptado con panel de revisión (diff palabra a palabra contra el perfil, cifras nuevas y fuentes inexistentes resaltadas; no se imprime). `cv_diff.py`.
 - `import-cv` asistido: estructura la experiencia (cargo, empresa, fechas, logros con id) y sugiere evidencia por skill; todo queda como sugerencia, ninguna skill pasa a `backed` (`import_experience.py`).

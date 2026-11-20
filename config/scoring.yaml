@@ -1,0 +1,21 @@
+# PLANTILLA. Umbrales y puntos del puntaje de compatibilidad. Los valores de abajo son los de por defecto:
+# borra una línea para volver al valor histórico. Una clave desconocida o no numérica se ignora con un aviso.
+
+# Línea A: cobertura de skills
+min_skills: 6                  # con menos skills detectadas, el % de cobertura no es confiable
+non_tech_area_factor: 0.6      # factor extra si el área de la vacante no es técnica
+
+# Compatibilidad (puntaje 0-100 de evidence.match)
+experience_floor: 0.7          # mínimo del factor si te faltan años de experiencia
+recommend_high: 70             # "Postular: ajuste alto" desde este puntaje...
+recommend_high_required_coverage: 0.7   # ...y con esta cobertura de requisitos obligatorios
+recommend_mid: 50
+recommend_low: 30
+
+# Línea B: puntos (0-100) de cada componente; los pesos están en lines.yaml -> scoring
+eligibility_ok_points: 100
+eligibility_ambiguous_points: 50
+salary_target_points: 100      # sueldo >= target_monthly
+salary_min_points: 70          # sueldo >= min_monthly
+salary_below_points: 10
+salary_unknown_points: 50      # la oferta no publica sueldo

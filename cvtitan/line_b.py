@@ -15,7 +15,7 @@ from datetime import datetime
 from pathlib import Path
 from urllib.parse import quote_plus
 
-from . import evidence, job_intel, markets, sources, telemetry
+from . import evidence, job_intel, markets, scoring, sources, telemetry
 from .apply import intl_sources
 from .apply.legal import remote_eligibility
 from .apply.search import adjusted_score
@@ -94,15 +94,16 @@ def score_line(m: dict, n_skills: int, elig: str, usd: float | None, years_ok: b
     w = line.get("scoring") or {}
     sal = line.get("salary") or {}
     compat = adjusted_score(m["score"], n_skills, "")
-    elig_pts = 100 if elig.startswith("ok") else 50
+    sc = scoring.active()
+    elig_pts = sc.eligibility_ok_points if elig.startswith("ok") else sc.eligibility_ambiguous_points
     if usd is None:
-        sal_pts = 50
+        sal_pts = sc.salary_unknown_points
     elif usd >= float(sal.get("target_monthly", 5000)):
-        sal_pts = 100
+        sal_pts = sc.salary_target_points
     elif usd >= float(sal.get("min_monthly", 3000)):
-        sal_pts = 70
+        sal_pts = sc.salary_min_points
     else:
-        sal_pts = 10
+        sal_pts = sc.salary_below_points
     req, cand = years
     exp_pts = 100 if years_ok in (None, True) else max(0, min(100, 100 * cand / req)) if req else 100
     parts = {"compatibility": compat, "eligibility": elig_pts, "salary": sal_pts, "experience": exp_pts}

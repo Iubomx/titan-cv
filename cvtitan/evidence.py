@@ -1,6 +1,7 @@
 """02 — Candidate Evidence Agent: matriz de compatibilidad vacante vs. evidencia verificable."""
 from __future__ import annotations
 
+from . import scoring
 from .profile import Profile
 from .taxonomy import Taxonomy
 from .utils import now_iso
@@ -49,7 +50,7 @@ def match(job: dict, profile: Profile, taxonomy: Taxonomy) -> dict:
     years_req = job.get("years_required")
     score = round(100 * backed_w / total, 1)
     if years_req and years < years_req:
-        score = round(score * max(0.7, years / years_req), 1)
+        score = round(score * max(scoring.active().experience_floor, years / years_req), 1)
 
     return {
         "job_id": job["job_id"],
@@ -66,11 +67,12 @@ def match(job: dict, profile: Profile, taxonomy: Taxonomy) -> dict:
 
 
 def _recommend(score: float, req_cov: float | None) -> str:
-    if score >= 70 and (req_cov is None or req_cov >= 0.7):
+    sc = scoring.active()
+    if score >= sc.recommend_high and (req_cov is None or req_cov >= sc.recommend_high_required_coverage):
         return "Postular: ajuste alto. Adaptar CV y priorizar."
-    if score >= 50:
+    if score >= sc.recommend_mid:
         return "Postular con CV adaptado y preparar respuestas para las brechas."
-    if score >= 30:
+    if score >= sc.recommend_low:
         return "Ajuste parcial: postular solo si hay interés estratégico."
     return "Ajuste bajo: no priorizar, salvo que la vacante sea clave."
 
