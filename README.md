@@ -148,6 +148,8 @@ Flujo de CV adaptado paso a paso: `analyze` -> `match` -> `approve` -> `generate
 
 ## 10. Contribuir
 
+Lee [`CONTRIBUTING.md`](CONTRIBUTING.md), [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) y [`SECURITY.md`](SECURITY.md).
+
 1. Crea una rama, haz cambios pequeños y agrega pruebas en `tests/`.
 2. `.\.venv\Scripts\python.exe -m pytest -q` debe pasar completo.
 3. Nunca incluyas datos personales reales en código, pruebas, ejemplos ni commits: usa datos ficticios

@@ -37,6 +37,15 @@ def open_for_login(profile_dir: Path, urls: list[str]) -> subprocess.Popen:
     return subprocess.Popen(args)
 
 
+def _ps_like(path: Path) -> str:
+    """Escapa una ruta para usarla dentro de un literal '...' de PowerShell con el operador -like:
+    duplica los apóstrofes y neutraliza los comodines (* ? [ ])."""
+    out = str(path).replace("'", "''")
+    for ch in "*?[]":
+        out = out.replace(ch, "`" + ch)
+    return out
+
+
 def release_profile(profile_dir: Path, grace_s: int = 8) -> int:
     """Cierra procesos de Chrome que sigan usando el perfil del robot sin ventana (modo en segundo plano).
     Devuelve cuántos quedaban. Solo toca procesos cuyo --user-data-dir es ESTE perfil."""
@@ -44,7 +53,7 @@ def release_profile(profile_dir: Path, grace_s: int = 8) -> int:
         return 0
     import time
     ps = ("Get-CimInstance Win32_Process -Filter \"Name='chrome.exe'\" | Where-Object { $_.CommandLine -like "
-          f"'*{profile_dir}*' -and $_.CommandLine -notlike '*--type=*' }} | ForEach-Object {{ $_.ProcessId }}")
+          f"'*{_ps_like(profile_dir)}*' -and $_.CommandLine -notlike '*--type=*' }} | ForEach-Object {{ $_.ProcessId }}")
     for _ in range(grace_s):
         out = subprocess.run(["powershell", "-NoProfile", "-Command", ps], capture_output=True, text=True).stdout
         pids = [x.strip() for x in out.split() if x.strip().isdigit()]
@@ -81,7 +90,7 @@ def release_orphans(profile_dir: Path) -> int:
     ps = (
         "$ids = @(Get-Process | ForEach-Object { $_.Id }); "
         "Get-CimInstance Win32_Process -Filter \"Name='chrome.exe'\" | Where-Object { $_.CommandLine -like "
-        f"'*{profile_dir}*' -and $_.CommandLine -notlike '*--type=*' }} | ForEach-Object {{ "
+        f"'*{_ps_like(profile_dir)}*' -and $_.CommandLine -notlike '*--type=*' }} | ForEach-Object {{ "
         "$p = Get-Process -Id $_.ProcessId -ErrorAction SilentlyContinue; "
         "if ($p -and -not $p.MainWindowTitle -and ($ids -notcontains $_.ParentProcessId)) { $_.ProcessId } }"
     )
