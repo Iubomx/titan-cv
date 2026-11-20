@@ -15,7 +15,7 @@ from datetime import datetime
 from pathlib import Path
 from urllib.parse import quote_plus
 
-from . import evidence, job_intel, telemetry
+from . import evidence, job_intel, sources, telemetry
 from .apply import intl_sources
 from .apply.legal import remote_eligibility
 from .apply.search import adjusted_score
@@ -116,17 +116,12 @@ def collect_offers(ws: Workspace, line: dict, say=print, use_linkedin: bool = Tr
 
     from .pipeline import run_parallel
     cache = ws.root / "data" / "cache"
+    ctx = sources.SourceContext(cache, line, ws.db_path)
     jobs = {}
     for name in line.get("sources") or []:
-        if name in intl_sources.FETCHERS:
-            jobs[name] = (lambda n=name: intl_sources.FETCHERS[n](cache))
-        elif name in ("greenhouse", "lever"):
-            # Escáner mundial: empresas configuradas + todas las que TITAN ya descubrió (crece en cada ejecución).
-            boards = list(line.get(name) or [])
-            if line.get("world_scan", True):
-                boards += intl_sources.known_boards(cache, ws.db_path).get(name, [])
-            fn = intl_sources.greenhouse if name == "greenhouse" else intl_sources.lever
-            jobs[name] = (lambda f=fn, b=boards: f(cache, b))
+        fetch = sources.get(name)
+        if fetch:
+            jobs[name] = (lambda f=fetch: f(ctx))
     results = run_parallel(jobs, ws.db_path, f"{date.today():%Y-%m-%d}", say=say)
     offers, stats = [], {}
     for name in jobs:
