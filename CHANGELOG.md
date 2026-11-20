@@ -6,6 +6,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 
 ### Added
 - `titan purge` (`--outputs`, `--sesiones`, `--historial`, `--cache`, `--todo`): borra lo generado en `data/` con confirmación; nunca toca `candidate/` ni `.env`.
+- CI: cobertura mínima (58%), job `typecheck` (mypy, informativo) y workflow de release por tag `v*`.
 - Job `audit` en CI (pip-audit, informativo).
 - Pruebas para el puntaje de la Línea B y la normalización de sueldos.
 - Archivos de comunidad: `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, plantillas de issues y PR.
