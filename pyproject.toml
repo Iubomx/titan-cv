@@ -50,7 +50,7 @@ Changelog = "https://github.com/Stoneroadd/titan-cv/blob/main/CHANGELOG.md"
 cvtitan = "cvtitan.cli:main"
 
 [tool.setuptools]
-packages = ["cvtitan", "cvtitan.apply", "cvtitan.web", "cvtitan.ui"]
+packages = ["cvtitan", "cvtitan.apply", "cvtitan.web", "cvtitan.ui", "cvtitan.commands"]
 
 [tool.setuptools.package-data]
 "cvtitan.web" = ["static/*"]

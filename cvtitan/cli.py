@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 from .colors import mark, tally
+from .commands import register_all
+from .commands._common import CliError  # noqa: F401  (reexportado)
 
 import argparse
 import shutil
@@ -17,8 +19,6 @@ from .utils import Workspace, dump_yaml, load_yaml, write_text
 MIN_SCORE_TO_GENERATE = 30.0
 
 
-class CliError(Exception):
-    pass
 
 
 # ---------------------------------------------------------------------- helpers
@@ -649,34 +649,6 @@ def purge_diagnostics(ws, days: int = 30) -> int:
     return n
 
 
-def cmd_purge(args):
-    """Borra datos generados en data/ por grupos. Nunca toca candidate/ ni .env."""
-    from . import purge
-    groups = list(purge.GROUPS) if args.todo else [
-        g for g, on in (("outputs", args.outputs), ("sessions", args.sesiones),
-                        ("history", args.historial), ("cache", args.cache)) if on]
-    if not groups:
-        raise CliError("Choose what to delete: --outputs, --sesiones, --historial, --cache or --todo.")
-    ws = Workspace.resolve(args.root)
-    paths = purge.plan(ws, groups)
-    if not paths:
-        print("Nothing to delete.")
-        return 0
-    print("Will delete:")
-    for path in paths:
-        print(f"  - data/{path.relative_to((ws.root / 'data').resolve()).as_posix()}")
-    print("Never touched: candidate/ (profile, declarations, CVs) and .env.")
-    if not args.si and input("Type 'borrar' to confirm: ").strip().lower() != "borrar":
-        print("Cancelled. Nothing was deleted.")
-        return 1
-    done, failed = purge.execute(paths)
-    print(f"Deleted {done} item(s).")
-    if failed:
-        print(f"Could not delete {len(failed)} item(s) (in use?). Close Chrome/TITAN and retry.", file=sys.stderr)
-        return 1
-    return 0
-
-
 def cmd_auto(args):
     linea_forced, sim_forced = MODE_PLAN[args.modo]
     args.linea = (linea_forced or args.linea or "TODAS").upper()
@@ -1090,20 +1062,13 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--headless", action="store_true", help=argparse.SUPPRESS)
     s.set_defaults(func=cmd_postular)
 
-    s = sub.add_parser("purge", help="Delete data TITAN generated in data/ (never touches candidate/ or .env).")
-    s.add_argument("--outputs", action="store_true", help="Generated CVs, analyses and screenshots.")
-    s.add_argument("--sesiones", action="store_true", help="Browser sessions and LinkedIn guard state.")
-    s.add_argument("--historial", action="store_true", help="History database, registry and mission reports.")
-    s.add_argument("--cache", action="store_true", help="Search, market and geo caches.")
-    s.add_argument("--todo", action="store_true", help="All of the above.")
-    s.add_argument("--si", action="store_true", help="Do not ask for confirmation.")
-    s.set_defaults(func=cmd_purge)
-
     s = sub.add_parser("web", help="Open the local web app: paste a link, apply and view history.")
     s.add_argument("--port", type=int, default=8765)
     s.add_argument("--headless", action="store_true", help="Headless browser (not recommended).")
     s.add_argument("--no-open", action="store_true")
     s.set_defaults(func=cmd_web)
+
+    register_all(sub)   # comandos ya migrados a cvtitan/commands/
     return p
 
 
