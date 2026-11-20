@@ -54,9 +54,16 @@ def _boards(ctx: SourceContext, kind: str) -> list[str]:
     return boards
 
 
+def _cache_only(fn: Callable[[Path], list[dict]]) -> Fetcher:
+    """Adapta un fetcher integrado `fn(cache)` al contrato `fetch(ctx)`."""
+    def fetch(ctx: SourceContext) -> list[dict]:
+        return fn(ctx.cache)
+    return fetch
+
+
 def _register_builtins() -> None:
     for name, fn in intl_sources.FETCHERS.items():
-        register(name, lambda ctx, f=fn: f(ctx.cache), builtin=True)
+        register(name, _cache_only(fn), builtin=True)
     register("greenhouse", lambda ctx: intl_sources.greenhouse(ctx.cache, _boards(ctx, "greenhouse")), builtin=True)
     register("lever", lambda ctx: intl_sources.lever(ctx.cache, _boards(ctx, "lever")), builtin=True)
 

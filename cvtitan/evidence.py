@@ -22,7 +22,7 @@ def match(job: dict, profile: Profile, taxonomy: Taxonomy) -> dict:
         evidence = []
         if profile.is_backed(key):
             status = "backed"
-            evidence = [{"id": i, "text": ev[i]["text"]} for i in declared.get("evidence", []) if i in ev]
+            evidence = [{"id": i, "text": ev[i]["text"]} for i in (declared or {}).get("evidence", []) if i in ev]
         elif declared:
             status = "to_demonstrate"
         else:
