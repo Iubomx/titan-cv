@@ -4,6 +4,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+from .import_experience import structure_experience, suggest_evidence
 from .taxonomy import Taxonomy
 from .utils import normalize, now_iso
 
@@ -56,6 +57,9 @@ def draft_profile(text: str, taxonomy: Taxonomy, source: str) -> dict:
             continue
         sections.setdefault(current, []).append(line)
 
+    experience = structure_experience(sections.get("experience", []), taxonomy)
+    suggestions = suggest_evidence(experience)
+
     email = re.search(r"[\w.+-]+@[\w-]+\.[\w.]+", text)
     phone = re.search(r"\+?\d[\d\s()-]{7,}\d", text)
     linkedin = re.search(r"(?:https?://)?(?:www\.)?linkedin\.com/in/[\w-]+/?", text)
@@ -67,7 +71,9 @@ def draft_profile(text: str, taxonomy: Taxonomy, source: str) -> dict:
             "source": source,
             "imported_at": now_iso(),
             "instructions": "BORRADOR. Revisa cada dato con el candidato y trasládalo a candidate/profile.yaml. "
-                            "Ninguna skill queda respaldada automáticamente: asigna `backed` solo con evidencia.",
+                            "Ninguna skill queda respaldada automáticamente: asigna `backed` solo con evidencia. "
+                            "`experience` y `suggested_evidence` son sugerencias: corrige cargos, fechas y logros, "
+                            "agrega cifras reales y copia al perfil solo lo que puedas defender.",
         },
         "personal": {
             "name": sections["header"][0] if sections["header"] else "",
@@ -77,6 +83,8 @@ def draft_profile(text: str, taxonomy: Taxonomy, source: str) -> dict:
             "linkedin": linkedin.group(0) if linkedin else "",
             "github": github.group(0) if github else "",
         },
-        "detected_skills": [{"name": taxonomy.name(k), "status": "to_demonstrate", "evidence": []} for k in detected],
+        "experience": experience,
+        "detected_skills": [{"name": taxonomy.name(k), "status": "to_demonstrate", "evidence": [],
+                             "suggested_evidence": suggestions.get(taxonomy.name(k), [])} for k in detected],
         "raw_sections": {k: v for k, v in sections.items() if v},
     }
