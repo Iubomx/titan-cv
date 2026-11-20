@@ -187,4 +187,6 @@ class Profile:
             for sk in e["skills"]:
                 if self.tax.key_for(sk, register=False) not in declared:
                     warnings.append(t("profile.skill_undeclared", ev_id=ev_id, skill=sk))
+        from .profile_checks import check
+        warnings.extend(check(self.data))
         return errors, warnings
