@@ -33,6 +33,10 @@ def cmd_informe(args):
     """Último informe de ejecución, o el historial de postulaciones (texto plano)."""
     from ..report import history_report
     ws = Workspace.resolve(args.root)
+    if args.semana:
+        from .. import weekly
+        print(weekly.render(weekly.build(DB(ws.db_path), days=args.dias or 7)))
+        return 0
     if args.historial:
         print(history_report(ws.db_path, args.dias))
         return 0
@@ -140,7 +144,8 @@ def register(sub) -> None:
 
     s = sub.add_parser("informe", help="Last run report (sites visited, applications) or the application history.")
     s.add_argument("--historial", action="store_true", help="Full application history from the database.")
-    s.add_argument("--dias", type=int, help="With --historial: only the last N days.")
+    s.add_argument("--semana", action="store_true", help="Weekly report: sent, responses, time to response, agenda.")
+    s.add_argument("--dias", type=int, help="With --historial or --semana: the last N days (--semana default 7).")
     s.add_argument("--lista", action="store_true", help="List saved run reports.")
     s.add_argument("--ref", help="Decode a job code (JOB-XXXXXXXX) into its real URL.")
     s.set_defaults(func=cmd_informe)
