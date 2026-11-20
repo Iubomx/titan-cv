@@ -35,6 +35,7 @@ fx:
 # de las preguntas pendientes. Nunca: contraseñas, RUT, declaraciones legales, casillas, HTML ni formularios completos.
 llm:
   enabled: false
+  send_contact: false   # false = nombre, correo, teléfono, ubicación y enlaces NO se envían a la API
 
 # Límites EXCLUSIVOS de LinkedIn (protegen tu cuenta; las demás fuentes no se ven afectadas).
 linkedin:

@@ -5,10 +5,12 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 ## [Unreleased]
 
 ### Security
+- **La IA recibía nombre, correo, teléfono y ciudad.** El bloque `personal` viajaba completo a la API en las respuestas de formularios y las cartas. Ahora se minimiza por defecto (ver Added) y cada solicitud queda registrada localmente. **Cambio de comportamiento:** las respuestas redactadas por la IA ya no pueden usar esos datos; si faltan, la pregunta queda pendiente para ti.
 - **La Línea A no respetaba `send_enabled`.** Solo la Línea B comprobaba ese ajuste; `titan auto` (modo `apply`) podía enviar postulaciones de la Línea A aunque `lines.A.send_enabled` fuera `false`, contra lo documentado. Ahora ambas líneas pasan por `send_policy.decide`: solo `send_enabled: true` (booleano exacto) permite enviar.
 - **Revisión humana por defecto.** Nuevo `lines.<A|B>.review_mode` (`always` por defecto): el autopilot deja cada formulario listo en «awaiting_review» y el envío lo apruebas tú (web o `postular --pendientes --ver`). `review_mode: auto` conserva el envío sin confirmación para quien lo elija explícitamente. **Cambio de comportamiento:** quien tenía `send_enabled: true` y dependía del envío automático debe agregar `review_mode: auto`.
 
 ### Added
+- Privacidad de la IA (`llm_privacy.py`): nombre, correo, teléfono, ubicación y enlaces ya NO se envían a la API salvo `llm.send_contact: true`; documentos de identidad y fecha de nacimiento (`preferences`) nunca salen. Registro local `data/llm_audit.jsonl` (solo metadatos: fecha, función, modelo, secciones, tokens) y comando `titan llmlog`. `titan purge --historial` lo borra.
 - `titan preview <job_id>`: HTML del CV adaptado con panel de revisión (diff palabra a palabra contra el perfil, cifras nuevas y fuentes inexistentes resaltadas; no se imprime). `cv_diff.py`.
 - `import-cv` asistido: estructura la experiencia (cargo, empresa, fechas, logros con id) y sugiere evidencia por skill; todo queda como sugerencia, ninguna skill pasa a `backed` (`import_experience.py`).
 - `titan init --plantilla <rubro>` (software, comercial, salud; ficticias), `--listar` y `--guiado` (asistente que crea un perfil mínimo válido y `declarations.yaml`). El comando `init` pasa a `cvtitan/commands/`.
