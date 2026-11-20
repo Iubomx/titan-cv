@@ -161,8 +161,9 @@ let health = null, openId = null, lastDetail = '';
 const PLATFORM = {linkedin:'LinkedIn', indeed:'Indeed', getonboard:'Get on Board', greenhouse:'Greenhouse', lever:'Lever',
   workday:'Workday', laborum:'Laborum', computrabajo:'Computrabajo', trabajando:'Trabajando', generic:'Sitio empresa'};
 
+const TOKEN = document.querySelector('meta[name="titan-token"]')?.content || '';
 async function api(path, opts = {}) {
-  const res = await fetch(path, {headers: {'Content-Type': 'application/json'}, ...opts,
+  const res = await fetch(path, {headers: {'Content-Type': 'application/json', 'X-Titan-Token': TOKEN}, ...opts,
     body: opts.body ? JSON.stringify(opts.body) : undefined});
   if (!res.ok) { let m = res.statusText; try { m = (await res.json()).detail || m; } catch {} throw new Error(m); }
   return res.headers.get('content-type')?.includes('json') ? res.json() : res.text();

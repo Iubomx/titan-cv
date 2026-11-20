@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import re
+import secrets
 from datetime import date
 from pathlib import Path
 from urllib.parse import urlparse
@@ -16,6 +17,7 @@ from ..engine import Engine
 from ..profile import Profile
 from ..taxonomy import Taxonomy
 from ..utils import Workspace, load_yaml, slugify
+from . import guard
 
 STATIC = Path(__file__).parent / "static"
 SERVABLE = {".pdf", ".docx", ".md", ".png", ".html", ".yaml"}
@@ -33,6 +35,8 @@ def create_app(ws: Workspace, headless: bool = False, start_runner: bool = True)
 
     app = FastAPI(title="CV TITAN", docs_url=None, redoc_url=None)
     app.state.engine, app.state.runner = engine, runner
+    app.state.token = secrets.token_urlsafe(24)          # anti-CSRF: solo se entrega dentro de la página principal
+    guard.install(app, app.state.token)
 
     def need(job_id: str) -> dict:
         row = db.get(job_id)
@@ -47,7 +51,7 @@ def create_app(ws: Workspace, headless: bool = False, start_runner: bool = True)
 
     @app.get("/", response_class=HTMLResponse)
     def index():
-        return (STATIC / "index.html").read_text(encoding="utf-8")
+        return guard.inject_token((STATIC / "index.html").read_text(encoding="utf-8"), app.state.token)
 
     @app.get("/api/health")
     def health():

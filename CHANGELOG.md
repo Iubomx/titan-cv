@@ -5,6 +5,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 ## [Unreleased]
 
 ### Security
+- **Web local protegida contra CSRF y DNS rebinding** (`web/guard.py`): las acciones que modifican datos exigen un token por ejecución (solo se entrega en la página principal) y se rechazan `Host` y `Origin` que no sean localhost. Antes cualquier página abierta en el navegador podía llamar a `127.0.0.1:8765`.
 - **La IA recibía nombre, correo, teléfono y ciudad.** El bloque `personal` viajaba completo a la API en las respuestas de formularios y las cartas. Ahora se minimiza por defecto (ver Added) y cada solicitud queda registrada localmente. **Cambio de comportamiento:** las respuestas redactadas por la IA ya no pueden usar esos datos; si faltan, la pregunta queda pendiente para ti.
 - **La Línea A no respetaba `send_enabled`.** Solo la Línea B comprobaba ese ajuste; `titan auto` (modo `apply`) podía enviar postulaciones de la Línea A aunque `lines.A.send_enabled` fuera `false`, contra lo documentado. Ahora ambas líneas pasan por `send_policy.decide`: solo `send_enabled: true` (booleano exacto) permite enviar.
 - **Revisión humana por defecto.** Nuevo `lines.<A|B>.review_mode` (`always` por defecto): el autopilot deja cada formulario listo en «awaiting_review» y el envío lo apruebas tú (web o `postular --pendientes --ver`). `review_mode: auto` conserva el envío sin confirmación para quien lo elija explícitamente. **Cambio de comportamiento:** quien tenía `send_enabled: true` y dependía del envío automático debe agregar `review_mode: auto`.
