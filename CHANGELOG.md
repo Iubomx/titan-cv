@@ -5,6 +5,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 ## [Unreleased]
 
 ### Added
+- `titan preview <job_id>`: HTML del CV adaptado con panel de revisión (diff palabra a palabra contra el perfil, cifras nuevas y fuentes inexistentes resaltadas; no se imprime). `cv_diff.py`.
 - `import-cv` asistido: estructura la experiencia (cargo, empresa, fechas, logros con id) y sugiere evidencia por skill; todo queda como sugerencia, ninguna skill pasa a `backed` (`import_experience.py`).
 - `titan init --plantilla <rubro>` (software, comercial, salud; ficticias), `--listar` y `--guiado` (asistente que crea un perfil mínimo válido y `declarations.yaml`). El comando `init` pasa a `cvtitan/commands/`.
 - Avisos de calidad del perfil (`profile_checks.py`): correo, fechas inválidas o solapadas, claves desconocidas, logros sin cifras, skills con una sola evidencia. `titan schema` genera el esquema JSON del perfil para el editor.
