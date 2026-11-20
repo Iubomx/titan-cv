@@ -1,0 +1,84 @@
+# PERFIL DE EJEMPLO (ficticio): ventas y desarrollo de negocios. Usa `titan init --plantilla comercial`.
+# Las cifras de un logro son las únicas que el CV podrá usar para ese logro.
+personal:
+  name: Valentina Soto Araya
+  headline: Ejecutiva Comercial B2B | Cuentas clave y desarrollo de negocios
+  email: valentina.soto@example.com
+  phone: "+56 9 5555 0102"
+  location: Concepción, Chile
+  linkedin: linkedin.com/in/valentina-ejemplo
+
+summary: >-
+  Ejecutiva comercial con 7 años en ventas B2B de servicios industriales, enfocada en cartera de cuentas clave,
+  negociación de contratos y uso de CRM para gestionar el embudo.
+
+experience:
+  - id: exp-industrial
+    company: Servicios Industriales Ejemplo
+    role: Ejecutiva de Cuentas Clave
+    location: Concepción, Chile
+    start: 2020-02
+    end: presente
+    achievements:
+      - id: ach-cartera
+        text: >-
+          Gestioné una cartera de 18 cuentas clave que representó USD 2,4 millones en ventas anuales.
+        skills: [Cuentas clave, Gestión de cartera]
+      - id: ach-crecimiento
+        text: Aumenté las ventas de mi cartera un 27% en 2023 con venta cruzada de servicios de mantenimiento.
+        skills: [Venta cruzada, Negociación]
+      - id: ach-crm
+        text: Implementé el seguimiento de oportunidades en HubSpot para un equipo de 6 ejecutivos.
+        skills: [CRM, HubSpot]
+  - id: exp-retail
+    company: Retail Ejemplo S.A.
+    role: Vendedora Corporativa
+    location: Concepción, Chile
+    start: 2017-03
+    end: 2020-01
+    achievements:
+      - id: ach-corporativo
+        text: Superé la meta anual de ventas corporativas en 3 de los 3 años, con un máximo de 118%.
+        skills: [Ventas corporativas, Prospección]
+
+education:
+  - id: edu-ing-com
+    degree: Ingeniería Comercial
+    institution: Universidad Ejemplo
+    year: 2016
+    skills: [Finanzas]
+
+certifications:
+  - id: cert-hubspot
+    name: HubSpot Sales Software Certification
+    issuer: HubSpot Academy
+    year: 2022
+    skills: [HubSpot]
+
+skills:
+  - {name: Cuentas clave, status: backed, evidence: [ach-cartera, ach-crecimiento]}
+  - {name: Gestión de cartera, status: backed, evidence: [ach-cartera, ach-corporativo]}
+  - {name: Negociación, status: backed, evidence: [ach-crecimiento, ach-corporativo]}
+  - {name: Venta cruzada, status: backed, evidence: [ach-crecimiento, ach-cartera]}
+  - {name: CRM, status: backed, evidence: [ach-crm, cert-hubspot]}
+  - {name: HubSpot, status: backed, evidence: [ach-crm, cert-hubspot]}
+  - {name: Ventas corporativas, status: backed, evidence: [ach-corporativo, ach-cartera]}
+  - {name: Prospección, status: backed, evidence: [ach-corporativo, ach-crm]}
+  - name: Salesforce
+    status: to_demonstrate
+    note: En aprendizaje; sin uso real todavía.
+
+preferences:
+  country: Chile
+  salary_expectation: "CLP 2.600.000 líquidos mensuales más comisiones"
+  availability: "Inmediata"
+  willing_to_relocate: "Sí, dentro de Chile"
+  work_authorization:
+    Chile: "Sí"
+    default: null
+
+documents: []
+
+languages:
+  - {name: Español, level: Nativo}
+  - {name: Inglés, level: Intermedio (B1)}

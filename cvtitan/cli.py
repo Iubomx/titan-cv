@@ -8,7 +8,6 @@ from .commands._common import CliError  # noqa: F401  (reexportado)
 
 import argparse
 import os
-import shutil
 import sys
 from pathlib import Path
 
@@ -75,17 +74,6 @@ def _read_job_text(args) -> tuple[str, dict]:
 
 
 # ---------------------------------------------------------------------- comandos
-def cmd_init(args):
-    ws = Workspace.resolve(args.root)
-    for d in ("candidate", "data/jobs", "data/outputs"):
-        (ws.root / d).mkdir(parents=True, exist_ok=True)
-    if ws.profile_path.exists():
-        print(f"{ws.profile_path} already exists; not overwritten.")
-    else:
-        shutil.copy(ws.example_profile_path, ws.profile_path)
-        print(f"Created {ws.profile_path} from the example. Replace it with your real data.")
-
-
 def cmd_validate(args):
     ws, tax = _ctx(args)
     profile = Profile.load(ws.profile_path, tax)
@@ -920,7 +908,6 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--lang", choices=i18n.available(), help="Message language (default: CVTITAN_LANG or es).")
     sub = p.add_subparsers(dest="cmd", required=True)
 
-    sub.add_parser("init", help="Create folders and candidate/profile.yaml from the example.").set_defaults(func=cmd_init)
     sub.add_parser("validate", help="Validate the candidate profile.").set_defaults(func=cmd_validate)
 
     s = sub.add_parser("import-cv", help="Extract a draft profile from a PDF/DOCX/TXT.")
