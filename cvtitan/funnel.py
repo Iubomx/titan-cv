@@ -75,7 +75,7 @@ def write(records: list[dict], path: Path, refs_path: Path) -> None:
     """Guarda el embudo (sin URLs) y actualiza el mapa local código -> URL."""
     from .privacy import mask_url, redact, ref
     cols = ["line", "stage", "tier", "reason_category", "reason", "score", "title", "company", "source", "country",
-            "modality", "ref"]
+            "modality", "ref", "pts_compatibility", "pts_eligibility", "pts_salary", "pts_experience"]
     refs: dict[str, str] = {}
     if refs_path.exists():
         try:
@@ -90,7 +90,8 @@ def write(records: list[dict], path: Path, refs_path: Path) -> None:
             url = r.get("url") or ""
             if url:
                 refs[ref(url)] = url
-            w.writerow({**{k: redact(str(r.get(k) or "")) for k in cols}, "ref": mask_url(url) if url else ""})
+            w.writerow({**{k: redact("" if r.get(k) is None else str(r.get(k))) for k in cols},
+                        "ref": mask_url(url) if url else ""})
     refs_path.write_text(json.dumps(refs, ensure_ascii=False), encoding="utf-8")
 
 
