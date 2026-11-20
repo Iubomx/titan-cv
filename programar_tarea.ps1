@@ -10,6 +10,10 @@ if ($Quitar) {
     exit
 }
 $root = $PSScriptRoot
+$lines = Join-Path $root "config\lines.yaml"
+if ((Test-Path $lines) -and (Select-String -Path $lines -Pattern '^\s*send_enabled:\s*true' -Quiet)) {
+    Write-Warning "send_enabled: true detectado: la tarea ENVIARA postulaciones reales sin supervision. Revisa varias misiones manuales antes."
+}
 $action = New-ScheduledTaskAction -Execute "$root\.venv\Scripts\pythonw.exe" `
     -Argument "-m cvtitan auto --linea todas --log data\auto\auto.log" -WorkingDirectory $root
 $trigger = New-ScheduledTaskTrigger -Daily -At $Hora
