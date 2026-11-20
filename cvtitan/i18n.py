@@ -29,7 +29,7 @@ def current() -> str:
     return _lang or set_language(None)
 
 
-def t(key: str, **kw) -> str:
+def t(key: str, /, **kw) -> str:
     template = MESSAGES.get(current(), {}).get(key) or MESSAGES[DEFAULT_LANG].get(key) or key
     try:
         return template.format(**kw)
