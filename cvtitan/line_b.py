@@ -15,7 +15,7 @@ from datetime import datetime
 from pathlib import Path
 from urllib.parse import quote_plus
 
-from . import evidence, job_intel, sources, telemetry
+from . import evidence, job_intel, markets, sources, telemetry
 from .apply import intl_sources
 from .apply.legal import remote_eligibility
 from .apply.search import adjusted_score
@@ -235,7 +235,7 @@ def run(ws: Workspace, simulate: bool = True, say=print, use_linkedin: bool = Tr
     out_dir.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now().strftime("%Y%m%d-%H%M")
 
-    say("[1/4] International sources (remote from Chile)")
+    say(f"[1/4] International sources (remote from {markets.active().country})")
     telemetry.stage("LINE B · GLOBAL", 1, 4, "Scanning job boards")
     telemetry.agent("TITAN-SCOUT", "ACTIVE", f"{len(line.get('sources') or [])} sources"
                     + (" + LinkedIn" if use_linkedin else ""))
@@ -349,7 +349,7 @@ def run(ws: Workspace, simulate: bool = True, say=print, use_linkedin: bool = Tr
             elig = f"excluido: el título restringe a {tm.group(0).strip(' -()/,')}"
         if elig.startswith("ok") and text_elig.startswith("excluido"):   # el texto contradice la región: gana lo estricto
             elig = f"excluido: conflicto región/texto — {text_elig[10:]}"
-        if o.get("onsite") and not re.search(r"(?i)chile|santiago|latam|latin america", o["onsite"]):
+        if o.get("onsite") and not re.search("(?i)" + markets.active().home_regex, o["onsite"]):
             # Escáner mundial (portal ATS del empleador): ubicación oficial presencial fuera de Chile.
             elig = f"excluido: presencial en {o['onsite'][:60]} (ubicación oficial del empleador)"
         job = job_intel.analyze(o["text"] or o["title"], tax, title=o["title"], company=o.get("company"),

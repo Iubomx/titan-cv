@@ -14,6 +14,7 @@ import re
 from datetime import date, datetime
 from pathlib import Path
 
+from . import markets
 from .db import DB, PROCESS_STATUSES as PROCESS
 from .utils import Workspace, load_yaml, normalize
 
@@ -86,20 +87,20 @@ def run(ws: Workspace, simulate: bool = False, say=print, reuse: Path | None = N
     out_dir.mkdir(parents=True, exist_ok=True)
 
     from . import telemetry
-    telemetry.stage("LINE A · CHILE", 1, 3, "Scanning Chilean job boards")
-    telemetry.agent("TITAN-SCOUT", "ACTIVE", "Chilean boards and mining career sites")
+    telemetry.stage(markets.active().stage_name, 1, 3, markets.active().scan_label)
+    telemetry.agent("TITAN-SCOUT", "ACTIVE", markets.active().agent_label)
     if reuse:
         say(f"[1/3] Using saved search {reuse}")
         rows = list(csv.DictReader(reuse.read_text(encoding="utf-8-sig").splitlines(), delimiter=";"))
         rows = [r for r in rows if (db.find_by_url(r["url"]) or {}).get("status") not in PROCESS]
     else:
         say(f"[1/3] Searching job openings (groups: {', '.join(rules.get('groups') or [])})...")
-        where = ["getonboard", "computrabajo", "chiletrabajos", "indeed", "linkedin"]
-        _, rows = run_search(ws, [], where, "Chile", [], int(rules.get("max_per_search", 8)),
+        where = list(markets.active().local_sources)
+        _, rows = run_search(ws, [], where, markets.active().country, [], int(rules.get("max_per_search", 8)),
                              out_dir / f"{stamp}-busqueda.csv", headless=True, groups=rules.get("groups"), say=say)
 
     telemetry.count("discovered", len(rows))
-    telemetry.market([{"source": r.get("plataforma"), "company": r.get("empresa"), "country": r.get("pais") or "Chile",
+    telemetry.market([{"source": r.get("plataforma"), "company": r.get("empresa"), "country": r.get("pais") or markets.active().country,
                        "city": r.get("ciudad"), "modality": r.get("modalidad"), "fit": r.get("score")} for r in rows])
     by_portal: dict = {}
     for r in rows:
@@ -109,7 +110,7 @@ def run(ws: Workspace, simulate: bool = False, say=print, reuse: Path | None = N
     telemetry.explored(countries=[r.get("pais") or "" for r in rows], cities=[r.get("ciudad") or "" for r in rows],
                        companies=[r.get("empresa") or "" for r in rows])
     telemetry.agent("TITAN-SCOUT", "READY", f"{len(rows)} offers")
-    telemetry.stage("LINE A · CHILE", 2, 3, "Rules, fit and scoring")
+    telemetry.stage(markets.active().stage_name, 2, 3, "Rules, fit and scoring")
     telemetry.agent("TITAN-MATCH", "ACTIVE", f"evaluating {len(rows)} offers")
     say("\n[2/3] Applying your rules...")
     quota = max(0, int(rules.get("daily_max", 15)) - applied_today(db))
@@ -176,11 +177,11 @@ def run(ws: Workspace, simulate: bool = False, say=print, reuse: Path | None = N
     result = {"found": len(rows), "chosen": len(chosen), "decisions": str(decision_csv), "summary": []}
     if simulate or not chosen:
         say("\n[3/3] Simulation: nothing was submitted." if simulate else "\n[3/3] Nothing to apply to today.")
-        telemetry.stage("LINE A · CHILE", 3, 3, "Simulation · no submissions" if simulate else "Nothing to apply")
+        telemetry.stage(markets.active().stage_name, 3, 3, "Simulation · no submissions" if simulate else "Nothing to apply")
         return result
 
     say(f"\n[3/3] Applying to {len(chosen)} job(s)...")
-    telemetry.stage("LINE A · CHILE", 3, 3, "Processing applications")
+    telemetry.stage(markets.active().stage_name, 3, 3, "Processing applications")
     applier = BatchApplier(ws, headless=True, force=True, auto_submit=True, unattended=True,
                            login_window=False, say=say)
     result["summary"] = applier.run([r["url"] for r in chosen], limit=len(chosen), direct=True)
