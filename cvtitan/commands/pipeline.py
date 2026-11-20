@@ -2,10 +2,11 @@
 interview, run, jobs y track (movidos desde `cli.py`; comportamiento sin cambios)."""
 from __future__ import annotations
 
+from datetime import date
 from pathlib import Path
 
 from .. import cv_writer, evidence, importer, interview, job_intel, recruiter
-from ..db import DB, STATUSES
+from ..db import DB, PROCESS_EVENT_KINDS, STATUSES
 from ..profile import Profile
 from ..i18n import t
 from ..utils import dump_yaml, load_yaml, write_text
@@ -197,6 +198,29 @@ def cmd_track(args):
             db.upsert(args.job_id, **info)
         row = db.set_status(args.job_id, args.status, args.notes)
         print(f"{row['job_id']}: {row['status_label']}")
+    elif args.action == "event":
+        if not args.job_id or not args.kind or not args.on:
+            raise CliError("Uso: cvtitan track event <job_id> --kind interview|followup|test|offer|other --on AAAA-MM-DD "
+                           "[--notes ...]")
+        try:
+            event_id = db.add_process_event(args.job_id, args.kind, args.on, args.notes or "")
+        except KeyError as exc:
+            raise CliError(f"No existe la postulación '{args.job_id}'. Usa `cvtitan track list`.") from exc
+        except ValueError as exc:
+            raise CliError(str(exc)) from exc
+        print(f"Event #{event_id} scheduled: {args.kind} on {args.on[:10]} for {args.job_id}")
+    elif args.action == "agenda":
+        rows = db.agenda(args.days)
+        if not rows:
+            print(f"Nothing pending in the next {args.days} days.")
+        for r in rows:
+            late = " (OVERDUE)" if r["due"] < date.today().isoformat() else ""
+            print(f"#{r['id']:<4} {r['due']}{late:10} {r['kind']:<10} {(r.get('company') or '-')[:22]:<22} "
+                  f"{(r.get('title') or r['job_id'])[:40]}  {r['note']}")
+    elif args.action == "done":
+        if not args.job_id or not args.job_id.isdigit() or not db.complete_process_event(int(args.job_id)):
+            raise CliError("Uso: cvtitan track done <id del evento> (ver `cvtitan track agenda`).")
+        print(f"Event #{args.job_id} marked as done.")
     elif args.action == "list":
         for r in db.list():
             print(f"{r['job_id']:50} {r['status_label']:22} {str(r.get('country') or '-'):12} "
@@ -259,8 +283,11 @@ def register(sub) -> None:
     sub.add_parser("jobs", help="List analyzed jobs.").set_defaults(func=cmd_jobs)
 
     s = sub.add_parser("track", help="Application tracking.")
-    s.add_argument("action", choices=["add", "update", "list", "stats"])
+    s.add_argument("action", choices=["add", "update", "list", "stats", "event", "agenda", "done"])
     s.add_argument("job_id", nargs="?")
     s.add_argument("--status", choices=STATUSES)
     s.add_argument("--notes")
+    s.add_argument("--kind", choices=PROCESS_EVENT_KINDS, help="With `event`: interview, followup, test, offer, other.")
+    s.add_argument("--on", help="With `event`: due date YYYY-MM-DD.")
+    s.add_argument("--days", type=int, default=14, help="With `agenda`: look-ahead window in days (default 14).")
     s.set_defaults(func=cmd_track)
