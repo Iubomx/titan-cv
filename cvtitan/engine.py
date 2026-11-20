@@ -23,6 +23,9 @@ class Engine:
         self.settings = load_yaml(ws.settings_path) if ws.settings_path.exists() else {}
         import os
         os.environ["CVTITAN_LLM_ENABLED"] = "1" if (self.settings.get("llm") or {}).get("enabled") else "0"
+        os.environ["CVTITAN_LLM_SEND_CONTACT"] = "1" if (self.settings.get("llm") or {}).get("send_contact") else "0"
+        from . import llm_privacy
+        llm_privacy.set_audit_path(ws.root / "data" / "llm_audit.jsonl")
 
     def load(self) -> tuple[Taxonomy, Profile]:
         """Se recarga en cada postulación para tomar cambios recientes del perfil."""

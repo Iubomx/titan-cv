@@ -18,6 +18,8 @@ from typing import Literal, Optional
 
 from pydantic import BaseModel, Field
 
+from . import llm_privacy
+
 MODEL = os.environ.get("CVTITAN_MODEL", "claude-opus-5-5")
 FALLBACK_BETA = "server-side-fallback-2026-07-01"
 
@@ -46,7 +48,7 @@ def available() -> bool:
 
 
 def _parse(system: str, user: str, schema: type[BaseModel], effort: str = "medium",
-           max_tokens: int = 16000) -> BaseModel:
+           max_tokens: int = 16000, purpose: str = "unknown", sent: list[str] | None = None) -> BaseModel:
     if not available():
         raise LLMUnavailable("No hay ANTHROPIC_API_KEY configurada (archivo .env).")
     try:
@@ -78,6 +80,7 @@ def _parse(system: str, user: str, schema: type[BaseModel], effort: str = "mediu
         raise LLMUnavailable("El modelo declinó la solicitud.")
     if response.stop_reason == "max_tokens" or response.parsed_output is None:
         raise LLMUnavailable("Respuesta incompleta del modelo.")
+    llm_privacy.record(purpose, MODEL, sent or [], len(system) + len(user), getattr(response, "usage", None))
     return response.parsed_output
 
 
@@ -111,7 +114,7 @@ JOB_SYSTEM = (
 
 def extract_job(text: str, url: str | None = None) -> JobFacts:
     user = f"URL: {url or 'no disponible'}\n\n<oferta>\n{text}\n</oferta>"
-    return _parse(JOB_SYSTEM, user, JobFacts, effort="low")
+    return _parse(JOB_SYSTEM, user, JobFacts, effort="low", purpose="extract_job", sent=["url", "oferta"])
 
 
 # ---------------------------------------------------------------------- 2. CV
@@ -153,7 +156,8 @@ def rewrite_cv(draft: dict, job: dict, backed_skills: list[str]) -> CVRewrite:
         "habilidades_respaldadas": backed_skills,
         "bloques": blocks,
     }
-    return _parse(CV_SYSTEM, json.dumps(payload, ensure_ascii=False, indent=1), CVRewrite, effort="medium")
+    return _parse(CV_SYSTEM, json.dumps(payload, ensure_ascii=False, indent=1), CVRewrite, effort="medium",
+                  purpose="rewrite_cv", sent=list(payload))
 
 
 # ---------------------------------------------------------------------- 3. formularios
@@ -184,8 +188,10 @@ FORM_SYSTEM = (
 
 
 def answer_fields(fields: list[dict], context: dict) -> FormAnswers:
+    context = llm_privacy.scrub_contact(context)
     user = json.dumps({"fuentes": context, "campos": fields}, ensure_ascii=False, indent=1)
-    return _parse(FORM_SYSTEM, user, FormAnswers, effort="medium")
+    return _parse(FORM_SYSTEM, user, FormAnswers, effort="medium", purpose="answer_fields",
+                  sent=["fuentes." + k for k in context] + ["campos"])
 
 
 class CoverLetter(BaseModel):
@@ -193,10 +199,12 @@ class CoverLetter(BaseModel):
 
 
 def cover_letter(job: dict, context: dict) -> str:
+    context = llm_privacy.scrub_contact(context)
     system = ("Redactas cartas de presentación breves (máx. 220 palabras) y concretas, en el idioma de la vacante. "
               "Solo usas hechos del perfil entregado; no inventes cifras, herramientas ni logros. "
               "Sin fórmulas vacías ni adulación.")
     user = json.dumps({"vacante": {"cargo": job.get("title"), "empresa": job.get("company"),
                                    "requisitos": [s["name"] for s in job["skills"][:12]]},
                        "candidato": context}, ensure_ascii=False, indent=1)
-    return _parse(system, user, CoverLetter, effort="medium").text
+    return _parse(system, user, CoverLetter, effort="medium", purpose="cover_letter",
+                  sent=["vacante"] + ["candidato." + k for k in context]).text
