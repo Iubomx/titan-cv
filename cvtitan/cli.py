@@ -97,6 +97,8 @@ def cmd_import_cv(args):
     out = ws.root / "candidate" / "profile.draft.yaml"
     dump_yaml(draft, out)
     print(f"Borrador creado: {out}")
+    exps = draft["experience"]
+    print(f"Detected experiences: {len(exps)} · achievements to review: {sum(len(e['achievements']) for e in exps)}")
     print(f"Detected skills (unbacked): {len(draft['detected_skills'])}")
     print("Next step: validate with the candidate and move the data into candidate/profile.yaml.")
 
