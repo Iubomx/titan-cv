@@ -20,3 +20,7 @@ data/
 .env
 vault.titanvault
 *.titanvault
+
+# Artefactos de empaquetado (python -m build): nunca se versionan
+build/
+dist/
