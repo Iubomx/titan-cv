@@ -111,14 +111,15 @@ def _sr_one(cache: Path, tok: str, line: dict) -> list[dict]:
         postings += content or []
         if not content or len(content) < SR_PAGE:
             break
-    chosen = [p for p in postings if p.get("name") and p.get("id") and title_matches(p["name"], None, line)]
+    chosen = [p for p in postings if p.get("name") and p.get("id") and title_matches(p["name"], [], line)]
     chosen = chosen[:SR_MAX_DETAILS]                # la descripción completa solo se baja para cargos de interés
 
     def detail_of(p: dict) -> dict:
         if not p.get("ref"):
             return {}
         try:
-            return _cached(cache, f"sr-{tok}-{p['id']}", lambda u=p["ref"]: json.loads(_get(u))) or {}
+            data = _cached(cache, f"sr-{tok}-{p['id']}", lambda u=p["ref"]: json.loads(_get(u)))
+            return data if isinstance(data, dict) else {}
         except Exception:
             return {}
     from concurrent.futures import ThreadPoolExecutor

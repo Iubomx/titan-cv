@@ -166,7 +166,7 @@ def _norm_btn(text: str) -> str:
 
 def find_buttons(page) -> dict:
     """Clasifica botones visibles en next / submit / apply."""
-    found = {"next": [], "submit": [], "all": []}
+    found: dict[str, list] = {"next": [], "submit": [], "all": []}
     for i, frame in enumerate(frames(page)):
         try:
             buttons = frame.evaluate(BUTTONS_JS)

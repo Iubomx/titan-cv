@@ -17,7 +17,7 @@ GREEN, YELLOW, RED, GREY, CYAN, BOLD, RESET = ("\033[38;2;76;195;138m", "\033[38
 def _enable() -> bool:
     if os.environ.get("NO_COLOR") or not getattr(sys.stdout, "isatty", lambda: False)():
         return False
-    if os.name == "nt":                       # activar secuencias ANSI en la consola de Windows (PowerShell 5.1)
+    if sys.platform == "win32":                       # activar secuencias ANSI en la consola de Windows (PowerShell 5.1)
         try:
             import ctypes
             k = ctypes.windll.kernel32
@@ -102,7 +102,7 @@ def set_title(text: str) -> None:
     if not ON:
         return
     try:
-        if os.name == "nt":
+        if sys.platform == "win32":
             import ctypes
             ctypes.windll.kernel32.SetConsoleTitleW(text)
         else:
