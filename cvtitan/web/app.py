@@ -45,9 +45,10 @@ def create_app(ws: Workspace, headless: bool = False, start_runner: bool = True)
         return row
 
     def send(cmd: str, arg=None, **kw):
-        if runner is None:
+        active = app.state.runner
+        if active is None:
             raise HTTPException(503, "El robot del navegador no está activo.")
-        runner.send(cmd, arg, **kw)
+        active.send(cmd, arg, **kw)
 
     @app.get("/", response_class=HTMLResponse)
     def index():
@@ -81,8 +82,7 @@ def create_app(ws: Workspace, headless: bool = False, start_runner: bool = True)
         os.environ["ANTHROPIC_API_KEY"] = key
         return {"ok": True}
 
-    @app.post("/api/apply")
-    def apply(url: str = Body(..., embed=True), force: bool = Body(False, embed=True)):
+    def queue_application(url: str, force: bool = False) -> dict:
         url = url.strip()
         if not re.match(r"^https?://", url):
             raise HTTPException(400, "Pega el enlace completo de la vacante (https://...).")
@@ -105,6 +105,21 @@ def create_app(ws: Workspace, headless: bool = False, start_runner: bool = True)
         db.event(job_id, "info", "Postulación en cola.")
         send("start", job_id, force=force)
         return {"job_id": job_id}
+
+    @app.post("/api/apply")
+    def apply(url: str = Body(..., embed=True), force: bool = Body(False, embed=True)):
+        return queue_application(url, force)
+
+    @app.post("/api/funnel/{code}/queue")
+    def queue_from_funnel(code: str):
+        """Pasa una oferta del embudo a postulación. La URL real se resuelve en el servidor (la página solo ve códigos)."""
+        if not re.fullmatch(r"JOB-[0-9A-Fa-f]{8}", code):
+            raise HTTPException(400, "Código de oferta inválido.")
+        from ..privacy import resolve_ref
+        urls = resolve_ref(code, ws.db_path)
+        if not urls:
+            raise HTTPException(404, "No encuentro esa oferta: puede que el registro local ya no la tenga.")
+        return queue_application(urls[0], False)
 
     @app.get("/api/applications")
     def applications(status: str | None = None, search: str | None = None):
@@ -198,9 +213,9 @@ def create_app(ws: Workspace, headless: bool = False, start_runner: bool = True)
         return db.stats()
 
     @app.get("/api/funnel")
-    def funnel():
+    def funnel(limit: int = 40, tier: str | None = None):
         """Embudo de la última misión (sin URLs: solo códigos) con el desglose del puntaje por oferta."""
-        return insights.latest_funnel(ws.root / "data" / "auto" / "runs")
+        return insights.latest_funnel(ws.root / "data" / "auto" / "runs", limit=max(1, min(limit, 200)), tier=tier or None)
 
     @app.get("/api/weekly")
     def weekly_summary(days: int = 7):

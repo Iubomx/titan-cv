@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import csv
+import re
 from pathlib import Path
 
 from ..funnel import TIERS, summarize
@@ -17,7 +18,7 @@ def _number(value: str | None) -> float | None:
         return None
 
 
-def latest_funnel(runs_dir: Path, limit: int = 40) -> dict:
+def latest_funnel(runs_dir: Path, limit: int = 40, tier: str | None = None) -> dict:
     """Embudo del último `*-funnel.csv` (sin URLs: solo códigos). `file: None` si aún no hay misiones."""
     files = sorted(runs_dir.glob("*-funnel.csv")) if runs_dir.is_dir() else []
     if not files:
@@ -28,7 +29,11 @@ def latest_funnel(runs_dir: Path, limit: int = 40) -> dict:
     summary = summarize(records)
     rows = []
     for r in sorted(records, key=lambda r: (TIER_ORDER.get(r.get("tier") or "no", 9), -(_number(r.get("score")) or 0))):
+        if tier and (r.get("tier") or "no") != tier:
+            continue
         row = {k: r.get(k) or "" for k in ("line", "tier", "reason_category", "reason", "title", "company", "source", "ref")}
+        code = re.search(r"JOB-[0-9A-F]{8}", row["ref"])
+        row["code"] = code.group(0) if code else ""                  # código para pasar la oferta a postulación
         row["score"] = _number(r.get("score"))
         row["points"] = {k.removeprefix("pts_"): _number(r.get(k)) for k in POINT_COLUMNS if _number(r.get(k)) is not None}
         rows.append(row)

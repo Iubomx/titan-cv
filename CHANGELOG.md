@@ -4,6 +4,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 
 ## [Unreleased]
 
+### Added
+- Web, embudo: **filtro por nivel** y botón **Postular** en las ofertas con acción posible (`POST /api/funnel/{código}/queue`). La URL real se resuelve en el servidor a partir del código (la página nunca la ve), la acción exige el token de sesión y la postulación queda en cola para tu revisión antes de enviar. `GET /api/funnel` acepta `tier` y `limit` (máx. 200).
+
 ### Changed
 - Tipado: el job de mypy (bloqueante) cubre ahora 52 módulos (antes 35), incluidos `colors`, `report`, `cv_writer`, `llm`, `autopilot`, `telemetry`, `pipeline`, `apply/answers`, `apply/legal`, `apply/platforms` y la web (`web/app`, `web/insights`). Correcciones sin cambio de comportamiento; `llm._parse` es genérico y devuelve el tipo de su esquema.
 

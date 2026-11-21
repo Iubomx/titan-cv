@@ -135,13 +135,17 @@ h4 { margin: 0 0 8px; font-size: 13px; }
   <section class="stats" id="stats"></section>
 
   <section class="card" id="funnelCard" hidden>
-    <div class="hd"><h2>Embudo de la última misión</h2><span class="sub" id="funnelSub"></span></div>
+    <div class="hd"><h2>Embudo de la última misión</h2><span class="sub" id="funnelSub"></span>
+      <select id="funnelFilter" style="margin-left:auto" aria-label="Filtrar por nivel">
+        <option value="">Todos los niveles</option><option value="high">Alta</option><option value="held">En espera</option>
+        <option value="manual">Manual</option><option value="potential">Potencial</option><option value="review">Revisar</option>
+        <option value="no">No compatible</option></select></div>
     <div class="bd">
       <div id="funnelBars"></div>
       <div class="hint" id="funnelReasons"></div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Nivel</th><th>Oferta</th><th>Ajuste</th><th>Desglose del puntaje</th><th>Motivo</th></tr></thead>
+          <thead><tr><th>Nivel</th><th>Oferta</th><th>Ajuste</th><th>Desglose del puntaje</th><th>Motivo</th><th></th></tr></thead>
           <tbody id="funnelRows"></tbody>
         </table>
       </div>
@@ -380,7 +384,8 @@ $('#statusFilter').onchange = refresh;
 const TIER_LABEL = {high: 'Alta', held: 'En espera', manual: 'Manual', potential: 'Potencial', review: 'Revisar', no: 'No compatible'};
 const PT_LABEL = {compatibility: 'compat.', eligibility: 'elegib.', salary: 'sueldo', experience: 'exper.'};
 async function loadInsights() {
-  const [f, w] = await Promise.all([api('/api/funnel'), api('/api/weekly')]);
+  const tier = $('#funnelFilter').value;
+  const [f, w] = await Promise.all([api('/api/funnel?limit=100' + (tier ? '&tier=' + encodeURIComponent(tier) : '')), api('/api/weekly')]);
   $('#funnelCard').hidden = !f.file;
   if (f.file) {
     $('#funnelSub').textContent = f.file + ' · ' + f.total + ' ofertas';
@@ -394,7 +399,8 @@ async function loadInsights() {
       return `<tr><td><span class="tier ${esc(r.tier)}">${esc(TIER_LABEL[r.tier] || r.tier)}</span></td>
         <td><b>${esc(r.title)}</b><div class="hint">${esc(r.company)} · ${esc(r.source)} · ${esc(r.ref)}</div></td>
         <td>${r.score === null ? '-' : esc(r.score)}</td><td><div class="pts">${pts || '-'}</div></td>
-        <td class="hint">${esc(r.reason_category)}</td></tr>`;
+        <td class="hint">${esc(r.reason_category)}</td>
+        <td>${r.code && r.tier !== 'no' ? `<button class="small" data-queue="${esc(r.code)}">Postular</button>` : ''}</td></tr>`;
     }).join('');
   }
   const rate = w.response_rate === null ? 'n/d' : w.response_rate + '%';
@@ -408,6 +414,18 @@ async function loadInsights() {
       <span>${esc(e.company || '-')} · ${esc(e.title || e.job_id)} <span class="hint">${esc(e.note)}</span></span></div>`;
   }).join('') : '<div class="hint">Sin hitos en los próximos 7 días. Agrégalos con <code>titan track event</code>.</div>';
 }
+
+$('#funnelFilter').onchange = () => loadInsights().catch(() => {});
+$('#funnelRows').addEventListener('click', async e => {
+  const code = e.target.dataset && e.target.dataset.queue;
+  if (!code) return;
+  e.target.disabled = true;
+  try {
+    const r = await api('/api/funnel/' + encodeURIComponent(code) + '/queue', {method: 'POST'});
+    toast(r.existing ? 'Ya estaba en tu lista de postulaciones' : 'En cola: revisa «Requiere tu atención» antes de enviar');
+    refresh();
+  } catch (err) { toast(err.message); e.target.disabled = false; }
+});
 
 loadHealth().then(refresh);
 loadInsights().catch(() => {});
