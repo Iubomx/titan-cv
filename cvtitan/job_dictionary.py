@@ -14,9 +14,9 @@ import re
 from functools import lru_cache
 from pathlib import Path
 
-from .utils import normalize
+from .utils import PACKAGE_ROOT, normalize
 
-DICT_PATH = Path(__file__).resolve().parents[1] / "config" / "job_dictionary.json"
+DICT_PATH = PACKAGE_ROOT / "config" / "job_dictionary.json"
 # Reglas del candidato que el diccionario no puede saltarse.
 NEVER = re.compile(r"\bjunior\b|\bjr\b|\btrainee\b|\bintern(ship)?\b")
 

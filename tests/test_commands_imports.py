@@ -29,7 +29,9 @@ def _defined_names(source_file: str) -> set[str]:
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
             names.add(node.name)
         elif isinstance(node, ast.Assign):
-            names |= {t.id for t in node.targets if isinstance(t, ast.Name)}
+            for target in node.targets:
+                elements = target.elts if isinstance(target, ast.Tuple) else [target]   # a, b = ...
+                names |= {e.id for e in elements if isinstance(e, ast.Name)}
         elif isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name):
             names.add(node.target.id)
         elif isinstance(node, (ast.Import, ast.ImportFrom)):

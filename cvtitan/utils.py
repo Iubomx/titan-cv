@@ -10,7 +10,18 @@ from pathlib import Path
 
 import yaml
 
-PACKAGE_ROOT = Path(__file__).resolve().parent.parent
+def _resource_root() -> tuple[Path, bool]:
+    """(carpeta con `config/` y `candidate/`, ¿es una copia del código fuente?).
+
+    En un clon del repositorio son la raíz del repo. En una instalación (pip/wheel) viajan dentro del paquete, en
+    `cvtitan/resources/`, y el espacio de trabajo por defecto es la carpeta actual (nunca site-packages)."""
+    checkout = Path(__file__).resolve().parent.parent
+    if (checkout / "config" / "skills_taxonomy.yaml").exists():
+        return checkout, True
+    return Path(__file__).resolve().parent / "resources", False
+
+
+PACKAGE_ROOT, IS_CHECKOUT = _resource_root()
 
 _NUM = re.compile(r"\d+(?:[.,]\d+)*")
 
@@ -62,7 +73,7 @@ class Workspace:
 
     @classmethod
     def resolve(cls, root: str | os.PathLike | None = None) -> "Workspace":
-        base = root or os.environ.get("CVTITAN_HOME") or PACKAGE_ROOT
+        base = root or os.environ.get("CVTITAN_HOME") or (PACKAGE_ROOT if IS_CHECKOUT else Path.cwd())
         return cls(Path(base).resolve())
 
     @property

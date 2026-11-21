@@ -16,9 +16,9 @@ from pathlib import Path
 
 from . import markets
 from .db import DB, PROCESS_STATUSES as PROCESS
-from .utils import Workspace, load_yaml, normalize
+from .utils import PACKAGE_ROOT, Workspace, load_yaml, normalize
 
-AUTO_PATH = Path(__file__).resolve().parents[1] / "config" / "auto.yaml"
+AUTO_PATH = PACKAGE_ROOT / "config" / "auto.yaml"
 
 
 def load_rules(ws: Workspace) -> dict:
