@@ -87,9 +87,11 @@ class Geo:
         return dict(r) if r else None
 
     def countries(self, continent: str | None = None) -> list[dict]:
-        sql, args = "SELECT * FROM geo_countries", ()
+        sql = "SELECT * FROM geo_countries"
+        args: tuple = ()
         if continent:
-            sql, args = sql + " WHERE continent=?", (continent,)
+            sql += " WHERE continent=?"
+            args = (continent,)
         return [dict(r) for r in self.conn.execute(sql + " ORDER BY population DESC", args)]
 
     def cities(self, country: str, min_population: int = 300_000, limit: int = 50, merge_km: float = 25) -> list[dict]:

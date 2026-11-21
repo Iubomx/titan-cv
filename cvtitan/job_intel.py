@@ -147,7 +147,7 @@ def _microdata_posting(raw: str) -> dict | None:
     if skills:
         tags = [html.unescape(t).strip() for t in re.findall(r">([^<]+)</a>", skills.group(1))]
         if tags:
-            meta["text"] += "\n\nTecnologías: " + ", ".join(tags) + "."
+            meta["text"] = (meta.get("text") or "") + "\n\nTecnologías: " + ", ".join(tags) + "."
     return meta
 
 
@@ -191,7 +191,7 @@ def detect_language(text: str) -> str:
     if not words:
         return "es"
     counts = {lang: sum(words.count(w) for w in vocab) for lang, vocab in LANG_WORDS.items()}
-    return max(counts, key=counts.get)
+    return max(counts, key=lambda lang: counts[lang])
 
 
 # Texto de la plataforma (no del aviso) que el detector confundiría con requisitos.
@@ -277,7 +277,7 @@ def _salary(text: str) -> dict:
             continue
         if not re.search(r"\d", ln):
             continue
-        out = {"salary_text": line.strip()[:160]}
+        out: dict = {"salary_text": line.strip()[:160]}
         for code, pat in CURRENCIES:
             if re.search(pat, ln):
                 out["salary_currency"] = code
