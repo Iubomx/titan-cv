@@ -51,10 +51,18 @@ Changelog = "https://github.com/Stoneroadd/titan-cv/blob/main/CHANGELOG.md"
 cvtitan = "cvtitan.cli:main"
 
 [tool.setuptools]
-packages = ["cvtitan", "cvtitan.apply", "cvtitan.web", "cvtitan.ui", "cvtitan.commands"]
+packages = ["cvtitan", "cvtitan.apply", "cvtitan.web", "cvtitan.ui", "cvtitan.commands", "cvtitan.resources",
+            "cvtitan.resources.config", "cvtitan.resources.candidate"]
+
+[tool.setuptools.package-dir]
+# config/ y candidate/ (plantillas) viven en la raíz del repo y se empaquetan dentro de cvtitan/resources/.
+"cvtitan.resources.config" = "config"
+"cvtitan.resources.candidate" = "candidate"
 
 [tool.setuptools.package-data]
 "cvtitan.web" = ["static/*"]
+"cvtitan.resources.config" = ["*.yaml", "*.json"]
+"cvtitan.resources.candidate" = ["*.example.yaml", "examples/*.example.yaml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

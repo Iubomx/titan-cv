@@ -24,7 +24,7 @@ from .. import evidence, job_intel, local_sources, markets, scoring
 from ..market import MarketCache, job_record
 from .legal import remote_eligibility
 from ..db import PROCESS_STATUSES
-from ..utils import Workspace
+from ..utils import PACKAGE_ROOT, Workspace
 from .batch import BatchApplier, clean_job_url, is_job_url
 from .platforms import detect
 
@@ -64,7 +64,7 @@ def vs_expectation(salary: dict, prefs: dict) -> str:
 YES = {"x", "si", "sí", "s", "1", "yes", "y", "true"}
 
 
-KEYWORDS_PATH = Path(__file__).resolve().parents[2] / "config" / "search_keywords.yaml"
+KEYWORDS_PATH = PACKAGE_ROOT / "config" / "search_keywords.yaml"
 SOURCES = ("getonboard", "computrabajo", "chiletrabajos", "indeed", "linkedin")
 COMPANIES_PATH = KEYWORDS_PATH.parent / "companies.yaml"
 SF_PAGE = 25            # resultados por página en portales SuccessFactors
@@ -138,7 +138,11 @@ def search_sources(keywords: list[str], where: list[str], location: str,
     return urls
 
 
-PAGE_CACHE = Path(__file__).resolve().parents[2] / "data" / "cache" / "pages"
+def _page_cache() -> Path:
+    """Caché de páginas del espacio de trabajo por defecto (nunca dentro del paquete instalado)."""
+    return Workspace.resolve(None).root / "data" / "cache" / "pages"
+
+
 PAGE_CACHE_HOURS = 24
 
 
@@ -147,7 +151,7 @@ def http_get(url: str, cache: bool | None = None) -> str:
     import hashlib
     import time as _time
     use_cache = is_job_url(url) if cache is None else cache
-    path = PAGE_CACHE / (hashlib.sha1(url.encode("utf-8")).hexdigest() + ".html")
+    path = _page_cache() / (hashlib.sha1(url.encode("utf-8")).hexdigest() + ".html")
     if use_cache and path.exists() and _time.time() - path.stat().st_mtime < PAGE_CACHE_HOURS * 3600:
         return path.read_text(encoding="utf-8", errors="replace")
     from ..net import fetch

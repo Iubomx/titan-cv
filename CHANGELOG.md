@@ -4,6 +4,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 
 ## [Unreleased]
 
+### Fixed
+- **El wheel/sdist no incluía `config/` ni las plantillas de `candidate/`**: tras `pip install`, `validate` e `init --plantilla` fallaban. Ahora viajan en `cvtitan/resources/`; en una instalación el espacio de trabajo por defecto es la carpeta actual (antes habría sido `site-packages`) y la caché de páginas ya no se escribe dentro del paquete. Nuevo job `package` en el CI: construye el wheel, lo instala en un entorno limpio y lo usa desde una carpeta vacía.
+
 ## [0.1.0] - 2026-11-20
 
 Primera versión etiquetada. Reúne la publicación inicial y todo lo siguiente: seguridad (envío con revisión humana,

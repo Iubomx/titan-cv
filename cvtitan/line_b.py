@@ -12,7 +12,6 @@ import csv
 import re
 from collections import Counter
 from datetime import datetime
-from pathlib import Path
 from urllib.parse import quote_plus
 
 from . import evidence, job_intel, markets, scoring, sources, telemetry
@@ -23,7 +22,7 @@ from .db import DB, PROCESS_STATUSES
 from .market import DEFAULT_FX, _monthly_usd
 from .profile import Profile
 from .taxonomy import Taxonomy
-from .utils import Workspace, load_yaml, normalize
+from .utils import PACKAGE_ROOT, Workspace, load_yaml, normalize
 
 def ELIG_EN(counts) -> dict:
     names = {"ok": "eligible", "ambiguo": "ambiguous", "excluido": "excluded"}
@@ -36,7 +35,7 @@ TITLE_PLACE = re.compile(r"(?<![A-Za-z])(US|USA|U\.S\.|UK|EMEA|APAC|EU|DACH|ANZ)
                          r"new zealand|brazil|japan|singapore)\b)")
 
 
-LINES_PATH = Path(__file__).resolve().parents[1] / "config" / "lines.yaml"
+LINES_PATH = PACKAGE_ROOT / "config" / "lines.yaml"
 COLUMNS = ["decision", "nivel", "motivo", "score_linea", "compatibilidad", "pts_elegibilidad", "pts_sueldo", "pts_experiencia", "elegibilidad", "sueldo_usd_mes", "cargo", "empresa",
            "fuente", "regiones", "idioma", "nivel", "brechas", "url"]
 
