@@ -4,6 +4,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 
 ## [Unreleased]
 
+### Fixed
+- **Duplicados entre portales en la Línea B:** su huella era más débil que la del registro global, así que «Sr. Data Engineer [LATAM]» y «Senior Data Engineer» (o «Acme Group» y «Acme») contaban como ofertas distintas y se podía postular dos veces. Ahora `line_b.fingerprint` usa la misma normalización que el registro (`registry.norm_company` / `norm_title`).
+
 ### Added
 - Web: panel **Embudo de la última misión** (niveles, motivos de descarte y desglose del puntaje por oferta; sin URLs) y panel **Semana y agenda** (envíos, tasa de respuesta, hitos). Nuevos `GET /api/funnel` y `GET /api/weekly` (`web/insights.py`).
 

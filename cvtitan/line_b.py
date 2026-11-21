@@ -17,6 +17,7 @@ from urllib.parse import quote_plus
 from . import evidence, job_intel, markets, scoring, sources, telemetry
 from .apply import intl_sources
 from .apply.legal import remote_eligibility
+from .registry import norm_company, norm_title
 from .apply.search import adjusted_score
 from .db import DB, PROCESS_STATUSES
 from .market import DEFAULT_FX, _monthly_usd
@@ -49,9 +50,11 @@ def load_line(ws: Workspace, key: str) -> dict:
 
 
 def fingerprint(company: str | None, title: str | None) -> str:
-    c = re.sub(r"\b(inc|llc|ltd|gmbh|s\.?a\.?|spa|corp|co)\b\.?", "", normalize(company or ""))
-    t = re.sub(r"\(.*?\)|\b(remote|remoto|latam|worldwide|- .*)$", "", normalize(title or ""))
-    return re.sub(r"[^a-z0-9]+", " ", f"{c}|{t}").strip()
+    """Huella de una oferta para detectar duplicados entre portales y contra el historial.
+
+    Usa la misma normalización que el registro global (`registry.norm_company` / `norm_title`): sin sufijos de
+    empresa (Inc, S.A., Group...), sin «(Remote)», «[LATAM]» ni « - Ciudad», y con «Sr.»/«Jr.» como senior/junior."""
+    return f"{norm_company(company)}|{norm_title(title)}"
 
 
 def _flat(text: str) -> str:
