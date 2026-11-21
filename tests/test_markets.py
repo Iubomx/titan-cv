@@ -8,7 +8,7 @@ from cvtitan.apply import intl_sources
 from cvtitan.apply.search import vs_expectation
 from cvtitan.market import _monthly_usd
 
-PERU = markets.Market(key="peru", country="Peru", home_regex=r"peru|lima|latam", default_currency="PEN",
+PERU = markets.Market(key="testland", country="Peru", home_regex=r"peru|lima|latam", default_currency="PEN",
                       no_currency_threshold=5_000, local_sources=("computrabajo",), accept_language="es-PE,es;q=0.9")
 
 
@@ -32,7 +32,7 @@ def test_default_market_is_chile():
 
 def test_configure_reads_market_from_lines_yaml(tmp_path):
     markets.register(PERU)
-    assert markets.configure(_lines_yaml(tmp_path, "peru")).country == "Peru"
+    assert markets.configure(_lines_yaml(tmp_path, "testland")).country == "Peru"
     assert markets.active() is PERU
 
 
@@ -53,7 +53,7 @@ def test_plugin_cannot_replace_builtin_chile():
 
 def test_market_plugin_entry_point_is_loaded(monkeypatch):
     class EP:
-        name = "peru"
+        name = "testland"
 
         @staticmethod
         def load():
@@ -61,7 +61,7 @@ def test_market_plugin_entry_point_is_loaded(monkeypatch):
 
     monkeypatch.setattr(markets, "_plugins_loaded", False)
     monkeypatch.setattr("importlib.metadata.entry_points", lambda group=None: [EP])
-    assert markets.get("peru") is PERU
+    assert markets.get("testland") is PERU
 
 
 def test_salary_without_currency_uses_market_default():

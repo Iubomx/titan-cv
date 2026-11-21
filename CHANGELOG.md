@@ -4,6 +4,15 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 
 ## [Unreleased]
 
+### Added
+- **Catálogo de portales de empleo** (`config/job_boards.yaml`, `docs/portales.md`): Indeed en 62 países, Computrabajo en 16 y cuatro portales comprobados contra el sitio real (elempleo, Catho, Reed, Job Bank). Cada portal es una entrada de datos (plantilla de búsqueda, patrón de enlace de oferta, lectura con o sin navegador y limpieza opcional del título); se pueden sumar los propios en `config/job_boards.yaml` del espacio de trabajo. `scripts/probe_board.py` comprueba un portal antes de agregarlo.
+- **Mercados por país**: `mexico`, `argentina`, `colombia`, `peru`, `uruguay`, `ecuador`, `espana`, `brasil`, `usa`, `uk` y `canada` (`lines.A.market`), cada uno con sus portales, su moneda y los términos de su región. `buscar` usa por defecto los del mercado activo (antes estaba atado a Chile) y respeta `--en`. Los sueldos sin moneda solo se asumen en la moneda local donde no chocan con montos en USD (Chile, Argentina, Colombia).
+- Monedas nuevas en la tabla de cambio (MXN, ARS, COP, PEN, UYU, BRL, GBP, CAD).
+
+### Fixed
+- `net.fetch` reintenta con `urllib` cuando `httpx` no logra conectar (`jobbank.gc.ca` respondía a `curl` y a `urllib` pero dejaba colgado el apretón TLS de `httpx`).
+- Los enlaces de Job Bank llevaban `;jsessionid=...` y se contaban como ofertas distintas; ahora se limpian.
+
 ### Fixed
 - **Duplicados entre portales en la Línea B:** su huella era más débil que la del registro global, así que «Sr. Data Engineer [LATAM]» y «Senior Data Engineer» (o «Acme Group» y «Acme») contaban como ofertas distintas y se podía postular dos veces. Ahora `line_b.fingerprint` usa la misma normalización que el registro (`registry.norm_company` / `norm_title`).
 

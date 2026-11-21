@@ -36,14 +36,41 @@ CHILE = Market(
     accept_language="es-CL,es;q=0.9", scan_label="Scanning Chilean job boards",
     agent_label="Chilean boards and mining career sites")
 
-_MARKETS: dict[str, Market] = {CHILE.key: CHILE}
+NO_GUESS = 10 ** 12          # un sueldo sin moneda NUNCA se asume en la moneda local (montos ambiguos con USD)
+
+
+def _market(key: str, country: str, home_regex: str, currency: str, sources: tuple[str, ...], lang: str,
+            threshold: float = NO_GUESS) -> Market:
+    return Market(key=key, country=country, home_regex=home_regex, default_currency=currency,
+                  no_currency_threshold=threshold, local_sources=sources, accept_language=lang,
+                  scan_label=f"Scanning {country} job boards", agent_label=f"{country} boards and career sites")
+
+
+LATAM = r"|latam|latin america"
+# Portales del catálogo comprobados (config/job_boards.yaml). Chile conserva sus fuentes y umbral históricos.
+BUILTIN: tuple[Market, ...] = (
+    CHILE,
+    _market("mexico", "Mexico", r"m[eé]xico|cdmx" + LATAM, "MXN", ("computrabajo_mx", "indeed_mx", "linkedin", "getonboard"), "es-MX,es;q=0.9"),
+    _market("argentina", "Argentina", r"argentina|buenos aires" + LATAM, "ARS", ("computrabajo_ar", "indeed_ar", "linkedin", "getonboard"), "es-AR,es;q=0.9", 200_000),
+    _market("colombia", "Colombia", r"colombia|bogot[aá]|medell[ií]n" + LATAM, "COP", ("computrabajo_co", "elempleo_co", "indeed_co", "linkedin", "getonboard"), "es-CO,es;q=0.9", 1_500_000),
+    _market("peru", "Peru", r"per[uú]|lima" + LATAM, "PEN", ("computrabajo_pe", "indeed_pe", "linkedin", "getonboard"), "es-PE,es;q=0.9"),
+    _market("uruguay", "Uruguay", r"uruguay|montevideo" + LATAM, "UYU", ("computrabajo_uy", "indeed_uy", "linkedin", "getonboard"), "es-UY,es;q=0.9"),
+    _market("ecuador", "Ecuador", r"ecuador|quito|guayaquil" + LATAM, "USD", ("computrabajo_ec", "indeed_ec", "linkedin"), "es-EC,es;q=0.9"),
+    _market("espana", "Spain", r"espa[nñ]a|spain|madrid|barcelona|emea|europe", "EUR", ("indeed_es", "linkedin"), "es-ES,es;q=0.9"),
+    _market("brasil", "Brazil", r"brasil|brazil|s[aã]o paulo" + LATAM, "BRL", ("catho_br", "indeed_br", "linkedin"), "pt-BR,pt;q=0.9"),
+    _market("usa", "United States", r"united states|usa|north america|americas", "USD", ("indeed_us", "linkedin"), "en-US,en;q=0.9"),
+    _market("uk", "United Kingdom", r"united kingdom|\buk\b|england|london|emea|europe", "GBP", ("reed_uk", "indeed_uk", "linkedin"), "en-GB,en;q=0.9"),
+    _market("canada", "Canada", r"canada|north america|americas", "CAD", ("jobbank_ca", "indeed_ca", "linkedin"), "en-CA,en;q=0.9"),
+)
+_BUILTIN_BY_KEY = {m.key: m for m in BUILTIN}
+_MARKETS: dict[str, Market] = dict(_BUILTIN_BY_KEY)
 _active: Market = CHILE
 _plugins_loaded = False
 
 
 def register(market: Market) -> Market:
-    if market.key in _MARKETS and market.key == CHILE.key and market is not CHILE:
-        warnings.warn("El mercado 'chile' es integrado; se ignora el plugin que intenta reemplazarlo.")
+    if market.key in _BUILTIN_BY_KEY and market is not _BUILTIN_BY_KEY[market.key]:
+        warnings.warn(f"El mercado '{market.key}' es integrado; se ignora el plugin que intenta reemplazarlo.")
         return market
     _MARKETS[market.key] = market
     return market

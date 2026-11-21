@@ -6,6 +6,7 @@ import argparse
 import sys
 from pathlib import Path
 
+from .. import markets
 from ..colors import mark, tally
 from ..utils import Workspace
 from ._common import CliError
@@ -64,7 +65,7 @@ def _cmd_postular(args):
               + ("" if args.confirmar else " Submitting without asking: you selected them."))
         sources += selected
     for kw in args.linkedin or []:
-        sources.append(linkedin_search_url(kw, args.lugar, easy_apply=not args.todas))
+        sources.append(linkedin_search_url(kw, args.lugar or markets.active().country, easy_apply=not args.todas))
     if not sources:
         raise CliError("Provide at least one URL (job or listing) or --linkedin \"keywords\".")
     headless = not args.ver
@@ -163,12 +164,13 @@ def _cmd_buscar(args):
     from ..apply.search import run_search
 
     ws = Workspace.resolve(args.root)
-    where = [w.strip().lower().replace(" ", "") for w in args.en.split(",")]
+    market = markets.active()
+    where = [w.strip().lower().replace(" ", "") for w in (args.en or ",".join(market.local_sources)).split(",")]
     out = Path(args.salida) if args.salida else ws.root / "data" / "busqueda.csv"
     groups = [g.strip() for g in args.grupo.split(",")] if args.grupo else None
     try:
         _quiet_process()
-        path, rows = run_search(ws, args.palabras, where, args.lugar, args.url or [], args.max, out, not args.ver,
+        path, rows = run_search(ws, args.palabras, where, args.lugar or market.country, args.url or [], args.max, out, not args.ver,
                                 groups, companies=not args.sin_empresas)
     except ValueError as e:
         raise CliError(str(e)) from e
@@ -236,11 +238,12 @@ def register(sub) -> None:
     s.add_argument("palabras", nargs="*",
                    help="Keywords. Without keywords, uses config/search_keywords.yaml.")
     s.add_argument("--grupo", help="Keyword groups, e.g. mineria,software (default: all).")
-    s.add_argument("--en", default="getonboard,computrabajo,chiletrabajos,indeed,linkedin",
-                   help="Sources: getonboard,computrabajo,chiletrabajos,indeed,linkedin (default: all).")
+    s.add_argument("--en", default=None,
+                   help="Sources, comma separated (default: those of your market, see lines.A.market). Any name of the "
+                        "catalog (config/job_boards.yaml): getonboard, linkedin, indeed_mx, computrabajo_co, reed_uk...")
     s.add_argument("--sin-empresas", action="store_true",
                    help="Skip mining company career sites (config/companies.yaml).")
-    s.add_argument("--lugar", default="Chile", help="LinkedIn location (default: Chile).")
+    s.add_argument("--lugar", default=None, help="Search location (default: the country of your market).")
     s.add_argument("--url", action="append", help="Extra listing URL (repeatable).")
     s.add_argument("--max", type=int, default=10, help="Max jobs per keyword and source (default: 10).")
     s.add_argument("--salida", help="Output CSV file (default: data/busqueda.csv).")
@@ -252,7 +255,7 @@ def register(sub) -> None:
     s.add_argument("urls", nargs="*", help="Job or listing URLs (e.g. https://www.getonbrd.com/jobs-postgres).")
     s.add_argument("--linkedin", action="append", metavar="PALABRAS",
                    help="Search LinkedIn (Easy Apply). Repeatable: --linkedin python --linkedin \"power bi\".")
-    s.add_argument("--lugar", default="Chile", help="LinkedIn search location (default: Chile).")
+    s.add_argument("--lugar", default=None, help="LinkedIn search location (default: the country of your market).")
     s.add_argument("--todas", action="store_true", help="LinkedIn: include jobs without Easy Apply.")
     s.add_argument("--max", type=int, default=15, help="Max jobs per run (default: 15).")
     s.add_argument("--lista", help="CSV from `cvtitan buscar`: apply to rows marked with x without asking.")

@@ -11,7 +11,9 @@ from collections.abc import Callable
 from datetime import datetime, timedelta
 from pathlib import Path
 
-DEFAULT_FX = {"USD": 1.0, "CLP": 1 / 950, "UF": 39000 / 950, "EUR": 1.08}   # supuestos: editables en settings.yaml
+# Aproximaciones (USD por unidad), editables en settings.yaml; con `fx_auto: true` se refrescan las monedas ISO.
+DEFAULT_FX = {"USD": 1.0, "CLP": 1 / 950, "UF": 39000 / 950, "EUR": 1.08, "MXN": 0.055, "ARS": 0.001, "COP": 0.00025,
+              "PEN": 0.27, "UYU": 0.025, "BRL": 0.18, "GBP": 1.27, "CAD": 0.73}
 API_URL = "https://open.er-api.com/v6/latest/USD"
 CACHE_HOURS = 24
 FIXED = {"USD", "UF"}                       # no se actualizan desde la API
