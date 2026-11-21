@@ -45,7 +45,7 @@ def _offer(source: str, ats: str, token: str, url: str, apply_url: str | None, t
 
 
 # ---------------------------------------------------------------- Workable
-def _workable_one(cache: Path, tok: str) -> list[dict]:
+def _workable_one(cache: Path, tok: str, include_posted_metadata: bool) -> list[dict]:
     data = _cached(cache, f"wk-{tok}", lambda t=tok: json.loads(
         _get(f"https://apply.workable.com/api/v1/widget/accounts/{t}?details=true")))
     if not isinstance(data, dict):
@@ -56,13 +56,25 @@ def _workable_one(cache: Path, tok: str) -> list[dict]:
             continue
         remote = bool(j.get("telecommuting"))
         loc = _location(remote, j.get("country") or "", j.get("city") or "")
-        out.append(_offer("Workable", "workable", tok, j["url"], j.get("application_url"), j["title"],
-                          data.get("name"), j.get("description") or "", remote, loc))
+        offer = _offer("Workable", "workable", tok, j["url"], j.get("application_url"), j["title"],
+                       data.get("name"), j.get("description") or "", remote, loc)
+        if include_posted_metadata:
+            locations = []
+            for place in j.get("locations") or []:
+                if not place.get("hidden"):
+                    locations.append(", ".join(value for value in
+                                               (place.get("city"), place.get("region"), place.get("country")) if value))
+            offer.update(workplace_type="remote" if remote else "on-site",
+                         location=" | ".join(filter(None, locations)) or loc,
+                         posting_regions=list(filter(None, locations)) if remote else None,
+                         posted_at=j.get("published_on"), posted_basis="Publicada por el empleador")
+        out.append(offer)
     return out
 
 
-def workable(cache: Path, tokens: list[str]) -> list[dict]:
-    return _per_token(tokens, lambda tok: _workable_one(cache, tok))
+def workable(cache: Path, tokens: list[str], line: dict | None = None) -> list[dict]:
+    include_posted_metadata = bool((line or {}).get("include_posted_metadata"))
+    return _per_token(tokens, lambda tok: _workable_one(cache, tok, include_posted_metadata))
 
 
 # ---------------------------------------------------------------- Recruitee
@@ -132,8 +144,12 @@ def _sr_one(cache: Path, tok: str, line: dict) -> list[dict]:
         country = str(loc_info.get("country") or "").upper()
         loc = _location(remote, country, loc_info.get("city") or "", loc_info.get("fullLocation") or "")
         url = detail.get("postingUrl") or f"https://jobs.smartrecruiters.com/{tok}/{p['id']}"
-        out.append(_offer("SmartRecruiters", "smartrecruiters", tok, url, detail.get("applyUrl"), p["name"],
-                          (p.get("company") or {}).get("name"), _sr_body(detail), remote, loc))
+        offer = _offer("SmartRecruiters", "smartrecruiters", tok, url, detail.get("applyUrl"), p["name"],
+                       (p.get("company") or {}).get("name"), _sr_body(detail), remote, loc)
+        offer.update(location=loc, workplace_type="remote" if remote else "on-site",
+                     posted_at=detail.get("releasedDate") or p.get("releasedDate"),
+                     posted_basis="Publicada por el empleador")
+        out.append(offer)
     return out
 
 

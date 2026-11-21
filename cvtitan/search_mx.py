@@ -3,18 +3,20 @@ from __future__ import annotations
 
 import csv
 import re
-from datetime import date
+from collections import Counter
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import urlparse
 
 from . import evidence, job_intel, line_b, sources
+from .apply.public_boards import getonboard_company
 from .profile import Profile
 from .utils import PACKAGE_ROOT, Workspace, load_yaml, normalize
 
 CONFIG = Path("config/search_mx.yaml")
 COLUMNS = (
     "cargo", "empresa", "areas", "modalidad", "ubicacion_publicada", "score", "obligatorios_%",
-    "habilidades_respaldadas", "requisitos_por_validar", "sueldo_publicado", "fuente", "consultada", "url",
+    "habilidades_respaldadas", "requisitos_por_validar", "sueldo_publicado", "fuente", "fecha_publicacion", "tipo_fecha", "consultada", "url",
 )
 METRO = re.compile(
     r"\b(monterrey|apodaca|san pedro(?: garza garcia)?|san nicolas(?: de los garza)?|santa catarina|"
@@ -25,7 +27,7 @@ MEXICO = re.compile(r"\b(mexico|mx)\b")
 STATE = re.compile(r"\b(nuevo leon|n\.?\s*l\.?)\b")
 CAPITAL = re.compile(r"\b(mexico city|ciudad de mexico|cdmx)\b")
 OTHER_CITY = re.compile(r"\b(guadalajara|puebla|queretaro|merida|tijuana|toluca)\b")
-REMOTE = re.compile(r"\b(remote|remot[oa]|teletrabajo|telecommute)\b")
+REMOTE = re.compile(r"\b(remote|remot[oa]|teletrabajo|telecommute|wfh|work from home|trabajo desde casa)\b")
 HYBRID = re.compile(r"\b(hybrid|hibrid[oa])\b")
 ONSITE = re.compile(r"\b(on[- ]?site|presencial)\b")
 REGION = re.compile(r"\b(latam|latin america|latinoamerica|america latina|worldwide|anywhere|global(?:ly)?)\b")
@@ -55,7 +57,7 @@ CLOSED = re.compile(
 
 def _location(offer: dict) -> tuple[str, str] | None:
     """Devuelve modalidad y evidencia geográfica. Una región desconocida queda fuera."""
-    regions = offer.get("regions") or []
+    regions = offer.get("posting_regions") or offer.get("regions") or []
     official = str(offer.get("location") or offer.get("onsite") or "")
     place = normalize(official)
     workplace = normalize(offer.get("workplace_type"))
@@ -78,7 +80,9 @@ def _location(offer: dict) -> tuple[str, str] | None:
     explicit = EXPLICIT_REMOTE.search(text) or ANY_MEXICO.search(text)
     region_evidence = remote_places or place
     city_restriction = CAPITAL.search(region_evidence) or CAPITAL.search(title) or OTHER_CITY.search(region_evidence)
-    if city_restriction and not ANY_MEXICO.search(text):
+    metro_location = any(METRO.search(normalize(region)) and MEXICO.search(normalize(region)) for region in regions)
+    country_location = any(re.fullmatch(r"(?:remote\s*[-:]?\s*)?(?:mexico|mx)", normalize(region)) for region in regions)
+    if city_restriction and not (explicit or metro_location or country_location):
         return None
     if region_evidence and not (MEXICO.search(region_evidence) or REGION.search(region_evidence)):
         if not re.fullmatch(r"(?:remote|remot[oa]|location not stated)", region_evidence):
@@ -102,13 +106,21 @@ def _areas(offer: dict, sectors: dict, exclude: str) -> list[str]:
     ]
 
 
-def _open(offer: dict) -> bool:
-    end = offer.get("valid_through")
-    if end:
-        try:
-            if date.fromisoformat(str(end)[:10]) < date.today():
-                return False
-        except ValueError:
+def _source_date(raw) -> date | None:
+    try:
+        if isinstance(raw, (int, float)):
+            seconds = raw / 1000 if raw >= 100_000_000_000 else raw
+            return datetime.fromtimestamp(seconds, timezone.utc).date()
+        return date.fromisoformat(str(raw)[:10])
+    except (ValueError, OverflowError, OSError):
+        return None
+
+
+def _open(offer: dict, today: date) -> bool:
+    raw_end = offer.get("valid_through")
+    if raw_end:
+        end = _source_date(raw_end)
+        if not end or end < today:
             return False
     return not CLOSED.search(normalize(offer.get("text")))
 
@@ -120,7 +132,7 @@ def _csv_value(value):
     return value
 
 
-def search(ws: Workspace, profile: Profile, requested: list[str], out: Path, say=print) -> tuple[int, int]:
+def search(ws: Workspace, profile: Profile, requested: list[str], out: Path, days: int, say=print) -> tuple[dict[str, int], int, int]:
     path = ws.root / CONFIG
     cfg = load_yaml(path if path.exists() else PACKAGE_ROOT / CONFIG)
     sectors = cfg["areas"]
@@ -137,27 +149,40 @@ def search(ws: Workspace, profile: Profile, requested: list[str], out: Path, say
     ))
     line["exclude_titles"] = cfg.get("exclude_titles", "")
     line["world_scan"] = False
+    line["include_posted_metadata"] = True
 
     offers, stats = line_b.collect_offers(ws, line, say=say, use_linkedin=False)
     if not any(isinstance(count, int) for count in stats.values()):
         raise ValueError("Las fuentes no respondieron. Vuelve a intentar más tarde.")
 
+    today = date.today()
+    earliest = today - timedelta(days=days - 1)
     rows, seen = [], set()
+    counts = Counter(dict.fromkeys(selected, 0))
+    undated = set()
     for offer in offers:
         url = str(offer.get("apply_url") or offer.get("url") or "")
         if urlparse(url).scheme != "https" or not urlparse(url).hostname or not offer.get("title"):
             continue
         areas = _areas(offer, selected, line["exclude_titles"])
         location = _location(offer)
-        if not areas or not location or not _open(offer):
+        if not areas or not location or not offer.get("text") or not _open(offer, today):
             continue
-        key = line_b.fingerprint(offer.get("company"), offer["title"]), location[0]
-        if key in seen:
+        key = (line_b.fingerprint(offer.get("company"), offer["title"]) if offer.get("company") else url, location[0])
+        posted = _source_date(offer.get("posted_at"))
+        if posted is None:
+            undated.add(key)
+            continue
+        if not earliest <= posted <= today or key in seen:
             continue
         seen.add(key)
+        counts.update(areas)
 
-        job = job_intel.analyze(offer.get("text") or offer["title"], profile.tax, title=offer["title"],
-                                company=offer.get("company"), url=url, job_id="busqueda-mx",
+        company = offer.get("company")
+        if not company and offer.get("source") == "Get on Board":
+            company = getonboard_company(ws.root / "data" / "cache", offer.get("company_id"))
+        job = job_intel.analyze(offer["text"], profile.tax, title=offer["title"],
+                                company=company, url=url, job_id="busqueda-mx",
                                 meta=offer.get("salary"))
         fit = evidence.match(job, profile, profile.tax)
         rows.append({
@@ -169,12 +194,13 @@ def search(ws: Workspace, profile: Profile, requested: list[str], out: Path, say
                 r["name"] for r in fit["rows"] if r["status"] != "backed" and r["importance"] == "required"
             ),
             "sueldo_publicado": job_intel.format_salary(job["salary"]), "fuente": offer["source"],
-            "consultada": date.today().isoformat(), "url": url,
+            "fecha_publicacion": posted.isoformat(), "tipo_fecha": offer.get("posted_basis") or "Publicada",
+            "consultada": today.isoformat(), "url": url,
         })
     out.parent.mkdir(parents=True, exist_ok=True)
     with out.open("w", encoding="utf-8-sig", newline="") as fh:
         writer = csv.DictWriter(fh, fieldnames=COLUMNS, delimiter=";")
         writer.writeheader()
-        for row in sorted(rows, key=lambda item: -item["score"]):
+        for row in sorted(rows, key=lambda item: (item["fecha_publicacion"], item["score"]), reverse=True):
             writer.writerow({key: _csv_value(value) for key, value in row.items()})
-    return len(rows), len(offers)
+    return dict(counts), len(rows), len(undated - seen)

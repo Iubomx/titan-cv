@@ -1,9 +1,20 @@
 # PLANTILLA. Búsqueda de solo lectura para México y Monterrey.
 # Puedes copiarla a config/search_mx.yaml de tu espacio de trabajo.
 feeds:
-  sources: [equipo123go, greenhouse, lever, himalayas]
-  greenhouse: [rushstreetinteractive, twilio, vonage, braze, iterable, hightouch, customerio, caylent, fueledcareers, mitratech]
-  lever: [trueml, lingarogroup, jumpcloud, applydigital]
+  sources: [equipo123go, greenhouse, lever, ashby, workable, smartrecruiters, getonboard_api, himalayas, jobicy]
+  greenhouse: [rushstreetinteractive, twilio, vonage, braze, iterable, customerio, caylent, fueledcareers, mitratech,
+               telcoin, redventures, demandbase, appdirect, fivetran, remotecom, roboyo, aircall, okta, spin]
+  lever: [trueml, lingarogroup, jumpcloud, applydigital, airalo, telnyx, weloglobal, yalo]
+  ashby: [deel, remote, mural, n8n, superside, hightouch, customerio, airalo, clerk, multiverse, apolloio, hireframe,
+          cloudbeds, hirehangar, the-global-talent-co, instructure, nextlinklabs, weave, truelogic, kueski]
+  workable: [huzzle, covergo, uptalent-dot-i-o, scalesource-1, assistantly, blue-view-builder, alten-mexico,
+             dacodes, bolder-apps, client-accelerators, pavago, wpt-global, finquery, talent-sam, open-look-business-solutions,
+             crystalia-glass, scalepex, pack-gamified-shopping, blue-stout, pragmatic-play]
+  smartrecruiters: [BoschGroup, Nagarro, Sutherland, PublicisGroupe, SEGULATechnologies, Visa, Blend360,
+                    Sportradar, Playtech, Evolution, Inetum, Vantiva]
+  jobicy_tags: [project-manager, program-manager, marketing, crm, customer-success, telecom, igaming]
+  getonboard_api: [project manager, gestión de proyectos, implementation manager, telecom, telecomunicaciones,
+                   carrier, iGaming, casino online, CRM, marketing automation, growth marketing, martech]
 
 exclude_titles: '\b(intern|internship|practicante|becario|trainee|junior|jr)\b'
 
@@ -12,31 +23,56 @@ areas:
     titles: [project manager, program manager, delivery manager, implementation manager, gerente de proyectos,
              directora de proyectos, director de proyectos, gerente de programas, director de programas, líder de proyectos,
              director de pmo, pmo manager, project management office lead, gerente de transformación digital,
-             digital transformation lead, ai delivery manager, product operations manager, service delivery manager]
+             digital transformation lead, ai delivery manager, product operations manager, service delivery manager,
+             coordinador de proyectos, project lead, program lead, implementation lead, tech delivery lead, program coordinator,
+             technical project lead, jefe de proyectos, gerente de implementación, implementation consultant]
   casinos:
     titles: [casino operations manager, gerente de operaciones de casino, sportsbook manager, gerente de sportsbook,
              player support manager, head of player support, igaming operations manager, gaming operations manager,
-             director of gaming operations, gerente de juego responsable, responsible gaming manager]
+             director of gaming operations, gerente de juego responsable, responsible gaming manager,
+             sportsbook operations lead, gaming product manager, casino product manager, betting operations manager,
+             jefe de operaciones de casino online, online casino manager]
     roles: [operations manager, customer support manager, head of customer support, customer experience manager,
             gerente de operaciones, gerente de atención al cliente, gerente de operaciones de pagos y riesgo,
             payments operations manager, gerente de afiliados, affiliate manager, gerencia de operaciones,
-            director of operations, gerente de proyectos, project manager, product manager]
-    context: [123go, rushstreetinteractive, rush street interactive, casino online, online casino, sportsbook, igaming, player support]
+            director of operations, gerente de proyectos, project manager, product manager, crm manager,
+            fraud operations manager, jefe de operaciones, compliance operations manager, head of operations,
+            responsable de operaciones, gerente de cumplimiento, gerente de tecnología, supervisor de atención al cliente,
+            customer support lead, payments lead, product operations lead, gerente de marketing, head of crm, affiliate lead,
+            director de marketing, customer experience lead, customer service manager]
+    context: [123go, rushstreetinteractive, rush street interactive, casino online, online casino, sportsbook, igaming,
+              player support, casino digital, apuestas deportivas, apuestas en línea, sports betting]
   telecom:
     titles: [telecom project manager, telecom program manager, telecom account manager, carrier relations manager,
              carrier operations manager, carrier partnerships manager, carrier account manager, wholesale account manager,
              telco project manager, gerente de telecomunicaciones, director de telecomunicaciones, gerente de interconexión,
-             mobile partnerships manager, carrier operations and governance]
+             mobile partnerships manager, carrier operations and governance, carrier relations lead, carrier sales manager,
+             wireless project manager, 5g project manager, network deployment manager, network operations manager,
+             gerente de redes móviles, gerente de operaciones de telecomunicaciones, jefe de telecomunicaciones,
+             coordinador de telecomunicaciones, supervisor de telecomunicaciones, noc manager, telecom specialist]
     roles: [project manager, program manager, implementation manager, delivery manager, partnerships manager,
-            account director, product manager, gerente de proyectos, director de producto, director comercial]
+            account director, product manager, gerente de proyectos, director de producto, director comercial,
+            technical account manager, account manager, account executive, strategic account excecutive,
+            gerente de cuenta, gerente de operaciones, gerente de redes, technical routing analyst,
+            network operations lead, director of partnerships, enterprise sales manager, connectivity manager,
+            project lead, gerente de implementación, solution architect, customer success manager, gerente comercial,
+            gerente de infraestructura, coordinador de proyectos]
     context: [telecommunications, telecomunicaciones, telco, telecom, carrier partnerships, mobile network operators,
-              cpaas, twilio, vonage, telnyx, sinch, infobip]
+              cpaas, twilio, vonage, telnyx, sinch, infobip, redes móviles, operadores móviles, fiber optic,
+              mobile carriers, carrier integration, network interconnection, radio access network, telecom networks]
   martech:
     titles: [martech manager, marketing technology manager, marketing operations manager, director of marketing operations,
              lifecycle marketing manager, marketing automation manager, crm manager, crm lead, crm program manager, gerente crm,
              gerente de crm, gerente de performance marketing, performance marketing manager, growth marketing manager,
              gerente de afiliados, affiliate marketing manager, gerente de seo, director de mercadotecnia,
-             crm transformation lead, salesforce program manager, revenue operations manager]
+             crm transformation lead, salesforce program manager, revenue operations manager, gerente de marketing digital,
+             digital marketing manager, lifecycle manager, marketing automation specialist, crm specialist,
+             crm operations lead, customer engagement manager, marketing technology specialist, paid media lead,
+             paid acquisition manager, growth operations manager, marketing analytics lead, campaign operations manager,
+             salesforce consultant, consultor salesforce, demand generation manager, marketing operations specialist,
+             performance marketing specialist, crm operations specialist, lifecycle marketing specialist,
+             marketing automations manager, marketing automation lead, growth marketing lead, ecommerce project manager,
+             crm & sales operations manager, marketing project manager, lifecycle strategist]
     roles: [implementation manager, technical account manager, customer success manager, strategic program manager,
             project manager, product manager, partnerships manager, director of customer success, gerente de proyectos]
     context: [martech, marketing technology, customer engagement platform, lifecycle marketing, marketing automation,

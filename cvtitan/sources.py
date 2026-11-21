@@ -18,7 +18,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
-from .apply import ats_boards, intl_sources, mx_boards
+from .apply import ats_boards, intl_sources, mx_boards, public_boards
 
 
 @dataclass
@@ -74,10 +74,13 @@ def _register_builtins() -> None:
         register(name, _cache_only(fn), builtin=True)
     register("greenhouse", lambda ctx: intl_sources.greenhouse(ctx.cache, _boards(ctx, "greenhouse")), builtin=True)
     register("lever", lambda ctx: intl_sources.lever(ctx.cache, _boards(ctx, "lever")), builtin=True)
-    register("workable", _ats_source("workable", ats_boards.workable), builtin=True)
+    register("workable", _ats_source("workable", ats_boards.workable, with_line=True), builtin=True)
     register("recruitee", _ats_source("recruitee", ats_boards.recruitee), builtin=True)
     register("smartrecruiters", _ats_source("smartrecruiters", ats_boards.smartrecruiters, with_line=True), builtin=True)
     register("equipo123go", lambda ctx: mx_boards.equipo123go(ctx.cache, ctx.line), builtin=True)
+    register("ashby", _ats_source("ashby", public_boards.ashby), builtin=True)
+    register("getonboard_api", lambda ctx: public_boards.getonboard(ctx.cache, ctx.line.get("getonboard_api") or []), builtin=True)
+    register("jobicy", lambda ctx: intl_sources.jobicy(ctx.cache, ctx.line.get("jobicy_tags")), builtin=True)
 
 
 def load_plugins() -> None:

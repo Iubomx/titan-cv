@@ -116,9 +116,16 @@ Flujo de CV adaptado paso a paso: `analyze` -> `match` -> `approve` -> `generate
 vacantes presenciales o híbridas en Monterrey y su zona metropolitana. Descarta ubicaciones
 sin datos suficientes y los avisos con cierre conocido.
 
-El CSV incluye el enlace, la modalidad, las habilidades respaldadas por tu perfil y los
-requisitos detectados que conviene revisar. El comando consulta los portales y usa su caché
-diaria. Puedes repetir `--area` para combinar proyectos, casinos, telecom y martech.
+El CSV incluye el enlace, la modalidad, la fecha informada por el portal, las habilidades
+respaldadas por tu perfil y los requisitos detectados que conviene revisar. Por defecto consulta
+todas las áreas juntas y ordena el CSV por fecha y compatibilidad. `--dias` cambia la ventana de
+publicación (30 días). `--meta` cambia el objetivo de vacantes distintas por área (20). El resumen
+muestra lo que falta cuando las fuentes no cubren la meta. Los avisos sin fecha comprobable se
+cuentan aparte y quedan fuera del CSV.
+
+Puedes repetir `--area` para combinar proyectos, casinos, telecom y martech. El comando usa la
+caché diaria de los portales públicos.
+
 
 ```sh
 cvtitan buscar-mx

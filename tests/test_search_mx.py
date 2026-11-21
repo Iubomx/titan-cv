@@ -7,12 +7,13 @@ import pytest
 from cvtitan import line_b
 from cvtitan.apply import mx_boards
 from cvtitan.cli import main
-from cvtitan.search_mx import _location
-from cvtitan.utils import Workspace
+from cvtitan.search_mx import CONFIG, _areas, _location
+from cvtitan.utils import PACKAGE_ROOT, Workspace, load_yaml
 
 
 @pytest.mark.parametrize(("offer", "mode"), [
     ({"regions": ["Mexico"]}, "Remoto desde México"),
+    ({"location": "Work from Home - Mexico"}, "Remoto desde México"),
     ({"regions": ["Remote in Mexico / Remote in Argentina"]}, "Remoto desde México"),
     ({"regions": ["Latin America"]}, "Remoto desde México"),
     ({"regions": ["Mexico City, Mexico - Remote"], "text": "Work from anywhere in Mexico."}, "Remoto desde México"),
@@ -47,6 +48,7 @@ def test_mexico_search_uses_evidence_and_filters_the_csv(tmp_path, monkeypatch):
         role = {
             "title": "Project Manager", "company": "Empresa Ejemplo", "regions": ["Mexico"],
             "text": "Requirements\n- Python\n- Docker", "source": "Tablero Ejemplo",
+            "posted_at": date.today().isoformat(),
             "url": "https://example.com/first",
         }
         return [
@@ -98,3 +100,71 @@ def test_equipo123go_requires_current_index_and_job_posting(tmp_path, monkeypatc
     assert mx_boards.equipo123go(tmp_path, filters) == first
     assert reads == [mx_boards.INDEX, "https://equipo123go.com/operaciones/"]
     assert len(first) == 1 and _location(first[0]) == ("Híbrido", "Monterrey, MX")
+
+
+def test_mx_search_counts_all_areas_and_requires_recent_dates(tmp_path, monkeypatch, capsys):
+    ws = Workspace.resolve(tmp_path)
+    ws.profile_path.parent.mkdir()
+    shutil.copy(ws.example_profile_path, ws.profile_path)
+    today = date.today()
+    common = {"company": "Empresa Ejemplo", "regions": ["Mexico"], "source": "Tablero Ejemplo",
+              "text": "Requirements\n- Python", "posted_at": today.isoformat()}
+
+    def offer(title, key, **overrides):
+        return {**common, "title": title, "url": f"https://example.com/{key}", **overrides}
+
+    def fetch(*args, **kwargs):
+        return [
+            offer("Project Manager", "project"),
+            offer("Casino Operations Manager", "casino"),
+            offer("Telecom Project Manager", "telecom"),
+            offer("Marketing Operations Manager", "martech"),
+            offer("CRM Manager", "old", posted_at=(today - timedelta(days=30)).isoformat()),
+            offer("MarTech Manager", "undated", posted_at=None),
+            offer("Sportsbook Manager", "future", company="Empresa Ejemplo",
+                  posted_at=(today + timedelta(days=1)).isoformat()),
+        ], {"publica": 7}
+
+    monkeypatch.setattr(line_b, "collect_offers", fetch)
+    assert main(["--root", str(tmp_path), "buscar-mx"]) == 0
+    output = capsys.readouterr().out
+    assert "proyectos: 2/20" in output
+    for area in ("casinos", "telecom", "martech"):
+        assert f"{area}: 1/20" in output
+    assert "1 vacante(s) compatibles sin fecha comprobable" in output
+    with (tmp_path / "data/busqueda-mx.csv").open(encoding="utf-8-sig") as file:
+        rows = list(csv.DictReader(file, delimiter=";"))
+    assert len(rows) == 4
+    assert {row["fecha_publicacion"] for row in rows} == {today.isoformat()}
+
+
+def test_workable_uses_original_publish_date_and_explicit_remote_locations(tmp_path, monkeypatch):
+    import json
+    from cvtitan.apply import ats_boards
+
+    body = {"name": "Publicador", "jobs": [{
+        "url": "https://apply.workable.com/j/FICTICIO",
+        "title": "Technical Project Manager",
+        "description": "<p>Requirements</p><p>Project planning.</p>",
+        "telecommuting": True, "country": "Mexico", "city": "Guadalajara",
+        "published_on": "2026-11-01",
+        "locations": [
+            {"country": "Mexico", "city": "Guadalajara", "region": "Jalisco", "hidden": False},
+            {"country": "Mexico", "city": "Monterrey", "region": "Nuevo León", "hidden": False},
+            {"country": "Canada", "city": "Toronto", "hidden": True},
+        ],
+    }]}
+    monkeypatch.setattr(ats_boards, "_get", lambda url: json.dumps(body).encode())
+    offer, = ats_boards.workable(tmp_path, ["example"], {"include_posted_metadata": True})
+    assert offer["posted_at"] == "2026-11-01"
+    assert offer["posting_regions"] == ["Guadalajara, Jalisco, Mexico", "Monterrey, Nuevo León, Mexico"]
+    assert _location(offer)[0] == "Remoto desde México"
+
+
+def test_telecom_role_requires_sector_for_generic_network_and_routing_titles():
+    cfg = load_yaml(PACKAGE_ROOT / CONFIG)
+    telecom = {"telecom": cfg["areas"]["telecom"]}
+    social = {"company": "Casino de ejemplo", "title": "Gerente de Redes Sociales", "text": "Marketing digital."}
+    routing = {"company": "Proveedor de ejemplo", "title": "Technical Routing Analyst", "text": "CPaaS carrier routing."}
+    assert _areas(social, telecom, cfg["exclude_titles"]) == []
+    assert _areas(routing, telecom, cfg["exclude_titles"]) == ["telecom"]

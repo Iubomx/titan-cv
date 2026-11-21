@@ -30,6 +30,7 @@ def _detail(url: str, mode: str) -> dict | None:
         "text": meta["text"], "location": location, "workplace_type": mode,
         "regions": [location] if mode == "remote" else None,
         "salary": job_intel._posting_salary(posting), "valid_through": posting.get("validThrough"),
+        "posted_at": posting.get("datePosted"), "posted_basis": "Publicada por el empleador",
     }
 
 
@@ -61,7 +62,7 @@ def equipo123go(cache: Path, line: dict) -> list[dict]:
 
     def read(item):
         url, mode = item
-        key = "equipo123go-" + hashlib.sha256(url.encode()).hexdigest()[:20]
+        key = "equipo123go-v2-" + hashlib.sha256(url.encode()).hexdigest()[:20]
         try:
             return _cached(cache, key, lambda: _detail(url, mode))
         except Exception:

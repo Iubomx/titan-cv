@@ -84,6 +84,7 @@ def remotive(cache: Path) -> list[dict]:
             out.append({"source": "Remotive", "url": j.get("url"), "apply_url": j.get("url"), "title": j.get("title"),
                         "company": j.get("company_name"), "text": _text(j.get("description")),
                         "regions": regions or None, "salary": _salary_from_text(j.get("salary")),
+                        "posted_at": j.get("publication_date"), "posted_basis": "Publicada por el portal",
                         "tags": j.get("tags") or []})
     return out
 
@@ -124,13 +125,15 @@ def himalayas(cache: Path, pages: int = 5) -> list[dict]:
                     "title": j.get("title"), "company": j.get("companyName"),
                     "text": _text(j.get("description") or j.get("excerpt")),
                     "regions": regions or ["Worldwide"] if j.get("locationRestrictions") == [] else (regions or None),
-                    "salary": sal, "tags": j.get("categories") or []})
+                    "salary": sal, "tags": j.get("categories") or [],
+                    "posted_at": j.get("pubDate"), "posted_basis": "Publicada por el portal",
+                    "valid_through": j.get("expiryDate")})
     return out
 
 
-def jobicy(cache: Path) -> list[dict]:
+def jobicy(cache: Path, tags=None) -> list[dict]:
     out = []
-    for tag in ("python", "data", "devops", "ai", "support"):
+    for tag in tags or ("python", "data", "devops", "ai", "support"):
         try:
             data = _cached(cache, f"jobicy-{tag}", lambda t=tag: json.loads(
                 _get(f"https://jobicy.com/api/v2/remote-jobs?count=50&tag={t}")))
@@ -146,7 +149,8 @@ def jobicy(cache: Path) -> list[dict]:
                        "salary_currency": j.get("salaryCurrency") or "USD", "salary_period": "año"}
             out.append({"source": "Jobicy", "url": j.get("url"), "apply_url": j.get("url"), "title": j.get("jobTitle"),
                         "company": j.get("companyName"), "text": _text(j.get("jobDescription") or j.get("jobExcerpt")),
-                        "regions": regions, "salary": sal, "tags": j.get("jobIndustry") or []})
+                        "regions": regions, "salary": sal, "tags": j.get("jobIndustry") or [],
+                        "posted_at": j.get("pubDate"), "posted_basis": "Publicada por el portal"})
     return out
 
 
@@ -213,7 +217,8 @@ def _greenhouse_one(cache: Path, tok: str) -> list[dict]:
                     "title": j.get("title"), "company": j.get("company_name") or tok,
                     "text": _text(html.unescape(j.get("content") or "")),
                     "location": loc, "regions": [loc] if re.search(r"(?i)remote", loc) else None,
-                    "salary": {}, "tags": [],
+                    "salary": {}, "tags": [], "posted_at": j.get("first_published"),
+                    "posted_basis": "Publicada por el empleador",
                     # Portal ATS: sin «remote» en la ubicación oficial, la vacante es presencial en ese lugar.
                     "onsite": None if re.search(r"(?i)remote|anywhere", loc) else (loc or "location not stated")})
     return out
@@ -234,6 +239,7 @@ def _lever_one(cache: Path, tok: str) -> list[dict]:
         out.append({"source": f"Lever ({tok})", "url": j.get("hostedUrl"), "apply_url": j.get("applyUrl"),
                     "title": j.get("text"), "company": tok, "text": _text(j.get("description")),
                     "location": loc, "workplace_type": j.get("workplaceType"),
+                    "posted_at": j.get("createdAt"), "posted_basis": "Creada en el ATS",
                     "regions": regions, "salary": {}, "tags": [],
                     "onsite": None if regions else (loc or "location not stated")})
     return out
