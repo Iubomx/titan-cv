@@ -4,29 +4,23 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 
 ## [Unreleased]
 
-### Added
-- **Tableros de empresas en Workable, Recruitee y SmartRecruiters** (`apply/ats_boards.py`): APIs públicas sin clave, comprobadas contra los sitios reales (Hugging Face, bunq, Experian, Bosch). Se configuran en `lines.B` y el escáner mundial suma las empresas que ya descubrió. Las ofertas siguen el formato común de la Línea B (elegibilidad remota, sueldo de Recruitee) y se marcan como «requiere persona» (`human_step_ats`). El registro reconoce sus URL como ATS. SmartRecruiters baja los detalles en paralelo (25 s → 7 s por empresa) y solo de los cargos que pasan el filtro.
+## [0.1.1] - 2026-11-21
+
+Esta versión **corrige el wheel de 0.1.0** (no incluía `config/` ni las plantillas, así que `pip install` era inutilizable) y suma mucha más cobertura de búsqueda: catálogo de portales de empleo, mercados por país, diccionario de cargos ampliado y tableros de empresas en Workable, Recruitee y SmartRecruiters.
 
 ### Added
+- **Tableros de empresas en Workable, Recruitee y SmartRecruiters** (`apply/ats_boards.py`): APIs públicas sin clave, comprobadas contra los sitios reales (Hugging Face, bunq, Experian, Bosch). Se configuran en `lines.B` y el escáner mundial suma las empresas que ya descubrió. Las ofertas siguen el formato común de la Línea B (elegibilidad remota, sueldo de Recruitee) y se marcan como «requiere persona» (`human_step_ats`). El registro reconoce sus URL como ATS. SmartRecruiters baja los detalles en paralelo (25 s → 7 s por empresa) y solo de los cargos que pasan el filtro.
 - **Catálogo de portales de empleo** (`config/job_boards.yaml`, `docs/portales.md`): Indeed en 62 países, Computrabajo en 16 y cuatro portales comprobados contra el sitio real (elempleo, Catho, Reed, Job Bank). Cada portal es una entrada de datos (plantilla de búsqueda, patrón de enlace de oferta, lectura con o sin navegador y limpieza opcional del título); se pueden sumar los propios en `config/job_boards.yaml` del espacio de trabajo. `scripts/probe_board.py` comprueba un portal antes de agregarlo.
 - **Mercados por país**: `mexico`, `argentina`, `colombia`, `peru`, `uruguay`, `ecuador`, `espana`, `brasil`, `usa`, `uk` y `canada` (`lines.A.market`), cada uno con sus portales, su moneda y los términos de su región. `buscar` usa por defecto los del mercado activo (antes estaba atado a Chile) y respeta `--en`. Los sueldos sin moneda solo se asumen en la moneda local donde no chocan con montos en USD (Chile, Argentina, Colombia).
 - Monedas nuevas en la tabla de cambio (MXN, ARS, COP, PEN, UYU, BRL, GBP, CAD).
 - **Diccionario de cargos ampliado** (`config/job_dictionary_extended.json`): 26 categorías nuevas en español, inglés y portugués (producto, proyectos, marketing, ventas, finanzas, RR. HH., logística, ingenierías, energía, salud, educación, legal, administración, turismo, retail, creativos, consultoría, banca, agro, sector público, ciencia de datos y geología) que suman 47 categorías y unas 760 denominaciones. Se fusiona solo con el diccionario base (gana el base) y entra en **P3**: la búsqueda por defecto (P1 y P2) no cambia; se activa con `dictionary_priorities: [P1, P2, P3]`.
+- **Tipos de cambio automáticos y opcionales** (`fx.py`, `fx_auto: true` en `config/settings.yaml`): actualiza CLP, EUR y demás monedas ISO de la tabla con tasas públicas del día (una consulta cada 24 h, en caché; sin datos tuyos). Si falla usa la caché vencida o la tabla. `USD` y `UF` no cambian. Por defecto está apagado.
+- Web: panel **Embudo de la última misión** (niveles, motivos de descarte y desglose del puntaje por oferta; sin URLs) y panel **Semana y agenda** (envíos, tasa de respuesta, hitos). Nuevos `GET /api/funnel` y `GET /api/weekly` (`web/insights.py`).
 
 ### Fixed
 - `net.fetch` reintenta con `urllib` cuando `httpx` no logra conectar (`jobbank.gc.ca` respondía a `curl` y a `urllib` pero dejaba colgado el apretón TLS de `httpx`).
 - Los enlaces de Job Bank llevaban `;jsessionid=...` y se contaban como ofertas distintas; ahora se limpian.
-
-### Fixed
 - **Duplicados entre portales en la Línea B:** su huella era más débil que la del registro global, así que «Sr. Data Engineer [LATAM]» y «Senior Data Engineer» (o «Acme Group» y «Acme») contaban como ofertas distintas y se podía postular dos veces. Ahora `line_b.fingerprint` usa la misma normalización que el registro (`registry.norm_company` / `norm_title`).
-
-### Added
-- **Tipos de cambio automáticos y opcionales** (`fx.py`, `fx_auto: true` en `config/settings.yaml`): actualiza CLP, EUR y demás monedas ISO de la tabla con tasas públicas del día (una consulta cada 24 h, en caché; sin datos tuyos). Si falla usa la caché vencida o la tabla. `USD` y `UF` no cambian. Por defecto está apagado.
-
-### Added
-- Web: panel **Embudo de la última misión** (niveles, motivos de descarte y desglose del puntaje por oferta; sin URLs) y panel **Semana y agenda** (envíos, tasa de respuesta, hitos). Nuevos `GET /api/funnel` y `GET /api/weekly` (`web/insights.py`).
-
-### Fixed
 - **El wheel/sdist no incluía `config/` ni las plantillas de `candidate/`**: tras `pip install`, `validate` e `init --plantilla` fallaban. Ahora viajan en `cvtitan/resources/`; en una instalación el espacio de trabajo por defecto es la carpeta actual (antes habría sido `site-packages`) y la caché de páginas ya no se escribe dentro del paquete. Nuevo job `package` en el CI: construye el wheel, lo instala en un entorno limpio y lo usa desde una carpeta vacía.
 
 ## [0.1.0] - 2026-11-20
