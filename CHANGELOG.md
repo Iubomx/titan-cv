@@ -11,6 +11,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 - **Revisión humana por defecto.** Nuevo `lines.<A|B>.review_mode` (`always` por defecto): el autopilot deja cada formulario listo en «awaiting_review» y el envío lo apruebas tú (web o `postular --pendientes --ver`). `review_mode: auto` conserva el envío sin confirmación para quien lo elija explícitamente. **Cambio de comportamiento:** quien tenía `send_enabled: true` y dependía del envío automático debe agregar `review_mode: auto`.
 
 ### Added
+- Cifrado en reposo con passphrase: `titan vault lock|unlock|status` (`vault.py`, extra opcional `[vault]`). Cifra `candidate/*.yaml`, documentos, `.env`, la base de datos y los CV generados en un solo archivo `vault.titanvault`; verifica todo antes de borrar los originales y no escribe nada si la passphrase es incorrecta. El escaneo del CI prohíbe subir `*.titanvault`.
 - `titan informe --semana [--dias N]`: informe semanal con envíos por día, tasa de respuesta, mediana de días hasta la primera respuesta, empresas con más postulaciones y agenda (`weekly.py`). Solo datos reales; sin URLs.
 - CRM de postulaciones: hitos del proceso (tabla `process_events`) con `titan track event <job_id> --kind interview|followup|test|offer|other --on AAAA-MM-DD`, `titan track agenda [--days N]` (incluye atrasados) y `titan track done <id>`.
 - Refactor (parte 2): `publish`, `informe`, `geo`, `registro` y `mercado` pasan a `cvtitan/commands/reports.py`; pruebas de humo para los comandos movidos (`tests/test_cli_smoke.py`).

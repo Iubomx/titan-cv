@@ -24,7 +24,7 @@ SECRETS = {
     "password literal": r"(?i)(password|passwd|contrase(n|ñ)a)\s*[:=]\s*['\"][^'\"\s]{6,}['\"]",
 }
 FORBIDDEN = [r"^candidate/(?!.*\.example\.yaml$).+", r"^data/", r"(^|/)\.env$", r"\.(db|sqlite|pdf|docx|log)$",
-             r"browser-profile", r"(^|/)answers\.yaml$"]
+             r"browser-profile", r"(^|/)answers\.yaml$", r"\.titanvault$"]
 LOCAL_PATH = r"(?i)[a-z]:\\\\?users\\\\?(?!<|\{|%|public\b|default\b|runneradmin\b)[a-z0-9._-]+\\\\|/home/(?!runner\b|user\b|<)[a-z0-9._-]+/"
 EMAIL = r"[\w.+-]+@(?!example\.(com|org)|users\.noreply\.github\.com|anthropic\.com|b\.c\b|x\.cl\b)[\w-]+(\.[\w-]+)+"
 TEXT_EXT = {".py", ".md", ".yaml", ".yml", ".json", ".toml", ".txt", ".cmd", ".bat", ".ps1", ".html", ".cfg", ".ini", ""}
