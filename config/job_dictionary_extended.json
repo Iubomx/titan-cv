@@ -1,0 +1,175 @@
+{
+  "version": "1.0",
+  "language": ["es", "en", "pt"],
+  "roles": {
+    "product_management": [
+      "Product Manager", "Senior Product Manager", "Technical Product Manager", "Product Owner", "Product Analyst",
+      "Head of Product", "Gerente de Producto", "Gerente de Producto Digital", "Dueño de Producto", "Analista de Producto",
+      "Jefe de Producto", "Gerente de Produto", "Gestor de Produto", "Analista de Produto"
+    ],
+    "project_program_management": [
+      "Project Manager", "Technical Project Manager", "Program Manager", "Scrum Master", "Agile Coach", "PMO Analyst",
+      "Delivery Manager", "Jefe de Proyectos", "Gerente de Proyectos", "Coordinador de Proyectos", "Analista PMO",
+      "Gerente de Programa", "Gerente de Projetos", "Coordenador de Projetos", "Gestor de Projetos"
+    ],
+    "marketing_digital": [
+      "Digital Marketing Manager", "Performance Marketing Specialist", "SEO Specialist", "SEM Specialist",
+      "Growth Marketing Manager", "Content Marketing Manager", "Social Media Manager", "Community Manager",
+      "CRM Marketing Specialist", "Marketing Analyst", "Brand Manager", "Email Marketing Specialist",
+      "Especialista en Marketing Digital", "Gerente de Marketing", "Analista de Marketing", "Especialista SEO",
+      "Gerente de Marca", "Analista de Marketing Digital", "Gestor de Tráfego", "Gerente de Marketing Digital"
+    ],
+    "sales_business_development": [
+      "Account Executive", "Sales Manager", "Business Development Manager", "Sales Development Representative",
+      "Key Account Manager", "Inside Sales Representative", "Sales Engineer", "Ejecutivo de Ventas",
+      "Ejecutivo Comercial", "Gerente Comercial", "Ejecutivo de Cuentas Clave", "Desarrollo de Negocios",
+      "Representante de Ventas", "Ingeniero de Ventas", "Executivo de Contas", "Gerente Comercial de Vendas",
+      "Analista Comercial", "Desenvolvimento de Negócios"
+    ],
+    "customer_success_support": [
+      "Customer Success Manager", "Customer Experience Manager", "Customer Support Specialist",
+      "Customer Service Representative", "Account Manager", "Onboarding Specialist", "Support Team Lead",
+      "Ejecutivo de Atención al Cliente", "Analista de Experiencia de Cliente", "Jefe de Servicio al Cliente",
+      "Especialista en Éxito del Cliente", "Analista de Sucesso do Cliente", "Especialista em Experiência do Cliente",
+      "Coordenador de Atendimento"
+    ],
+    "finance_accounting": [
+      "Financial Analyst", "Accountant", "Senior Accountant", "Controller", "FP&A Analyst", "Treasury Analyst",
+      "Credit Analyst", "Auditor", "Tax Analyst", "Accounts Payable Specialist", "Analista Financiero", "Contador",
+      "Contador Auditor", "Analista de Costos", "Analista de Crédito", "Analista Contable", "Analista de Tesorería",
+      "Analista Financeiro", "Contador(a)", "Analista Fiscal", "Analista de Controladoria"
+    ],
+    "hr_talent": [
+      "Recruiter", "Talent Acquisition Specialist", "HR Business Partner", "HR Generalist", "People Operations Manager",
+      "Compensation and Benefits Analyst", "Learning and Development Specialist", "Reclutador",
+      "Analista de Recursos Humanos", "Especialista en Selección", "Business Partner de Recursos Humanos",
+      "Analista de Remuneraciones", "Analista de Capacitación", "Recrutador", "Analista de Recursos Humanos Sênior",
+      "Business Partner de RH", "Analista de Remuneração e Benefícios"
+    ],
+    "supply_chain_logistics": [
+      "Supply Chain Analyst", "Logistics Coordinator", "Procurement Specialist", "Buyer", "Warehouse Manager",
+      "Demand Planner", "Inventory Analyst", "Logistics Manager", "Planificador de Demanda", "Analista de Abastecimiento",
+      "Coordinador de Logística", "Jefe de Bodega", "Comprador", "Analista de Compras", "Analista de Cadena de Suministro",
+      "Analista de Logística", "Planejador de Demanda", "Coordenador de Logística", "Analista de Suprimentos"
+    ],
+    "civil_construction_engineering": [
+      "Civil Engineer", "Construction Project Engineer", "Site Engineer", "Structural Engineer", "Construction Manager",
+      "Quantity Surveyor", "Cost Estimator", "Ingeniero Civil", "Ingeniero de Obra", "Jefe de Obra",
+      "Ingeniero Estructural", "Administrador de Obra", "Ingeniero de Proyectos de Construcción", "Engenheiro Civil",
+      "Engenheiro de Obras", "Gerente de Obras"
+    ],
+    "mechanical_electrical_engineering": [
+      "Mechanical Engineer", "Electrical Engineer", "Maintenance Engineer", "Reliability Engineer",
+      "Instrumentation Engineer", "Industrial Automation Engineer", "Process Engineer", "Ingeniero Mecánico",
+      "Ingeniero Eléctrico", "Ingeniero de Mantenimiento", "Ingeniero de Confiabilidad", "Ingeniero de Procesos",
+      "Ingeniero de Instrumentación", "Engenheiro Mecânico", "Engenheiro Elétrico", "Engenheiro de Manutenção"
+    ],
+    "industrial_quality_safety": [
+      "Industrial Engineer", "Quality Engineer", "Continuous Improvement Engineer", "Lean Six Sigma Black Belt",
+      "Production Planner", "Plant Manager", "EHS Specialist", "Safety Engineer", "Ingeniero Industrial",
+      "Ingeniero de Calidad", "Ingeniero de Mejora Continua", "Jefe de Planta", "Prevencionista de Riesgos",
+      "Especialista en Seguridad y Salud Ocupacional", "Engenheiro Industrial", "Engenheiro de Qualidade",
+      "Engenheiro de Segurança do Trabalho"
+    ],
+    "energy_renewables": [
+      "Solar Energy Engineer", "Wind Energy Technician", "Energy Analyst", "Renewable Energy Project Manager",
+      "Power Systems Engineer", "Ingeniero de Energías Renovables", "Ingeniero Solar", "Analista de Energía",
+      "Jefe de Proyectos de Energía", "Técnico de Parques Eólicos", "Engenheiro de Energia Solar"
+    ],
+    "healthcare_nursing": [
+      "Registered Nurse", "Nurse Practitioner", "Clinical Nurse Specialist", "Nurse Manager", "Critical Care Nurse",
+      "Enfermero Universitario", "Enfermera Coordinadora", "Técnico en Enfermería", "Enfermero de Urgencias",
+      "Enfermero de Cuidados Intensivos", "Enfermeiro", "Técnico de Enfermagem", "Enfermeiro Intensivista"
+    ],
+    "healthcare_medicine_pharma": [
+      "Physician", "General Practitioner", "Medical Doctor", "Pharmacist", "Clinical Research Associate",
+      "Physical Therapist", "Nutritionist", "Médico General", "Médico Especialista", "Químico Farmacéutico",
+      "Kinesiólogo", "Nutricionista", "Tecnólogo Médico", "Médico Clínico", "Farmacêutico", "Fisioterapeuta",
+      "Médico Clínico Geral"
+    ],
+    "education_training": [
+      "Teacher", "Instructional Designer", "Training Specialist", "Curriculum Developer", "University Lecturer",
+      "Academic Coordinator", "Tutor", "Profesor", "Docente", "Diseñador Instruccional", "Coordinador Académico",
+      "Capacitador", "Instructor", "Professor", "Designer Instrucional", "Coordenador Pedagógico"
+    ],
+    "legal_compliance": [
+      "Lawyer", "Legal Counsel", "Compliance Officer", "Paralegal", "Contract Manager", "Data Protection Officer",
+      "Privacy Analyst", "Abogado", "Analista Legal", "Oficial de Cumplimiento", "Asesor Legal", "Abogado Corporativo",
+      "Encargado de Protección de Datos", "Advogado", "Analista Jurídico", "Analista de Compliance"
+    ],
+    "administration_office": [
+      "Administrative Assistant", "Executive Assistant", "Office Manager", "Receptionist", "Data Entry Clerk",
+      "Operations Coordinator", "Asistente Administrativo", "Asistente Ejecutiva", "Secretaria Ejecutiva",
+      "Jefe de Oficina", "Coordinador de Operaciones", "Auxiliar Administrativo", "Assistente Administrativo",
+      "Secretária Executiva", "Assistente Executiva"
+    ],
+    "hospitality_tourism": [
+      "Hotel Manager", "Front Desk Agent", "Chef", "Restaurant Manager", "Travel Consultant", "Event Coordinator",
+      "Concierge", "Gerente de Hotel", "Recepcionista", "Jefe de Cocina", "Administrador de Restaurante",
+      "Coordinador de Eventos", "Agente de Viajes", "Chef de Cozinha", "Coordenador de Eventos",
+      "Consultor de Viagens"
+    ],
+    "retail_ecommerce": [
+      "Store Manager", "E-commerce Manager", "Merchandiser", "Category Manager", "Retail Operations Manager",
+      "Visual Merchandiser", "Marketplace Specialist", "Jefe de Tienda", "Gerente de Tienda", "Gerente de E-commerce",
+      "Analista de Merchandising", "Especialista en Marketplace", "Gerente de Loja", "Analista de E-commerce",
+      "Gerente de Categoria"
+    ],
+    "creative_content": [
+      "Graphic Designer", "Video Editor", "Copywriter", "Content Writer", "Art Director", "Motion Designer",
+      "Content Strategist", "Diseñador Gráfico", "Editor de Video", "Redactor Publicitario", "Director de Arte",
+      "Redactor de Contenido", "Estratega de Contenidos", "Designer Gráfico", "Redator",
+      "Diretor de Arte"
+    ],
+    "consulting_strategy": [
+      "Management Consultant", "Strategy Analyst", "Business Analyst", "Business Process Analyst", "Operations Analyst",
+      "Transformation Manager", "Consultor de Negocios", "Consultor de Gestión", "Analista de Negocios",
+      "Analista de Procesos", "Analista de Estrategia", "Gerente de Transformación", "Consultor de Gestão",
+      "Analista de Processos"
+    ],
+    "banking_risk_fintech": [
+      "Risk Analyst", "Credit Risk Manager", "Fraud Analyst", "Payments Specialist", "Investment Analyst",
+      "Relationship Manager", "KYC AML Analyst", "Analista de Riesgo", "Analista de Riesgo Crediticio",
+      "Analista de Fraude", "Ejecutivo de Banca Empresas", "Analista de Inversiones", "Analista de Cumplimiento AML",
+      "Analista de Risco", "Gerente de Relacionamento Bancário"
+    ],
+    "agriculture_food": [
+      "Agronomist", "Agricultural Engineer", "Food Technologist", "Food Quality Control Analyst", "Farm Manager",
+      "Ingeniero Agrónomo", "Ingeniero en Alimentos", "Jefe de Campo", "Analista de Control de Calidad de Alimentos",
+      "Técnico Agrícola", "Engenheiro Agrônomo", "Engenheiro de Alimentos"
+    ],
+    "public_sector_ngo": [
+      "Policy Analyst", "Program Officer", "Grants Manager", "Monitoring and Evaluation Specialist",
+      "Social Project Coordinator", "Analista de Políticas Públicas", "Oficial de Programas",
+      "Especialista en Monitoreo y Evaluación", "Coordinador de Proyectos Sociales", "Gerente de Subvenciones",
+      "Especialista em Monitoramento e Avaliação", "Coordenador de Projetos Sociais"
+    ],
+    "data_science_research": [
+      "Data Scientist", "Research Scientist", "Statistician", "Quantitative Analyst", "Biostatistician",
+      "Applied Scientist", "Científico de Datos", "Estadístico", "Analista Cuantitativo", "Bioestadístico",
+      "Investigador Científico", "Cientista de Dados", "Estatístico", "Analista Quantitativo"
+    ],
+    "mining_geology_engineering": [
+      "Mining Engineer", "Geologist", "Metallurgist", "Mine Planning Engineer", "Geotechnical Engineer",
+      "Drill and Blast Engineer", "Mineral Processing Engineer", "Ingeniero de Minas", "Geólogo", "Metalurgista",
+      "Planificador Minero", "Ingeniero Geotécnico", "Ingeniero en Perforación y Tronadura", "Ingeniero de Procesos Mineros",
+      "Engenheiro de Minas", "Engenheiro Geotécnico"
+    ]
+  },
+  "priority": {
+    "P3": [
+      "mining_geology_engineering", "data_science_research", "product_management", "project_program_management",
+      "consulting_strategy", "finance_accounting", "banking_risk_fintech", "marketing_digital",
+      "sales_business_development", "customer_success_support", "hr_talent", "supply_chain_logistics",
+      "civil_construction_engineering", "mechanical_electrical_engineering", "industrial_quality_safety",
+      "energy_renewables", "legal_compliance", "administration_office", "retail_ecommerce", "creative_content",
+      "education_training", "healthcare_nursing", "healthcare_medicine_pharma", "hospitality_tourism",
+      "agriculture_food", "public_sector_ngo"
+    ]
+  },
+  "notes": [
+    "Extension of config/job_dictionary.json: same schema, loaded automatically and merged (the base file wins on collisions).",
+    "All extended categories are P3, so default searches (P1 and P2) do not change. Enable them with dictionary_priorities: [P1, P2, P3].",
+    "A title in the dictionary is a search term, not proof of experience."
+  ]
+}

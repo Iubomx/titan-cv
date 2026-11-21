@@ -8,7 +8,7 @@ from cvtitan import fx
 from cvtitan.utils import Workspace, load_yaml
 
 NOW = datetime(2026, 11, 20, 12, 0, 0)
-PAYLOAD = json.dumps({"result": "success", "rates": {"USD": 1, "CLP": 1000.0, "EUR": 0.5, "PEN": 4.0}}).encode()
+PAYLOAD = json.dumps({"result": "success", "rates": {"USD": 1, "CLP": 1000.0, "EUR": 0.5, "JPY": 150.0}}).encode()
 
 
 class Fetcher:
@@ -40,7 +40,7 @@ def test_live_rates_override_iso_currencies_only(tmp_path):
     table = fx.resolve(tmp_path, {"fx_auto": True, "fx": {"UF": 41.0}}, fetch=Fetcher(), now=NOW)
     assert table["CLP"] == pytest.approx(1 / 1000.0) and table["EUR"] == pytest.approx(2.0)
     assert table["USD"] == 1.0 and table["UF"] == 41.0            # USD y UF nunca se tocan
-    assert "PEN" not in table                                     # solo monedas que ya estaban en la tabla
+    assert "JPY" not in table                                     # solo monedas que ya estaban en la tabla
 
 
 def test_cache_is_reused_for_24_hours_then_refreshed(tmp_path):

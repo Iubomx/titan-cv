@@ -1,0 +1,155 @@
+# CATÁLOGO de portales de empleo (Línea A). Cada portal es una entrada de datos: agregar uno NO requiere código.
+# Puedes sumar los tuyos creando config/job_boards.yaml en tu carpeta de trabajo (mismo formato; no reemplaza a los
+# integrados). Actívalos por país con `lines.A.market` o con `cvtitan buscar --en nombre1,nombre2`.
+#
+# Campos de `boards`:
+#   name      identificador en minúsculas (a-z, 0-9, _). Es lo que usas en --en y en los grupos de palabras clave.
+#   url       plantilla HTTPS de la búsqueda con {keyword} (codificada), {slug} (frase-con-guiones), {location}
+#             y {location_slug}. Debe incluir {keyword} o {slug}.
+#   job_link  expresión regular (sobre la URL, sin parámetros) que reconoce el enlace de UNA oferta. Sin ella, el
+#             programa no sabe qué enlaces del listado son ofertas. Solo agrega portales cuyo patrón hayas comprobado.
+#   http      true = el listado y las ofertas se leen sin navegador (HTML con las ofertas); false = requiere el
+#             Chrome del robot (el portal bloquea clientes automáticos o carga con JavaScript).
+#   title_clean  (opcional) lista de expresiones que se quitan del título de la página, p. ej. el sufijo del sitio.
+#   country, label, language, verified (fecha en que se comprobó contra el sitio real).
+#
+# Responsabilidad: respeta los términos de cada portal y su robots.txt. LinkedIn prohíbe la automatización
+# (límites estrictos en config/settings.yaml -> linkedin). Indeed pide verificación humana con frecuencia.
+# Lo que NO está aquí a propósito: portales que bloquean todo cliente automático (403) o que solo muestran ofertas
+# con JavaScript (Bumeran, Zonajobs, Laborum, Naukri, SimplyHired, Welcome to the Jungle...): sin navegador no se leen.
+
+# Familias: el mismo portal en varios países. `hosts` es código de país -> dominio (comprobados el 2026-11-21).
+families:
+  computrabajo:
+    label: Computrabajo
+    url: "https://{host}/trabajo-de-{slug}"
+    http: true                      # el patrón de oferta ya está integrado (batch.JOB_LINK_PATTERNS)
+    language: es
+    verified: "2026-11-21"
+    hosts:
+      ar: ar.computrabajo.com
+      bo: bo.computrabajo.com
+      co: co.computrabajo.com
+      cr: cr.computrabajo.com
+      do: do.computrabajo.com
+      ec: ec.computrabajo.com
+      gt: gt.computrabajo.com
+      hn: hn.computrabajo.com
+      mx: mx.computrabajo.com
+      ni: ni.computrabajo.com
+      pa: pa.computrabajo.com
+      pe: pe.computrabajo.com
+      py: py.computrabajo.com
+      sv: sv.computrabajo.com
+      uy: uy.computrabajo.com
+      ve: ve.computrabajo.com
+
+  indeed:
+    label: Indeed
+    url: "https://{host}/jobs?q={keyword}&l={location}"
+    http: false                     # bloquea clientes automáticos (403): se usa el Chrome del robot
+    language: multi
+    verified: "2026-11-21"
+    hosts:
+      ae: ae.indeed.com
+      ar: ar.indeed.com
+      at: at.indeed.com
+      au: au.indeed.com
+      bh: bh.indeed.com
+      be: be.indeed.com
+      br: br.indeed.com
+      ca: ca.indeed.com
+      ch: ch.indeed.com
+      co: co.indeed.com
+      cr: cr.indeed.com
+      cz: cz.indeed.com
+      de: de.indeed.com
+      dk: dk.indeed.com
+      ec: ec.indeed.com
+      eg: eg.indeed.com
+      es: es.indeed.com
+      fi: fi.indeed.com
+      fr: fr.indeed.com
+      gr: gr.indeed.com
+      hk: hk.indeed.com
+      hu: hu.indeed.com
+      id: id.indeed.com
+      ie: ie.indeed.com
+      il: il.indeed.com
+      in: in.indeed.com
+      it: it.indeed.com
+      jp: jp.indeed.com
+      kr: kr.indeed.com
+      kw: kw.indeed.com
+      lu: lu.indeed.com
+      ma: ma.indeed.com
+      mx: mx.indeed.com
+      my: my.indeed.com
+      ng: ng.indeed.com
+      nl: nl.indeed.com
+      "no": no.indeed.com             # entre comillas: en YAML, no a secas es el booleano falso
+      nz: nz.indeed.com
+      om: om.indeed.com
+      pa: pa.indeed.com
+      pe: pe.indeed.com
+      ph: ph.indeed.com
+      pk: pk.indeed.com
+      pl: pl.indeed.com
+      pt: pt.indeed.com
+      qa: qa.indeed.com
+      ro: ro.indeed.com
+      ru: ru.indeed.com
+      sa: sa.indeed.com
+      se: se.indeed.com
+      sg: sg.indeed.com
+      th: th.indeed.com
+      tr: tr.indeed.com
+      tw: tw.indeed.com
+      ua: ua.indeed.com
+      uk: uk.indeed.com
+      us: www.indeed.com
+      uy: uy.indeed.com
+      ve: ve.indeed.com
+      vn: vn.indeed.com
+      za: za.indeed.com
+      cn: cn.indeed.com
+
+# Portales sueltos, comprobados contra el sitio real (el listado trae ofertas en el HTML y la página de la oferta
+# se lee bien). Rendimiento medido: Reed 25, Job Bank 25, elempleo 20, Catho 19 ofertas por búsqueda.
+boards:
+  - name: elempleo_co
+    label: elempleo (Colombia)
+    country: CO
+    url: "https://www.elempleo.com/co/ofertas-empleo/?trabajo={keyword}"
+    job_link: '^https://www\.elempleo\.com/co/ofertas-trabajo/[a-z0-9-]+-\d+$'
+    http: true
+    language: es
+    verified: "2026-11-21"
+
+  - name: catho_br
+    label: Catho (Brasil)
+    country: BR
+    url: "https://www.catho.com.br/vagas/{slug}/"
+    job_link: '^https://www\.catho\.com\.br/vagas/[a-z0-9-]+/\d+/?$'
+    http: true
+    language: pt
+    verified: "2026-11-21"
+
+  - name: reed_uk
+    label: Reed (Reino Unido)
+    country: UK
+    url: "https://www.reed.co.uk/jobs/{slug}-jobs"
+    job_link: '^https://www\.reed\.co\.uk/jobs/[a-z0-9-]+/\d+$'
+    http: true
+    language: en
+    verified: "2026-11-21"
+
+  - name: jobbank_ca
+    label: Job Bank (Canadá)
+    country: CA
+    url: "https://www.jobbank.gc.ca/jobsearch/jobsearch?searchstring={keyword}"
+    job_link: '^https://www\.jobbank\.gc\.ca/jobsearch/jobposting/\d+'
+    title_clean: ['\s+-\s+[^-]+,\s+[A-Z]{2}\s+-\s+Job posting\s+-\s+Job Bank$']   # "cargo - Toronto, ON - Job posting - Job Bank"
+    http: true
+    language: en
+    verified: "2026-11-21"

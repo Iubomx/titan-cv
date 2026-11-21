@@ -128,8 +128,11 @@ def search_sources(keywords: list[str], where: list[str], location: str,
     """Palabras sueltas -> se buscan en `where`. Sin palabras -> diccionario (fuentes del grupo ∩ `where`)."""
     pairs = ([(None, kw, list(where)) for kw in keywords] if keywords
              else load_keywords(path, groups))
+    chile = markets.active().key == "chile"
     urls: list[str] = []
-    for _, kw, sources in pairs:
+    for name, kw, sources in pairs:
+        if name is not None and not chile:     # las fuentes de config/search_keywords.yaml son las de Chile
+            sources = list(where)              # en otro mercado se usan las del mercado (o las de --en)
         for src in sources:
             if src in where:
                 u = source_url(src, kw, location)
@@ -248,6 +251,8 @@ class Searcher(BatchApplier):
             raw = job_intel.parse_html(http_get(url))       # públicas: sin navegador, más rápido
             if raw.get("title"):                            # Computrabajo: "Trabajos de <cargo> - <ciudad>"
                 raw["title"] = re.sub(r"^Trabajos? de\s+", "", raw["title"]).strip()
+            if raw.get("title"):                            # sufijos del sitio definidos en el catálogo (Job Bank...)
+                raw["title"] = local_sources.clean_title(url, raw["title"])
             company = self.company_by_host.get(host_of(url))
             if company:                                     # SuccessFactors: "<cargo> | <ubicación>"
                 raw["title"] = (raw.get("title") or "").split(" | ")[0].strip()
@@ -430,6 +435,7 @@ def read_selected(path: Path) -> list[str]:
 def run_search(ws: Workspace, keywords: list[str], where: list[str], location: str, urls: list[str],
                limit: int, out: Path, headless: bool = False, groups: list[str] | None = None,
                companies: bool = True, say=print) -> tuple[Path, list[dict]]:
+    local_sources.load_workspace_catalog(ws.root)        # portales propios de config/job_boards.yaml
     path = ws.root / "config" / "search_keywords.yaml"
     sources = search_sources(keywords, where, location, groups, path if path.exists() else KEYWORDS_PATH) + list(urls)
     cpath = ws.root / "config" / "companies.yaml"

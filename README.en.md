@@ -73,6 +73,8 @@ starts as `to_demonstrate`, and you link evidence by hand.
 
 - `config/lines.yaml`: Line A (local portals) and Line B (international remote)
 - `config/auto.yaml`: title regexes, minimum score, salary rule, daily cap
+- **Job boards catalog**: `config/job_boards.yaml` (Indeed in 62 countries, Computrabajo in 16, plus elempleo, Catho, Reed and
+  Job Bank; adding a board is a data entry) and per-country markets via `lines.A.market`. See [`docs/portales.md`](docs/portales.md).
 - `config/search_keywords.yaml`, `config/job_dictionary.json`, `config/companies.yaml`,
   `config/skills_taxonomy.yaml`, `config/settings.yaml`
 

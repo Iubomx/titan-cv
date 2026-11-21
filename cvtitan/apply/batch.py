@@ -65,7 +65,9 @@ def linkedin_search_url(keywords: str, location: str = "Chile", easy_apply: bool
 
 
 def is_job_url(url: str) -> bool:
-    return any(re.search(p, url) for p in JOB_LINK_PATTERNS)
+    """¿Es el enlace de UNA oferta? Patrones integrados + los de los portales del catálogo (config/job_boards.yaml)."""
+    from .. import local_sources
+    return any(re.search(p, url) for p in (*JOB_LINK_PATTERNS, *local_sources.job_link_patterns()))
 
 
 def clean_job_url(url: str) -> str:
@@ -78,6 +80,7 @@ def clean_job_url(url: str) -> str:
         return f"{m.group(1)}/viewjob?jk={m.group(2)}"
     if "indeed.com" in url:
         return url
+    url = re.sub(r";jsessionid=[^?#]*", "", url)       # Job Bank añade la sesión al enlace
     return url.split("?")[0]
 
 

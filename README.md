@@ -79,6 +79,7 @@ en `data/browser-profile/`):
 | `config/search_keywords.yaml` | Grupos de palabras clave por portal y el bloque `dictionary` |
 | `config/job_dictionary.json` | Catálogo de cargos por categoría y prioridad (P1/P2/P3) |
 | `config/companies.yaml` | Portales de empleo de empresas específicas |
+| `config/job_boards.yaml` | **Catálogo de portales de empleo**: Indeed (62 países), Computrabajo (16), elempleo, Catho, Reed y Job Bank; agregar uno es una entrada de datos. Mercados por país (`lines.A.market`: mexico, argentina, colombia, peru, uruguay, ecuador, espana, brasil, usa, uk, canada). Guía: [`docs/portales.md`](docs/portales.md) |
 | `config/skills_taxonomy.yaml` | Skills, categorías y alias que el sistema reconoce en las vacantes |
 | `config/settings.yaml` | Navegador, límites por portal, límites de LinkedIn, IA, interfaz (casco animado, efectos) |
 
