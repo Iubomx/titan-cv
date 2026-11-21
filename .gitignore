@@ -18,3 +18,5 @@ data/
 
 # Secretos
 .env
+vault.titanvault
+*.titanvault
