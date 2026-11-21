@@ -20,12 +20,12 @@ import re
 from pathlib import Path
 from urllib.parse import quote_plus, urljoin, urlparse
 
-from .. import evidence, job_intel, markets, scoring
+from .. import evidence, job_intel, local_sources, markets, scoring
 from ..market import MarketCache, job_record
 from .legal import remote_eligibility
 from ..db import PROCESS_STATUSES
-from ..utils import Workspace, slugify
-from .batch import BatchApplier, clean_job_url, is_job_url, linkedin_search_url
+from ..utils import Workspace
+from .batch import BatchApplier, clean_job_url, is_job_url
 from .platforms import detect
 
 COLUMNS = ["postular", "score", "score_bruto", "skills_detectadas", "area", "obligatorios_%", "cargo", "empresa",
@@ -72,18 +72,10 @@ UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like 
 
 
 def source_url(source: str, keyword: str, location: str = "Chile") -> str:
-    slug = slugify(keyword, 60)
-    if source == "getonboard":
-        return f"https://www.getonbrd.com/jobs-{slug}"            # buscador de texto de Get on Board
-    if source == "computrabajo":
-        return f"https://cl.computrabajo.com/trabajo-de-{slug}"
-    if source == "chiletrabajos":
-        return f"https://www.chiletrabajos.cl/trabajos/{slug}"
-    if source == "indeed":
-        return f"https://cl.indeed.com/jobs?q={quote_plus(keyword)}&l={quote_plus(location)}"
-    if source == "linkedin":
-        return linkedin_search_url(keyword, location)
-    raise ValueError(f"Fuente desconocida: {source}. Disponibles: {', '.join(SOURCES)}")
+    src = local_sources.get(source)
+    if src is None:
+        raise ValueError(f"Fuente desconocida: {source}. Disponibles: {', '.join(local_sources.names())}")
+    return src.build_url(keyword, location)
 
 
 def load_companies(path: Path = COMPANIES_PATH) -> list[dict]:
@@ -205,7 +197,7 @@ def is_relevant(text: str, keywords: set[str]) -> bool:
     return any(all(stem in norm for stem in _stems(kw)) for kw in keywords if _stems(kw))
 
 
-HTTP_HOSTS = {"www.getonbrd.com", "getonbrd.com", "cl.computrabajo.com", "www.chiletrabajos.cl", "chiletrabajos.cl"}
+HTTP_HOSTS = local_sources.http_hosts()          # compatibilidad: hosts de las fuentes integradas
 
 
 class Searcher(BatchApplier):
@@ -221,7 +213,7 @@ class Searcher(BatchApplier):
 
     def is_http(self, url: str) -> bool:
         """Sitios públicos que se leen sin navegador (más rápido y sin consumir la sesión)."""
-        return host_of(url) in HTTP_HOSTS or host_of(url) in self.company_by_host
+        return host_of(url) in local_sources.http_hosts() or host_of(url) in self.company_by_host
 
     def expand(self, url: str, limit: int) -> list[str]:
         from .. import telemetry
