@@ -4,6 +4,12 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-11-20
+
+Primera versión etiquetada. Reúne la publicación inicial y todo lo siguiente: seguridad (envío con revisión humana,
+IA con datos minimizados, cifrado en reposo, web protegida), calidad (CI, tipado, cobertura, macOS, Docker),
+extensibilidad (plugins de fuentes, mercados y portales) y mejoras de producto.
+
 ### Security
 - **Web local protegida contra CSRF y DNS rebinding** (`web/guard.py`): las acciones que modifican datos exigen un token por ejecución (solo se entrega en la página principal) y se rechazan `Host` y `Origin` que no sean localhost. Antes cualquier página abierta en el navegador podía llamar a `127.0.0.1:8765`.
 - **La IA recibía nombre, correo, teléfono y ciudad.** El bloque `personal` viajaba completo a la API en las respuestas de formularios y las cartas. Ahora se minimiza por defecto (ver Added) y cada solicitud queda registrada localmente. **Cambio de comportamiento:** las respuestas redactadas por la IA ya no pueden usar esos datos; si faltan, la pregunta queda pendiente para ti.
@@ -48,5 +54,5 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 - Escape de rutas con apóstrofes o comodines en los comandos de PowerShell de `human_browser.py`.
 - `programar_tarea.ps1` advierte si `send_enabled: true`.
 
-## [0.1.0]
-- Primera versión pública.
+## Historial anterior
+- Primera versión pública (publicación inicial del repositorio, sin etiqueta).
