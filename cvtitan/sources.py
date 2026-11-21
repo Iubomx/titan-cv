@@ -18,7 +18,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
-from .apply import ats_boards, intl_sources
+from .apply import ats_boards, intl_sources, mx_boards
 
 
 @dataclass
@@ -77,6 +77,7 @@ def _register_builtins() -> None:
     register("workable", _ats_source("workable", ats_boards.workable), builtin=True)
     register("recruitee", _ats_source("recruitee", ats_boards.recruitee), builtin=True)
     register("smartrecruiters", _ats_source("smartrecruiters", ats_boards.smartrecruiters, with_line=True), builtin=True)
+    register("equipo123go", lambda ctx: mx_boards.equipo123go(ctx.cache, ctx.line), builtin=True)
 
 
 def load_plugins() -> None:

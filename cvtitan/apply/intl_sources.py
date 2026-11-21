@@ -212,7 +212,8 @@ def _greenhouse_one(cache: Path, tok: str) -> list[dict]:
         out.append({"source": f"Greenhouse ({tok})", "url": j.get("absolute_url"), "apply_url": j.get("absolute_url"),
                     "title": j.get("title"), "company": j.get("company_name") or tok,
                     "text": _text(html.unescape(j.get("content") or "")),
-                    "regions": [loc] if re.search(r"(?i)remote", loc) else None, "salary": {}, "tags": [],
+                    "location": loc, "regions": [loc] if re.search(r"(?i)remote", loc) else None,
+                    "salary": {}, "tags": [],
                     # Portal ATS: sin «remote» en la ubicación oficial, la vacante es presencial en ese lugar.
                     "onsite": None if re.search(r"(?i)remote|anywhere", loc) else (loc or "location not stated")})
     return out
@@ -232,6 +233,7 @@ def _lever_one(cache: Path, tok: str) -> list[dict]:
         regions = [loc] if (j.get("workplaceType") == "remote" or re.search(r"(?i)remote", loc)) else None
         out.append({"source": f"Lever ({tok})", "url": j.get("hostedUrl"), "apply_url": j.get("applyUrl"),
                     "title": j.get("text"), "company": tok, "text": _text(j.get("description")),
+                    "location": loc, "workplace_type": j.get("workplaceType"),
                     "regions": regions, "salary": {}, "tags": [],
                     "onsite": None if regions else (loc or "location not stated")})
     return out

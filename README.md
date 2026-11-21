@@ -109,6 +109,23 @@ oferta (nivel `high/held/manual/potential/review/no` y motivo).
 Flujo de CV adaptado paso a paso: `analyze` -> `match` -> `approve` -> `generate` -> `render` -> `interview`
 (ver `docs/agent-policy.md`).
 
+### México y Monterrey
+
+`cvtitan buscar-mx` lee las fuentes públicas configuradas en `config/search_mx.yaml` y genera
+`data/busqueda-mx.csv`. Acepta vacantes remotas cuya ubicación publicada admite México y
+vacantes presenciales o híbridas en Monterrey y su zona metropolitana. Descarta ubicaciones
+sin datos suficientes y los avisos con cierre conocido.
+
+El CSV incluye el enlace, la modalidad, las habilidades respaldadas por tu perfil y los
+requisitos detectados que conviene revisar. El comando consulta los portales y usa su caché
+diaria. Puedes repetir `--area` para combinar proyectos, casinos, telecom y martech.
+
+```sh
+cvtitan buscar-mx
+cvtitan buscar-mx --area proyectos --area telecom
+```
+
+
 ## 6. Uso responsable
 
 - **No se evaden CAPTCHA ni sistemas anti-bot**, no se crean cuentas y no se manejan contraseñas: login, CAPTCHA y
