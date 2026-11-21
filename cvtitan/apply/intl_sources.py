@@ -240,7 +240,8 @@ def _lever_one(cache: Path, tok: str) -> list[dict]:
 def known_boards(cache: Path, db_path: Path | None = None) -> dict[str, list[str]]:
     """Escáner mundial: portales Greenhouse/Lever de empresas que TITAN ya encontró (por el resolutor de ATS o en
     el registro de vacantes). Crece solo con cada ejecución. Ashby se excluye (CAPTCHA en cada postulación)."""
-    found: dict[str, set[str]] = {"greenhouse": set(), "lever": set()}
+    found: dict[str, set[str]] = {"greenhouse": set(), "lever": set(), "workable": set(), "recruitee": set(),
+                                  "smartrecruiters": set()}
     for f in (cache / "ats").glob("*.json"):
         m = re.match(r"(greenhouse|lever)-(.+)-\d{8}\.json$", f.name)
         if m:
@@ -257,6 +258,9 @@ def known_boards(cache: Path, db_path: Path | None = None) -> dict[str, list[str
             con.close()
             found["greenhouse"] |= set(re.findall(r"greenhouse\.io/([a-z0-9_-]+)/jobs", urls))
             found["lever"] |= set(re.findall(r"jobs\.lever\.co/([a-z0-9_-]+)/", urls))
+            from .ats_boards import BOARD_URL_PATTERNS
+            for kind, rx in BOARD_URL_PATTERNS.items():
+                found[kind] |= set(rx.findall(urls))
         except Exception:
             pass
     found["greenhouse"] -= {"embed", "v1"}

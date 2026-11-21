@@ -18,7 +18,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
-from .apply import intl_sources
+from .apply import ats_boards, intl_sources
 
 
 @dataclass
@@ -61,11 +61,22 @@ def _cache_only(fn: Callable[[Path], list[dict]]) -> Fetcher:
     return fetch
 
 
+def _ats_source(kind: str, fetch: Callable[..., list[dict]], with_line: bool = False) -> Fetcher:
+    """Fuente de tableros de empresas de un ATS: lista configurada + las que el escáner mundial ya descubrió."""
+    def source(ctx: SourceContext) -> list[dict]:
+        boards = _boards(ctx, kind)
+        return fetch(ctx.cache, boards, ctx.line) if with_line else fetch(ctx.cache, boards)
+    return source
+
+
 def _register_builtins() -> None:
     for name, fn in intl_sources.FETCHERS.items():
         register(name, _cache_only(fn), builtin=True)
     register("greenhouse", lambda ctx: intl_sources.greenhouse(ctx.cache, _boards(ctx, "greenhouse")), builtin=True)
     register("lever", lambda ctx: intl_sources.lever(ctx.cache, _boards(ctx, "lever")), builtin=True)
+    register("workable", _ats_source("workable", ats_boards.workable), builtin=True)
+    register("recruitee", _ats_source("recruitee", ats_boards.recruitee), builtin=True)
+    register("smartrecruiters", _ats_source("smartrecruiters", ats_boards.smartrecruiters, with_line=True), builtin=True)
 
 
 def load_plugins() -> None:

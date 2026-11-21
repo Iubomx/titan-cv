@@ -49,13 +49,14 @@ lines:
       \bintern\b|internship|trainee|early career|new grad|graduate program|apprentice|sales|account executive|
       recruiter|marketing|nurse|teacher|lawyer|accountant|copywriter|\bsdr\b|\bbdr\b
     # Fuentes públicas con API o feed oficial (1 consulta diaria por fuente, con caché).
-    sources: [remotive, remoteok, himalayas, jobicy, arbeitnow, weworkremotely, greenhouse, lever]
+    sources: [remotive, remoteok, himalayas, jobicy, arbeitnow, weworkremotely, greenhouse, lever, workable, recruitee,
+              smartrecruiters]
     # Portales que exigen cuenta propia para mostrar el enlace del empleador. Sus ofertas quedan «en espera»
     # hasta que crees la cuenta (manualmente) y agregues el portal a board_accounts.
     board_account_required: [We Work Remotely, Remote OK, Remotive]
     board_accounts: []
     # Sistemas que SIEMPRE exigen un paso humano (CAPTCHA): sus vacantes no consumen cupo ni abren ventanas.
-    human_step_ats: [ashby]
+    human_step_ats: [ashby, workable, recruitee, smartrecruiters]   # se descubren y evalúan; no se postula solo
     # Tableros públicos Greenhouse / Lever de empresas que contratan en remoto (agrega las que te interesen).
     #   greenhouse: [token]  -> https://boards.greenhouse.io/<token>
     #   lever: [token]       -> https://jobs.lever.co/<token>
@@ -63,6 +64,14 @@ lines:
     world_scan: true
     greenhouse: []
     lever: []
+    # Más tableros de empresas (APIs públicas, sin clave). Escribe el identificador de la empresa:
+    #   workable: [huggingface]            -> https://apply.workable.com/huggingface/
+    #   recruitee: [bunq]                  -> https://bunq.recruitee.com/
+    #   smartrecruiters: [BoschGroup]      -> https://jobs.smartrecruiters.com/BoschGroup/  (respeta mayúsculas)
+    # El escáner mundial también suma las que TITAN ya descubrió. Se evalúan, pero se postula a mano (human_step_ats).
+    workable: []
+    recruitee: []
+    smartrecruiters: []
     # LinkedIn (requiere tu sesión): búsquedas remotas. Una búsqueda por palabra × ubicación. Límites estrictos.
     linkedin:
       enabled: false              # actívalo solo si aceptas el riesgo (LinkedIn prohíbe la automatización)
