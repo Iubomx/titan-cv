@@ -52,10 +52,10 @@ button:disabled { opacity: .5; cursor: default; }
 .stat { padding: 12px 14px; }
 .stat .k { color: var(--muted); font-size: 12px; } .stat .v { font-size: 22px; font-weight: 650; font-variant-numeric: tabular-nums; margin-top: 2px; }
 .bar-row { display: grid; grid-template-columns: 120px 1fr 44px; gap: 10px; align-items: center; margin: 5px 0; font-size: 13px; }
-.bar { height: 10px; border-radius: 6px; background: var(--chip); overflow: hidden; }
-.bar > i { display: block; height: 100%; background: var(--accent); min-width: 2px; }
-.bar > i.t-high { background: var(--ok); } .bar > i.t-no { background: var(--bad); }
-.bar > i.t-potential, .bar > i.t-held, .bar > i.t-review { background: var(--warn); }
+.fbar { height: 10px; border-radius: 6px; background: var(--chip); overflow: hidden; }
+.fbar > i { display: block; height: 100%; background: var(--accent); min-width: 2px; }
+.fbar > i.t-high { background: var(--ok); } .fbar > i.t-no { background: var(--bad); }
+.fbar > i.t-potential, .fbar > i.t-held, .fbar > i.t-review { background: var(--warn); }
 .bar-row b { text-align: right; font-variant-numeric: tabular-nums; }
 .tier { display: inline-block; font-size: 11.5px; padding: 2px 8px; border-radius: 999px; background: var(--chip); white-space: nowrap; }
 .tier.high { color: var(--ok); } .tier.no { color: var(--bad); } .tier.potential, .tier.held, .tier.review { color: var(--warn); }
@@ -386,7 +386,7 @@ async function loadInsights() {
     $('#funnelSub').textContent = f.file + ' · ' + f.total + ' ofertas';
     const max = Math.max(1, ...Object.values(f.tiers));
     $('#funnelBars').innerHTML = Object.entries(f.tiers).map(([t, n]) =>
-      `<div class="bar-row"><span>${esc(TIER_LABEL[t] || t)}</span><div class="bar"><i class="t-${esc(t)}" style="width:${Math.round(100 * n / max)}%"></i></div><b>${n}</b></div>`).join('');
+      `<div class="bar-row"><span>${esc(TIER_LABEL[t] || t)}</span><div class="fbar"><i class="t-${esc(t)}" style="width:${Math.round(100 * n / max)}%"></i></div><b>${n}</b></div>`).join('');
     const reasons = Object.entries(f.reasons).slice(0, 5).map(([k, n]) => k + ': ' + n).join(' · ');
     $('#funnelReasons').textContent = reasons ? 'Principales motivos de descarte: ' + reasons : '';
     $('#funnelRows').innerHTML = f.rows.map(r => {

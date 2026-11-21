@@ -86,4 +86,4 @@ def test_weekly_endpoint_shape_and_bounds(client):
 def test_page_has_the_new_panels_and_escapes_dynamic_text(client):
     page = client.get("/").text
     assert 'id="funnelCard"' in page and 'id="agendaCard"' in page and "loadInsights" in page
-    assert "esc(r.title)" in page and "esc(e.note)" in page              # todo texto dinámico pasa por esc()
+    assert "fbar" in page and "esc(r.title)" in page and "esc(e.note)" in page              # todo texto dinámico pasa por esc()
