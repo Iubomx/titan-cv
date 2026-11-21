@@ -110,6 +110,8 @@ ATS_PATTERNS = [
     ("ashby", r"jobs\.ashbyhq\.com/([\w.-]+)/([0-9a-f-]{36})"),
     ("workday", r"([\w-]+)\.wd\d+\.myworkdayjobs\.com/.*?/job/.*?_([A-Z]*-?\d[\w-]*)$"),
     ("smartrecruiters", r"(?:jobs|careers)\.smartrecruiters\.com/([\w-]+)/(\d+)"),
+    ("workable", r"apply\.workable\.com/(?:([\w-]+)/)?j/([A-Za-z0-9]+)"),
+    ("recruitee", r"https?://([\w-]+)\.recruitee\.com/o/([\w-]+)"),
     ("successfactors", r"(?:https?://)([\w.-]+)/job/[^/]+/(\d+)"),
     ("linkedin", r"linkedin\.com/jobs/view/(\d+)"),
     ("indeed", r"indeed\.com/viewjob\?(?:.*&)?jk=([0-9a-f]+)"),

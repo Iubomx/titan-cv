@@ -11,6 +11,22 @@ Los portales viven en un **catálogo de datos**, `config/job_boards.yaml`. Agreg
 | **elempleo** (Colombia), **Catho** (Brasil), **Reed** (Reino Unido), **Job Bank** (Canadá) | Un país cada uno | HTTP, comprobados contra el sitio real |
 | **Get on Board**, **Chiletrabajos**, portales de empresas (SuccessFactors) | Latinoamérica / Chile | HTTP |
 | **Línea B (remoto internacional)** | Remotive, RemoteOK, Himalayas, Jobicy, Arbeitnow, WeWorkRemotely y los tableros Greenhouse y Lever de miles de empresas (escáner mundial) | APIs públicas |
+| **Workable, Recruitee y SmartRecruiters** (tableros de empresas) | Miles de empresas: tú indicas las tuyas en `lines.B` y el escáner mundial suma las que ya descubrió | APIs públicas, sin clave; se evalúan pero se postula a mano |
+
+## Tableros de empresas (la vía para miles de empresas)
+Workable, Recruitee y SmartRecruiters publican las ofertas de cada empresa en una API pública. En `config/lines.yaml`,
+bajo `lines.B`, escribes el identificador de la empresa:
+
+```yaml
+workable: [huggingface]            # https://apply.workable.com/huggingface/
+recruitee: [bunq]                  # https://bunq.recruitee.com/
+smartrecruiters: [BoschGroup]      # https://jobs.smartrecruiters.com/BoschGroup/  (respeta mayúsculas)
+```
+
+Con `world_scan: true` (por defecto) también se escanean las empresas que TITAN ya encontró en ofertas anteriores, así que
+la lista **crece sola** con cada ejecución. Las ofertas pasan por el mismo filtro de cargo, elegibilidad y puntaje que el
+resto; en SmartRecruiters solo se baja la descripción completa de los cargos que pasan el filtro (tope de 40 por empresa).
+Estos sistemas están en `human_step_ats`: se descubren y evalúan, pero **se postula a mano** hasta validar sus formularios.
 
 ## Mercados (`lines.A.market` en `config/lines.yaml`)
 `chile` (por defecto), `mexico`, `argentina`, `colombia`, `peru`, `uruguay`, `ecuador`, `espana`, `brasil`, `usa`, `uk`,

@@ -5,6 +5,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 ## [Unreleased]
 
 ### Added
+- **Tableros de empresas en Workable, Recruitee y SmartRecruiters** (`apply/ats_boards.py`): APIs públicas sin clave, comprobadas contra los sitios reales (Hugging Face, bunq, Experian, Bosch). Se configuran en `lines.B` y el escáner mundial suma las empresas que ya descubrió. Las ofertas siguen el formato común de la Línea B (elegibilidad remota, sueldo de Recruitee) y se marcan como «requiere persona» (`human_step_ats`). El registro reconoce sus URL como ATS. SmartRecruiters baja los detalles en paralelo (25 s → 7 s por empresa) y solo de los cargos que pasan el filtro.
+
+### Added
 - **Catálogo de portales de empleo** (`config/job_boards.yaml`, `docs/portales.md`): Indeed en 62 países, Computrabajo en 16 y cuatro portales comprobados contra el sitio real (elempleo, Catho, Reed, Job Bank). Cada portal es una entrada de datos (plantilla de búsqueda, patrón de enlace de oferta, lectura con o sin navegador y limpieza opcional del título); se pueden sumar los propios en `config/job_boards.yaml` del espacio de trabajo. `scripts/probe_board.py` comprueba un portal antes de agregarlo.
 - **Mercados por país**: `mexico`, `argentina`, `colombia`, `peru`, `uruguay`, `ecuador`, `espana`, `brasil`, `usa`, `uk` y `canada` (`lines.A.market`), cada uno con sus portales, su moneda y los términos de su región. `buscar` usa por defecto los del mercado activo (antes estaba atado a Chile) y respeta `--en`. Los sueldos sin moneda solo se asumen en la moneda local donde no chocan con montos en USD (Chile, Argentina, Colombia).
 - Monedas nuevas en la tabla de cambio (MXN, ARS, COP, PEN, UYU, BRL, GBP, CAD).
