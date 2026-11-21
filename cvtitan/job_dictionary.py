@@ -21,12 +21,37 @@ DICT_PATH = PACKAGE_ROOT / "config" / "job_dictionary.json"
 NEVER = re.compile(r"\bjunior\b|\bjr\b|\btrainee\b|\bintern(ship)?\b")
 
 
+EXTENDED_PATH = PACKAGE_ROOT / "config" / "job_dictionary_extended.json"
+
+
+def merge(base: dict, extension: dict) -> dict:
+    """Suma una extensión al diccionario base. El archivo base gana si una categoría ya existe; las categorías nuevas
+    entran en las prioridades que la extensión declare (solo si no estaban ya en ninguna)."""
+    roles = dict(base.get("roles", {}))
+    for category, titles in (extension.get("roles") or {}).items():
+        roles.setdefault(category, list(titles))
+    priority = {p: list(cats) for p, cats in (base.get("priority") or {}).items()}
+    placed = {c for cats in priority.values() for c in cats}
+    for p, cats in (extension.get("priority") or {}).items():
+        for category in cats:
+            if category in roles and category not in placed:
+                priority.setdefault(p, []).append(category)
+                placed.add(category)
+    languages = list(base.get("language", []))
+    languages += [lang for lang in extension.get("language", []) if lang not in languages]
+    return {**base, "roles": roles, "priority": priority, "language": languages}
+
+
 @lru_cache(maxsize=4)
 def load(path: str | None = None) -> dict:
+    """Diccionario de cargos. Con la ruta por defecto se le suma `job_dictionary_extended.json` (26 categorías en P3)."""
     p = Path(path) if path else DICT_PATH
     if not p.exists():
         return {"roles": {}, "priority": {}}
-    return json.loads(p.read_text(encoding="utf-8"))
+    data = json.loads(p.read_text(encoding="utf-8"))
+    if path is None and EXTENDED_PATH.exists():
+        data = merge(data, json.loads(EXTENDED_PATH.read_text(encoding="utf-8")))
+    return data
 
 
 def categories(priorities: list[str] | tuple[str, ...] = ("P1", "P2"), data: dict | None = None) -> list[str]:
