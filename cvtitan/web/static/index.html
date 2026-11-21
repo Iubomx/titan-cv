@@ -51,6 +51,17 @@ button:disabled { opacity: .5; cursor: default; }
 .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
 .stat { padding: 12px 14px; }
 .stat .k { color: var(--muted); font-size: 12px; } .stat .v { font-size: 22px; font-weight: 650; font-variant-numeric: tabular-nums; margin-top: 2px; }
+.bar-row { display: grid; grid-template-columns: 120px 1fr 44px; gap: 10px; align-items: center; margin: 5px 0; font-size: 13px; }
+.fbar { height: 10px; border-radius: 6px; background: var(--chip); overflow: hidden; }
+.fbar > i { display: block; height: 100%; background: var(--accent); min-width: 2px; }
+.fbar > i.t-high { background: var(--ok); } .fbar > i.t-no { background: var(--bad); }
+.fbar > i.t-potential, .fbar > i.t-held, .fbar > i.t-review { background: var(--warn); }
+.bar-row b { text-align: right; font-variant-numeric: tabular-nums; }
+.tier { display: inline-block; font-size: 11.5px; padding: 2px 8px; border-radius: 999px; background: var(--chip); white-space: nowrap; }
+.tier.high { color: var(--ok); } .tier.no { color: var(--bad); } .tier.potential, .tier.held, .tier.review { color: var(--warn); }
+.pts { display: flex; gap: 6px; flex-wrap: wrap; } .pts span { font-size: 11.5px; background: var(--chip); border-radius: 6px; padding: 1px 6px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.ag { display: grid; grid-template-columns: 96px 80px 1fr; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+.ag .late { color: var(--bad); font-weight: 600; }
 .attention { display: grid; gap: 10px; }
 .task { border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; display: grid; gap: 8px; background: var(--surface); }
 .task .top { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
@@ -122,6 +133,28 @@ h4 { margin: 0 0 8px; font-size: 13px; }
   </section>
 
   <section class="stats" id="stats"></section>
+
+  <section class="card" id="funnelCard" hidden>
+    <div class="hd"><h2>Embudo de la última misión</h2><span class="sub" id="funnelSub"></span></div>
+    <div class="bd">
+      <div id="funnelBars"></div>
+      <div class="hint" id="funnelReasons"></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Nivel</th><th>Oferta</th><th>Ajuste</th><th>Desglose del puntaje</th><th>Motivo</th></tr></thead>
+          <tbody id="funnelRows"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="agendaCard">
+    <div class="hd"><h2>Semana y agenda</h2><span class="sub" id="weekSub"></span></div>
+    <div class="bd">
+      <div class="chips" id="weekStats"></div>
+      <div id="agendaList"></div>
+    </div>
+  </section>
 
   <section class="card" id="attentionCard" hidden>
     <div class="hd"><h2>Requiere tu atención</h2></div>
@@ -344,7 +377,41 @@ $('#exportBtn').onclick = () => location.href = '/api/export.csv';
 $('#search').oninput = () => { clearTimeout(window._s); window._s = setTimeout(refresh, 250); };
 $('#statusFilter').onchange = refresh;
 
+const TIER_LABEL = {high: 'Alta', held: 'En espera', manual: 'Manual', potential: 'Potencial', review: 'Revisar', no: 'No compatible'};
+const PT_LABEL = {compatibility: 'compat.', eligibility: 'elegib.', salary: 'sueldo', experience: 'exper.'};
+async function loadInsights() {
+  const [f, w] = await Promise.all([api('/api/funnel'), api('/api/weekly')]);
+  $('#funnelCard').hidden = !f.file;
+  if (f.file) {
+    $('#funnelSub').textContent = f.file + ' · ' + f.total + ' ofertas';
+    const max = Math.max(1, ...Object.values(f.tiers));
+    $('#funnelBars').innerHTML = Object.entries(f.tiers).map(([t, n]) =>
+      `<div class="bar-row"><span>${esc(TIER_LABEL[t] || t)}</span><div class="fbar"><i class="t-${esc(t)}" style="width:${Math.round(100 * n / max)}%"></i></div><b>${n}</b></div>`).join('');
+    const reasons = Object.entries(f.reasons).slice(0, 5).map(([k, n]) => k + ': ' + n).join(' · ');
+    $('#funnelReasons').textContent = reasons ? 'Principales motivos de descarte: ' + reasons : '';
+    $('#funnelRows').innerHTML = f.rows.map(r => {
+      const pts = Object.entries(r.points || {}).map(([k, v]) => `<span>${esc(PT_LABEL[k] || k)} ${Math.round(v)}</span>`).join('');
+      return `<tr><td><span class="tier ${esc(r.tier)}">${esc(TIER_LABEL[r.tier] || r.tier)}</span></td>
+        <td><b>${esc(r.title)}</b><div class="hint">${esc(r.company)} · ${esc(r.source)} · ${esc(r.ref)}</div></td>
+        <td>${r.score === null ? '-' : esc(r.score)}</td><td><div class="pts">${pts || '-'}</div></td>
+        <td class="hint">${esc(r.reason_category)}</td></tr>`;
+    }).join('');
+  }
+  const rate = w.response_rate === null ? 'n/d' : w.response_rate + '%';
+  const wait = w.median_days_to_response === null ? 'n/d' : w.median_days_to_response + ' días';
+  $('#weekSub').textContent = w.from + ' → ' + w.to;
+  $('#weekStats').innerHTML = [`Enviadas: ${w.sent}`, `Avanzaron: ${w.advanced}`, `Tasa de respuesta: ${rate}`, `Mediana hasta responder: ${wait}`]
+    .map(t => `<span class="status">${esc(t)}</span>`).join(' ');
+  $('#agendaList').innerHTML = w.agenda.length ? w.agenda.map(e => {
+    const late = e.due < w.to ? ' late' : '';
+    return `<div class="ag"><span class="${late.trim()}">${esc(e.due)}${late ? ' · atrasado' : ''}</span><span>${esc(e.kind)}</span>
+      <span>${esc(e.company || '-')} · ${esc(e.title || e.job_id)} <span class="hint">${esc(e.note)}</span></span></div>`;
+  }).join('') : '<div class="hint">Sin hitos en los próximos 7 días. Agrégalos con <code>titan track event</code>.</div>';
+}
+
 loadHealth().then(refresh);
+loadInsights().catch(() => {});
+setInterval(() => loadInsights().catch(() => {}), 30000);
 setInterval(() => refresh().catch(() => {}), 3000);
 setInterval(() => loadHealth().catch(() => {}), 30000);
 </script>

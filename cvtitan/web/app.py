@@ -10,14 +10,14 @@ from urllib.parse import urlparse
 from fastapi import Body, FastAPI, HTTPException
 from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse
 
-from .. import llm
+from .. import llm, weekly
 from ..apply.platforms import detect, login_targets
 from ..db import PROCESS_STATUSES, STATUS_LABELS
 from ..engine import Engine
 from ..profile import Profile
 from ..taxonomy import Taxonomy
 from ..utils import Workspace, load_yaml, slugify
-from . import guard
+from . import guard, insights
 
 STATIC = Path(__file__).parent / "static"
 SERVABLE = {".pdf", ".docx", ".md", ".png", ".html", ".yaml"}
@@ -196,6 +196,16 @@ def create_app(ws: Workspace, headless: bool = False, start_runner: bool = True)
     @app.get("/api/stats")
     def stats():
         return db.stats()
+
+    @app.get("/api/funnel")
+    def funnel():
+        """Embudo de la última misión (sin URLs: solo códigos) con el desglose del puntaje por oferta."""
+        return insights.latest_funnel(ws.root / "data" / "auto" / "runs")
+
+    @app.get("/api/weekly")
+    def weekly_summary(days: int = 7):
+        """Resumen de la semana: envíos, respuestas, tiempo hasta la respuesta y agenda de hitos."""
+        return weekly.build(db, days=max(1, min(days, 90)))
 
     @app.get("/api/export.csv", response_class=PlainTextResponse)
     def export():
