@@ -109,7 +109,7 @@ def analyze_market(records: list[dict], profile: Profile, fx: dict | None = None
     fx = fx or DEFAULT_FX
     n = len(records)
     demand: dict[str, dict] = {}
-    gain = defaultdict(float)
+    gain: defaultdict[str, float] = defaultdict(float)
     pay = defaultdict(list)
     all_pay = []
     for rec in records:

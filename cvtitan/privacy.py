@@ -35,7 +35,7 @@ def _load() -> list[tuple[re.Pattern, str]]:
         if _rules is not None:
             return _rules
         rules: list[tuple[str, str]] = []
-        p = {}
+        p: dict = {}
         try:
             if _profile_path is None:
                 from .utils import PACKAGE_ROOT
