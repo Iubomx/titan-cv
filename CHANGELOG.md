@@ -4,6 +4,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 
 ## [Unreleased]
 
+### Added
+- Web: panel **Embudo de la última misión** (niveles, motivos de descarte y desglose del puntaje por oferta; sin URLs) y panel **Semana y agenda** (envíos, tasa de respuesta, hitos). Nuevos `GET /api/funnel` y `GET /api/weekly` (`web/insights.py`).
+
 ### Fixed
 - **El wheel/sdist no incluía `config/` ni las plantillas de `candidate/`**: tras `pip install`, `validate` e `init --plantilla` fallaban. Ahora viajan en `cvtitan/resources/`; en una instalación el espacio de trabajo por defecto es la carpeta actual (antes habría sido `site-packages`) y la caché de páginas ya no se escribe dentro del paquete. Nuevo job `package` en el CI: construye el wheel, lo instala en un entorno limpio y lo usa desde una carpeta vacía.
 
