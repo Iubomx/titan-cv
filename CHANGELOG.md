@@ -4,6 +4,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 
 ## [Unreleased]
 
+### Changed
+- Refactor (final): el comando `auto` (piloto automático, tablero y registro de la ejecución) pasa a `cvtitan/commands/auto.py`. `cli.py` queda en 56 líneas (solo el parser y `main`), frente a las 1092 originales; todos los comandos viven en `cvtitan/commands/`. Sin cambios de comportamiento.
+
 ## [0.1.1] - 2026-11-21
 
 Esta versión **corrige el wheel de 0.1.0** (no incluía `config/` ni las plantillas, así que `pip install` era inutilizable) y suma mucha más cobertura de búsqueda: catálogo de portales de empleo, mercados por país, diccionario de cargos ampliado y tableros de empresas en Workable, Recruitee y SmartRecruiters.
