@@ -176,17 +176,17 @@ def render_docx(draft: dict, path: Path) -> Path:
             bp = doc.add_paragraph(style="List Bullet")
             bp.add_run(f"{pr['name']}: ").bold = True
             bp.add_run(pr["text"] + (f" ({pr['url']})" if pr.get("url") else ""))
-    for section in ("education", "certifications"):
-        if draft[section]:
-            heading(HEADINGS[section])
-            for x in draft[section]:
+    for key in ("education", "certifications"):
+        if draft[key]:
+            heading(HEADINGS[key])
+            for x in draft[key]:
                 para(x["text"], style="List Bullet")
     if draft["languages"]:
         heading(HEADINGS["languages"])
         para(", ".join(draft["languages"]))
 
     path.parent.mkdir(parents=True, exist_ok=True)
-    doc.save(path)
+    doc.save(str(path))
     return path
 
 

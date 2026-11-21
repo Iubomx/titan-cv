@@ -13,6 +13,7 @@ import csv
 import re
 from datetime import date, datetime
 from pathlib import Path
+from typing import Any
 
 from . import markets
 from .db import DB, PROCESS_STATUSES as PROCESS
@@ -174,7 +175,7 @@ def run(ws: Workspace, simulate: bool = False, say=print, reuse: Path | None = N
                        "motivo": "retry queue"})
         seen_urls.add(q["url"])
         say(f"  retry queue: {(q.get('title') or q['url'])[:70]}")
-    result = {"found": len(rows), "chosen": len(chosen), "decisions": str(decision_csv), "summary": []}
+    result: dict[str, Any] = {"found": len(rows), "chosen": len(chosen), "decisions": str(decision_csv), "summary": []}
     from . import send_policy
     from .line_b import load_line
     try:
@@ -193,7 +194,7 @@ def run(ws: Workspace, simulate: bool = False, say=print, reuse: Path | None = N
                            login_window=False, say=say)
     result["summary"] = applier.run([r["url"] for r in chosen], limit=len(chosen), direct=True)
     with (out_dir / f"{stamp}-resultado.csv").open("w", encoding="utf-8-sig", newline="") as fh:
-        w = csv.writer(fh, delimiter=";")
-        w.writerow(["vacante", "score", "resultado"])
-        w.writerows(result["summary"])
+        res_writer = csv.writer(fh, delimiter=";")
+        res_writer.writerow(["vacante", "score", "resultado"])
+        res_writer.writerows(result["summary"])
     return result

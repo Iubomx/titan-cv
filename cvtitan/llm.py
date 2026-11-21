@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
-from typing import Literal, Optional
+from typing import Literal, Optional, TypeVar
 
 from pydantic import BaseModel, Field
 
@@ -47,8 +47,11 @@ def available() -> bool:
     return has_key and os.environ.get("CVTITAN_LLM_ENABLED") == "1"
 
 
-def _parse(system: str, user: str, schema: type[BaseModel], effort: str = "medium",
-           max_tokens: int = 16000, purpose: str = "unknown", sent: list[str] | None = None) -> BaseModel:
+_M = TypeVar("_M", bound=BaseModel)
+
+
+def _parse(system: str, user: str, schema: type[_M], effort: str = "medium",
+           max_tokens: int = 16000, purpose: str = "unknown", sent: list[str] | None = None) -> _M:
     if not available():
         raise LLMUnavailable("No hay ANTHROPIC_API_KEY configurada (archivo .env).")
     try:

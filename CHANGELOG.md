@@ -5,6 +5,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 ## [Unreleased]
 
 ### Changed
+- Tipado: el job de mypy (bloqueante) cubre ahora 52 módulos (antes 35), incluidos `colors`, `report`, `cv_writer`, `llm`, `autopilot`, `telemetry`, `pipeline`, `apply/answers`, `apply/legal`, `apply/platforms` y la web (`web/app`, `web/insights`). Correcciones sin cambio de comportamiento; `llm._parse` es genérico y devuelve el tipo de su esquema.
+
+### Changed
 - Refactor (final): el comando `auto` (piloto automático, tablero y registro de la ejecución) pasa a `cvtitan/commands/auto.py`. `cli.py` queda en 56 líneas (solo el parser y `main`), frente a las 1092 originales; todos los comandos viven en `cvtitan/commands/`. Sin cambios de comportamiento.
 
 ## [0.1.1] - 2026-11-21

@@ -8,6 +8,7 @@ Ambos devuelven texto plano; la CLI lo imprime y lo guarda en data/auto/runs/<fe
 from __future__ import annotations
 
 import time
+from typing import Any
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
@@ -145,7 +146,7 @@ def save_snapshot(s: dict, hist: dict, path: Path) -> None:
 
 def render_mission(s: dict, hist: dict | None = None):
     """Mismo informe, como paneles Rich con la paleta del centro de mando. URLs solo como dominio + código."""
-    from rich.console import Group
+    from rich.console import Group, RenderableType
     from rich.panel import Panel
     from rich.table import Table
     from rich.text import Text
@@ -174,7 +175,7 @@ def render_mission(s: dict, hist: dict | None = None):
     head.append(f"{s.get('mission') or '-'}  ::  {(s.get('mode') or '-').upper()}  ::  ", style=WHITE)
     head.append(f"T+{elapsed // 3600:02d}:{elapsed % 3600 // 60:02d}:{elapsed % 60:02d}  ", style=WHITE)
     head.append(s.get("stage") or "-", style=SUCCESS if s.get("finished") else WARN)
-    parts = [Panel(head, border_style=NEON, box=BOX, style=BG)]
+    parts: list[RenderableType] = [Panel(head, border_style=NEON, box=BOX, style=BG)]
 
     grid = Table.grid(expand=True, padding=(0, 1))
     for _ in range(3):
@@ -227,8 +228,9 @@ def render_mission(s: dict, hist: dict | None = None):
     if processed:
         styles = {"ok": SUCCESS, "done": SUCCESS, "pend": WARN, "no": GREY, "err": CRIT}
         t = Table(box=None, expand=True, header_style=f"bold {GREY}", pad_edge=False)
-        for col, kw in (("TIME", {"width": 8}), ("RESULT", {"width": 6}), ("JOB", {"ratio": 3}),
-                        ("REF", {"ratio": 2}), ("DETAIL", {"ratio": 3})):
+        columns: list[tuple[str, dict[str, Any]]] = [("TIME", {"width": 8}), ("RESULT", {"width": 6}), ("JOB", {"ratio": 3}),
+                                                      ("REF", {"ratio": 2}), ("DETAIL", {"ratio": 3})]
+        for col, kw in columns:
             t.add_column(col, no_wrap=True, overflow="ellipsis", **kw)
         for p in processed:
             st = styles.get(p["outcome"], WHITE)
