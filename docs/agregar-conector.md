@@ -56,7 +56,27 @@ peru = "mi_paquete.mercados:PERU"      # un objeto `Market`
 
 y actívalo con `lines.A.market: peru` en `config/lines.yaml`. El mercado `chile` es integrado y no se reemplaza.
 
+## Portales locales (Línea A)
+
+Los portales de empleo de tu país viven en `cvtitan/local_sources.py`. Una `LocalSource` construye la URL de búsqueda
+y declara los dominios que se leen sin navegador:
+
+```python
+from cvtitan.local_sources import LocalSource
+
+TRABAJO_PE = LocalSource("trabajo_pe", lambda kw, loc: f"https://pe.example.com/jobs?q={kw}&city={loc}",
+                         frozenset({"pe.example.com"}))
+```
+
+```toml
+[project.entry-points."cvtitan.local_sources"]
+trabajo_pe = "mi_paquete.portales:TRABAJO_PE"
+```
+
+Actívala con el `Market` de tu país (`local_sources=(..., "trabajo_pe")`) o en `config/search_keywords.yaml`. Los
+portales integrados (Chile) no se pueden reemplazar.
+
 ## Siguiente paso previsto
 
 El mismo patrón se extenderá a los portales de postulación (`apply/platforms.py`) y a las URL de búsqueda locales
-(`apply/search.py`), que todavía son específicas de Chile.
+(`apply/platforms.py`, para postular), que siguen siendo específicos de Chile.

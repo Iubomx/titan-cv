@@ -20,7 +20,7 @@ from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-from . import evidence, job_intel, markets
+from . import evidence, job_intel, local_sources, markets
 from .profile import Profile
 from .taxonomy import Taxonomy
 from .utils import Workspace, now_iso, write_text
@@ -78,11 +78,11 @@ def _monthly_usd(salary: dict, fx: dict) -> float | None:
 
 def collect(urls: list[str], cache: MarketCache, tax: Taxonomy, profile: Profile, say=print) -> list[dict]:
     """Registros de mercado para `urls`: del caché o leyendo en paralelo los avisos públicos."""
-    from .apply.search import HTTP_HOSTS, host_of, http_get, load_companies
+    from .apply.search import host_of, http_get, load_companies
 
     company_by_host = {host_of(c["url"]): c["name"] for c in load_companies() if c.get("ats") == "successfactors"}
     company_hosts = set(company_by_host)
-    missing = [u for u in urls if u not in cache.data and (host_of(u) in HTTP_HOSTS or host_of(u) in company_hosts)]
+    missing = [u for u in urls if u not in cache.data and (host_of(u) in local_sources.http_hosts() or host_of(u) in company_hosts)]
     if missing:
         say(f"Leyendo {len(missing)} aviso(s) que faltan en el caché (en paralelo)...")
 
