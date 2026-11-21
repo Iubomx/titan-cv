@@ -4,6 +4,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 
 ## [Unreleased]
 
+### Fixed
+- Se versionaron por error 84 archivos de `build/lib/` (artefactos de `python -m build`). Se eliminan y `build/` y `dist/` pasan a `.gitignore`. No afectaba al wheel publicado (solo toma los paquetes declarados).
+
 ### Added
 - Web, embudo: **filtro por nivel** y botón **Postular** en las ofertas con acción posible (`POST /api/funnel/{código}/queue`). La URL real se resuelve en el servidor a partir del código (la página nunca la ve), la acción exige el token de sesión y la postulación queda en cola para tu revisión antes de enviar. `GET /api/funnel` acepta `tier` y `limit` (máx. 200).
 
