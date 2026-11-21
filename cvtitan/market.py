@@ -21,11 +21,12 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from . import evidence, job_intel, local_sources, markets
+from . import fx as fx_mod
 from .profile import Profile
 from .taxonomy import Taxonomy
 from .utils import Workspace, now_iso, write_text
 
-DEFAULT_FX = {"USD": 1.0, "CLP": 1 / 950, "UF": 39000 / 950, "EUR": 1.08}   # supuestos: editables en settings.yaml
+from .fx import DEFAULT_FX  # noqa: F401  (se reexporta: line_b y las pruebas lo importan desde aquí)
 
 
 def job_record(url: str, raw: dict, job: dict, m: dict, source: str = "") -> dict:
@@ -191,7 +192,7 @@ def run(ws: Workspace, csv_path: Path, say=print) -> tuple[Path, dict]:
     tax = Taxonomy.load(ws.taxonomy_path)
     profile = Profile.load(ws.profile_path, tax)
     settings = load_yaml(ws.settings_path) if ws.settings_path.exists() else {}
-    fx = {**DEFAULT_FX, **(settings.get("fx") or {})}
+    fx = fx_mod.resolve(ws.root, settings)
     text = csv_path.read_text(encoding="utf-8-sig")
     urls = [r["url"] for r in csv.DictReader(text.splitlines(), delimiter=";") if (r.get("url") or "").startswith("http")]
     cache = MarketCache(ws.root / "data" / "market_cache.jsonl")

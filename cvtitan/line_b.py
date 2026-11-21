@@ -20,7 +20,8 @@ from .apply.legal import remote_eligibility
 from .registry import norm_company, norm_title
 from .apply.search import adjusted_score
 from .db import DB, PROCESS_STATUSES
-from .market import DEFAULT_FX, _monthly_usd
+from . import fx as fx_mod
+from .market import _monthly_usd
 from .profile import Profile
 from .taxonomy import Taxonomy
 from .utils import PACKAGE_ROOT, Workspace, load_yaml, normalize
@@ -240,7 +241,7 @@ def run(ws: Workspace, simulate: bool = True, say=print, use_linkedin: bool = Tr
     profile = Profile.load(ws.profile_path, tax)
     db = DB(ws.db_path)
     settings = load_yaml(ws.settings_path) if ws.settings_path.exists() else {}
-    fx = {**DEFAULT_FX, **(settings.get("fx") or {})}
+    fx = fx_mod.resolve(ws.root, settings)
     sal_cfg = line.get("salary") or {}
     out_dir = ws.root / "data" / "auto" / "B"
     out_dir.mkdir(parents=True, exist_ok=True)
