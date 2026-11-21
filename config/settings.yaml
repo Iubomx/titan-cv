@@ -28,6 +28,9 @@ fx:
   CLP: 0.00105      # ~950 CLP por USD
   UF: 41.0          # ~39.000 CLP por UF
   EUR: 1.08
+# true = actualiza las monedas ISO de la tabla (CLP, EUR...) con tasas públicas del día (1 consulta cada 24 h, en caché).
+# La consulta no lleva ningún dato tuyo; si falla se usa la tabla de arriba. USD y UF no cambian.
+fx_auto: false
 
 # IA (Claude API) para preguntas abiertas de formularios. DESACTIVADA por defecto.
 # Para activarla: 1) ANTHROPIC_API_KEY en .env  2) enabled: true.
