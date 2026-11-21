@@ -4,6 +4,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 
 ## [Unreleased]
 
+### Fixed
+- **Duplicados entre portales en la Línea B:** su huella era más débil que la del registro global, así que «Sr. Data Engineer [LATAM]» y «Senior Data Engineer» (o «Acme Group» y «Acme») contaban como ofertas distintas y se podía postular dos veces. Ahora `line_b.fingerprint` usa la misma normalización que el registro (`registry.norm_company` / `norm_title`).
+
 ### Added
 - **Tipos de cambio automáticos y opcionales** (`fx.py`, `fx_auto: true` en `config/settings.yaml`): actualiza CLP, EUR y demás monedas ISO de la tabla con tasas públicas del día (una consulta cada 24 h, en caché; sin datos tuyos). Si falla usa la caché vencida o la tabla. `USD` y `UF` no cambian. Por defecto está apagado.
 
